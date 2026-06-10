@@ -44,6 +44,8 @@ export function PaletteFlow({
   const [palettes, setPalettes] = useState<GeneratedPalette[]>([]);
   const [brands, setBrands] = useState<string[]>([]);
   const [loadingBrand, setLoadingBrand] = useState<string | null>(null);
+  // True while the palette stream is still producing — drives the inline indicator.
+  const [streaming, setStreaming] = useState(false);
 
   const aliveRef = useRef(true);
   const didStartRef = useRef(false);
@@ -64,16 +66,23 @@ export function PaletteFlow({
     );
   };
 
-  // Generate palettes + template recommendations in parallel. Sets state only
-  // after the awaited fetches resolve.
+  // Generate palettes (streaming — cards appear as each palette completes)
+  // + template recommendations in parallel.
   const runGenerate = async (history: AskedItem[]) => {
     setPhase("generating");
+    setPalettes([]);
+    setStreaming(true);
     const brief = buildBrief(history);
     const [pRes, bRes] = await Promise.allSettled([
-      generatePalettes(brief),
+      generatePalettes(brief, undefined, (p) => {
+        if (!aliveRef.current) return;
+        setPalettes((prev) => [...prev, p]);
+        setPhase("results"); // first card flips the view; the rest stream in
+      }),
       recommendBrands(brief),
     ]);
     if (!aliveRef.current) return;
+    setStreaming(false);
 
     const pOk = pRes.status === "fulfilled" ? pRes.value : [];
     const bOk = bRes.status === "fulfilled" ? bRes.value : [];
@@ -281,7 +290,15 @@ export function PaletteFlow({
     <div className="space-y-10">
       <section className="space-y-4">
         <header className="space-y-1">
-          <h2 className="text-lg font-semibold tracking-tight">配色方案</h2>
+          <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+            配色方案
+            {streaming && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-normal text-neutral-400">
+                <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-neutral-400" />
+                生成中…
+              </span>
+            )}
+          </h2>
           <p className="text-sm text-neutral-500 dark:text-neutral-400">
             根据你的方向AI给出方案
           </p>

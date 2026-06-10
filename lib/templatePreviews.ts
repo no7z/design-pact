@@ -34,12 +34,15 @@ export function useTemplatePreview(
 ): string[] | undefined {
   const [preview, setPreview] = useState<string[] | undefined>(() => previewCache.get(brand));
 
+  // Adjust-during-render (not in an effect) when the brand prop changes.
+  const [prevBrand, setPrevBrand] = useState(brand);
+  if (prevBrand !== brand) {
+    setPrevBrand(brand);
+    setPreview(previewCache.get(brand));
+  }
+
   useEffect(() => {
-    const cached = previewCache.get(brand);
-    if (cached) {
-      setPreview(cached);
-      return;
-    }
+    if (previewCache.has(brand)) return;
 
     let cancelled = false;
     const trigger = () => {

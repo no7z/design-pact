@@ -2,6 +2,8 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { adjustHex } from "./color";
+import { buildShadowsFromIntensity } from "./scales";
+import type { EasingPreset } from "./scales";
 import type { ExtractedColor } from "./extract";
 
 export type SemanticRole =
@@ -27,7 +29,29 @@ export type Typography = {
   ratio: number;
   fontFamily: string;
   headingFamily: string;
+  fontWeight: number;
+  lineHeight: number;
+  letterSpacing: number; // em units
 };
+
+export type Spacing = { base: number };
+export type Radius = { base: number };
+export type ShadowToken = { blur: number; offsetY: number; opacity: number };
+export type Shadow = {
+  intensity: number; // 0..1, drives sm/md/lg in simple mode
+  advanced: boolean; // when true, sm/md/lg are user-edited and intensity is ignored
+  sm: ShadowToken;
+  md: ShadowToken;
+  lg: ShadowToken;
+};
+
+export type Motion = {
+  base: number;       // ms, 80–500, default 200
+  easing: EasingPreset;
+};
+
+export type Border = { base: number }; // px
+export type Opacity = { base: number }; // interactive state base opacity
 
 export type Globals = { dL: number; dC: number; dH: number };
 
@@ -46,13 +70,33 @@ type State = {
   globals: Globals;
   variants: Variant[];
   activeVariantId: string | null;
+  description: string;
+  recommendations: string[];
+  activeBrand: string | null;
+  spacing: Spacing;
+  radius: Radius;
+  shadow: Shadow;
+  motion: Motion;
+  border: Border;
+  opacity: Opacity;
   setColors: (palette: ExtractedColor[]) => void;
+  loadTokens: (tokens: ColorToken[], brand?: string | null) => void;
   updateColor: (id: string, patch: Partial<ColorToken>) => void;
   setRole: (id: string, role: SemanticRole) => void;
   setGlobal: (g: Partial<Globals>) => void;
   bakeGlobals: () => void;
   resetGlobals: () => void;
   setTypography: (t: Partial<Typography>) => void;
+  setDescription: (s: string) => void;
+  setRecommendations: (r: string[]) => void;
+  setSpacing: (s: Partial<Spacing>) => void;
+  setRadius: (r: Partial<Radius>) => void;
+  setShadowIntensity: (intensity: number) => void;
+  setShadowAdvanced: (advanced: boolean) => void;
+  setShadowLevel: (level: "sm" | "md" | "lg", t: Partial<ShadowToken>) => void;
+  setMotion: (m: Partial<Motion>) => void;
+  setBorder: (b: Partial<Border>) => void;
+  setOpacity: (o: Partial<Opacity>) => void;
   reset: () => void;
   saveAsVariant: (name: string) => string;
   updateActiveVariant: () => void;
@@ -66,6 +110,20 @@ const defaultTypography: Typography = {
   ratio: 1.25,
   fontFamily: "Inter, system-ui, sans-serif",
   headingFamily: "Inter, system-ui, sans-serif",
+  fontWeight: 400,
+  lineHeight: 1.5,
+  letterSpacing: 0,
+};
+
+const defaultSpacing: Spacing = { base: 4 };
+const defaultRadius: Radius = { base: 8 };
+const defaultMotion: Motion = { base: 200, easing: "ease-out" };
+const defaultBorder: Border = { base: 1 };
+const defaultOpacity: Opacity = { base: 0.08 };
+const defaultShadow: Shadow = {
+  intensity: 0.5,
+  advanced: false,
+  ...buildShadowsFromIntensity(0.5),
 };
 
 export const computedHex = (token: ColorToken, g: Globals): string =>
@@ -88,6 +146,15 @@ export const useTokens = create<State>()(
       globals: { dL: 0, dC: 0, dH: 0 },
       variants: [],
       activeVariantId: null,
+      description: "",
+      recommendations: [],
+      activeBrand: null,
+      spacing: defaultSpacing,
+      radius: defaultRadius,
+      shadow: defaultShadow,
+      motion: defaultMotion,
+      border: defaultBorder,
+      opacity: defaultOpacity,
       setColors: (palette) =>
         set(() => ({
           colors: palette.map((c, i) => ({
@@ -98,6 +165,13 @@ export const useTokens = create<State>()(
             role: inferRole(i, palette.length),
           })),
           globals: { dL: 0, dC: 0, dH: 0 },
+          activeBrand: null,
+        })),
+      loadTokens: (tokens, brand = null) =>
+        set(() => ({
+          colors: tokens.map((t, i) => ({ ...t, id: `c${i}` })),
+          globals: { dL: 0, dC: 0, dH: 0 },
+          activeBrand: brand,
         })),
       updateColor: (id, patch) =>
         set((s) => ({
@@ -121,12 +195,39 @@ export const useTokens = create<State>()(
         })),
       resetGlobals: () => set(() => ({ globals: { dL: 0, dC: 0, dH: 0 } })),
       setTypography: (t) => set((s) => ({ typography: { ...s.typography, ...t } })),
+      setDescription: (s) => set(() => ({ description: s })),
+      setRecommendations: (r) => set(() => ({ recommendations: r })),
+      setSpacing: (s) => set((cur) => ({ spacing: { ...cur.spacing, ...s } })),
+      setRadius: (r) => set((cur) => ({ radius: { ...cur.radius, ...r } })),
+      setShadowIntensity: (intensity) =>
+        set((cur) => ({
+          shadow: {
+            ...cur.shadow,
+            intensity,
+            advanced: false,
+            ...buildShadowsFromIntensity(intensity),
+          },
+        })),
+      setShadowAdvanced: (advanced) =>
+        set((cur) => ({ shadow: { ...cur.shadow, advanced } })),
+      setShadowLevel: (level, t) =>
+        set((cur) => ({
+          shadow: {
+            ...cur.shadow,
+            advanced: true,
+            [level]: { ...cur.shadow[level], ...t },
+          },
+        })),
+      setMotion: (m) => set((cur) => ({ motion: { ...cur.motion, ...m } })),
+      setBorder: (b) => set((cur) => ({ border: { ...cur.border, ...b } })),
+      setOpacity: (o) => set((cur) => ({ opacity: { ...cur.opacity, ...o } })),
       reset: () =>
         set(() => ({
           colors: [],
           typography: defaultTypography,
           globals: { dL: 0, dC: 0, dH: 0 },
           activeVariantId: null,
+          activeBrand: null,
         })),
       saveAsVariant: (name) => {
         const id = `v${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;

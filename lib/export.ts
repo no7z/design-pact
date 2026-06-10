@@ -1,10 +1,30 @@
-import type { ColorToken, Typography } from "./store";
+import type { ColorToken, Typography, Spacing, Radius, Shadow, Motion, Border, Opacity } from "./store";
 import { buildScale, SCALE_STEPS } from "./typography";
+import { buildSpacing, buildRadius, shadowToCss, buildDurations, EASING_PRESETS, buildBorderScale, buildOpacityScale, boldWeight } from "./scales";
 import { oklchString } from "./color";
 
 export type ResolvedToken = ColorToken & { displayHex: string };
 
-export function w3cTokens(colors: ResolvedToken[], typography: Typography) {
+// What each interaction-opacity step is for — so the AI prompt tells the model
+// WHEN to use them, not just their values (otherwise they go unused).
+const OPACITY_USAGE: Record<string, string> = {
+  hover: "tint/overlay on hover (e.g. button or row background)",
+  pressed: "active/pressed feedback",
+  focus: "focus ring or focused-row background",
+  disabled: "opacity of disabled controls",
+  overlay: "modal/drawer backdrop scrim",
+};
+
+export function w3cTokens(
+  colors: ResolvedToken[],
+  typography: Typography,
+  spacing: Spacing,
+  radius: Radius,
+  shadow: Shadow,
+  motion: Motion,
+  border: Border,
+  opacity: Opacity,
+) {
   const colorGroup: Record<string, unknown> = {};
   for (const c of colors) {
     const key = c.role === "unassigned" ? c.id : c.role;
@@ -20,6 +40,34 @@ export function w3cTokens(colors: ResolvedToken[], typography: Typography) {
   for (const s of buildScale(typography)) {
     fontSizes[s.name] = { $value: `${s.rem}rem`, $type: "dimension" };
   }
+  const spacingGroup: Record<string, unknown> = {};
+  for (const s of buildSpacing(spacing.base)) {
+    spacingGroup[s.name] = { $value: `${s.px}px`, $type: "dimension" };
+  }
+  const radiusGroup: Record<string, unknown> = {};
+  for (const r of buildRadius(radius.base)) {
+    radiusGroup[r.name] = { $value: `${r.px}px`, $type: "dimension" };
+  }
+  const shadowGroup: Record<string, unknown> = {};
+  for (const level of ["sm", "md", "lg"] as const) {
+    shadowGroup[level] = { $value: shadowToCss(shadow[level]), $type: "shadow" };
+  }
+  const motionGroup: Record<string, unknown> = {};
+  for (const d of buildDurations(motion.base)) {
+    motionGroup[`duration-${d.name}`] = { $value: `${d.ms}ms`, $type: "duration" };
+  }
+  motionGroup["easing"] = { $value: EASING_PRESETS[motion.easing], $type: "cubicBezier" };
+
+  const borderGroup: Record<string, unknown> = {};
+  for (const b of buildBorderScale(border.base)) {
+    borderGroup[b.name] = { $value: `${b.px}px`, $type: "dimension" };
+  }
+
+  const opacityGroup: Record<string, unknown> = {};
+  for (const o of buildOpacityScale(opacity.base)) {
+    opacityGroup[o.name] = { $value: o.value, $type: "number" };
+  }
+
   return {
     color: colorGroup,
     typography: {
@@ -28,19 +76,56 @@ export function w3cTokens(colors: ResolvedToken[], typography: Typography) {
         heading: { $value: typography.headingFamily, $type: "fontFamily" },
       },
       fontSize: fontSizes,
+      fontWeight: { $value: typography.fontWeight, $type: "fontWeight" },
+      fontWeightBold: { $value: boldWeight(typography.fontWeight), $type: "fontWeight" },
+      lineHeight: { $value: typography.lineHeight, $type: "number" },
+      letterSpacing: { $value: `${typography.letterSpacing}em`, $type: "dimension" },
       $extensions: {
         "ui-generator": { base: typography.base, ratio: typography.ratio },
       },
     },
+    spacing: spacingGroup,
+    borderRadius: radiusGroup,
+    borderWidth: borderGroup,
+    shadow: shadowGroup,
+    motion: motionGroup,
+    opacity: opacityGroup,
   };
 }
 
-export function tailwindConfig(colors: ResolvedToken[], typography: Typography): string {
+export function tailwindConfig(
+  colors: ResolvedToken[],
+  typography: Typography,
+  spacing: Spacing,
+  radius: Radius,
+  shadow: Shadow,
+  motion: Motion,
+  border: Border,
+  opacity: Opacity,
+): string {
   const colorEntries = colors
     .map((c) => `        ${c.role === "unassigned" ? c.id : c.role}: "${c.displayHex}",`)
     .join("\n");
   const sizeEntries = buildScale(typography)
     .map((s) => `        "${s.name}": "${s.rem}rem",`)
+    .join("\n");
+  const spacingEntries = buildSpacing(spacing.base)
+    .map((s) => `        ${s.name}: "${s.px}px",`)
+    .join("\n");
+  const radiusEntries = buildRadius(radius.base)
+    .map((r) => `        ${r.name}: "${r.px}px",`)
+    .join("\n");
+  const shadowEntries = (["sm", "md", "lg"] as const)
+    .map((level) => `        ${level}: "${shadowToCss(shadow[level])}",`)
+    .join("\n");
+  const durationEntries = buildDurations(motion.base)
+    .map((d) => `        ${d.name}: "${d.ms}ms",`)
+    .join("\n");
+  const borderEntries = buildBorderScale(border.base)
+    .map((b) => `        ${b.name}: "${b.px}px",`)
+    .join("\n");
+  const opacityEntries = buildOpacityScale(opacity.base)
+    .map((o) => `        ${o.name}: "${o.value}",`)
     .join("\n");
   return `module.exports = {
   theme: {
@@ -55,29 +140,107 @@ ${colorEntries}
       fontSize: {
 ${sizeEntries}
       },
+      fontWeight: {
+        body: "${typography.fontWeight}",
+        bold: "${boldWeight(typography.fontWeight)}",
+      },
+      lineHeight: {
+        body: "${typography.lineHeight}",
+      },
+      letterSpacing: {
+        body: "${typography.letterSpacing}em",
+      },
+      spacing: {
+${spacingEntries}
+      },
+      borderRadius: {
+${radiusEntries}
+      },
+      borderWidth: {
+${borderEntries}
+      },
+      boxShadow: {
+${shadowEntries}
+      },
+      transitionDuration: {
+${durationEntries}
+      },
+      transitionTimingFunction: {
+        standard: "${EASING_PRESETS[motion.easing]}",
+      },
+      opacity: {
+${opacityEntries}
+      },
     },
   },
 };
 `;
 }
 
-export function cssVars(colors: ResolvedToken[], typography: Typography): string {
+export function cssVars(
+  colors: ResolvedToken[],
+  typography: Typography,
+  spacing: Spacing,
+  radius: Radius,
+  shadow: Shadow,
+  motion: Motion,
+  border: Border,
+  opacity: Opacity,
+): string {
   const colorLines = colors
     .map((c) => `  --color-${c.role === "unassigned" ? c.id : c.role}: ${c.displayHex};`)
     .join("\n");
   const sizeLines = buildScale(typography)
     .map((s) => `  --font-size-${s.name}: ${s.rem}rem;`)
     .join("\n");
+  const spacingLines = buildSpacing(spacing.base)
+    .map((s) => `  --spacing-${s.name}: ${s.px}px;`)
+    .join("\n");
+  const radiusLines = buildRadius(radius.base)
+    .map((r) => `  --radius-${r.name}: ${r.px}px;`)
+    .join("\n");
+  const shadowLines = (["sm", "md", "lg"] as const)
+    .map((level) => `  --shadow-${level}: ${shadowToCss(shadow[level])};`)
+    .join("\n");
+  const durationLines = buildDurations(motion.base)
+    .map((d) => `  --duration-${d.name}: ${d.ms}ms;`)
+    .join("\n");
+  const borderLines = buildBorderScale(border.base)
+    .map((b) => `  --border-${b.name}: ${b.px}px;`)
+    .join("\n");
+  const opacityLines = buildOpacityScale(opacity.base)
+    .map((o) => `  --opacity-${o.name}: ${o.value};`)
+    .join("\n");
   return `:root {
 ${colorLines}
   --font-family-body: ${typography.fontFamily};
   --font-family-heading: ${typography.headingFamily};
+  --font-weight: ${typography.fontWeight};
+  --font-weight-bold: ${boldWeight(typography.fontWeight)};
+  --line-height: ${typography.lineHeight};
+  --letter-spacing: ${typography.letterSpacing}em;
 ${sizeLines}
+${spacingLines}
+${radiusLines}
+${borderLines}
+${shadowLines}
+${durationLines}
+  --easing-standard: ${EASING_PRESETS[motion.easing]};
+${opacityLines}
 }
 `;
 }
 
-export function aiPrompt(colors: ResolvedToken[], typography: Typography): string {
+export function aiPrompt(
+  colors: ResolvedToken[],
+  typography: Typography,
+  spacing: Spacing,
+  radius: Radius,
+  shadow: Shadow,
+  motion: Motion,
+  border: Border,
+  opacity: Opacity,
+): string {
   const sorted = [...colors].sort((a, b) => b.proportion - a.proportion);
   const palette = sorted
     .map(
@@ -90,7 +253,25 @@ export function aiPrompt(colors: ResolvedToken[], typography: Typography): strin
     .join("\n");
   const dominant = sorted[0];
   const accent = sorted.find((c) => c.role === "accent") ?? sorted[1];
+  const rootBlock = cssVars(colors, typography, spacing, radius, shadow, motion, border, opacity);
   return `# Design system
+
+## Machine-readable tokens — COPY THIS BLOCK VERBATIM
+Paste the \`:root\` below into your \`<style>\` exactly as written, then reference
+every value through \`var(--…)\`. This block is the single source of truth.
+
+Hard rules:
+- Do NOT redefine, round, rescale, or re-derive any value. Copy it character for character.
+- Do NOT introduce colors, fonts, font-sizes, spacing, radii, or shadows that are not declared here.
+- If you need a lighter/darker shade of a color, derive it in OKLCH by changing lightness only — keep hue and chroma fixed. Do not invent a new hue.
+- Every length in your CSS must be a \`var(--…)\` reference. Do NOT convert a \`px\` token to \`rem\` (or any other unit) — reference it as-is. Spacing, radius, and border vars are in \`px\`; font sizes are in \`rem\`; keep each as declared.
+
+\`\`\`css
+${rootBlock}\`\`\`
+
+The prose below explains the intent behind these tokens. When prose and the \`:root\` block disagree, the block wins.
+
+---
 
 When generating UI from this token set, respect the following proportions and roles. The percentages reflect how much of the source design each color occupies — use them as a guide for surface area in the output.
 
@@ -106,13 +287,118 @@ ${scale}
 
 Body family: ${typography.fontFamily}
 Heading family: ${typography.headingFamily}
+Font weight: ${typography.fontWeight} (\`--font-weight\`), line-height: ${typography.lineHeight}, letter-spacing: ${typography.letterSpacing}em.
+Use \`--font-weight\` for body text AND headings — this design keeps one weight throughout. Use \`--font-weight-bold\` (${boldWeight(typography.fontWeight)}) ONLY for emphasis: primary CTA labels, \`<strong>\`, badges. Never let the browser default headings or \`<strong>\` to bold — set the weight explicitly so nothing falls outside these two values.
+
+## Spacing
+Base unit ${spacing.base}px. Use this 8-step scale for padding/margin/gap:
+
+${buildSpacing(spacing.base).map((s) => `- ${s.name}: ${s.px}px`).join("\n")}
+
+## Border radius
+Base ${radius.base}px. Use:
+
+${buildRadius(radius.base).map((r) => `- ${r.name}: ${r.name === "full" ? "9999px (pill)" : `${r.px}px`}`).join("\n")}
+
+## Shadow / elevation
+${shadow.advanced ? "Per-level custom values" : `Intensity ${shadow.intensity.toFixed(2)}`}.
+
+${(["sm", "md", "lg"] as const).map((level) => `- ${level}: ${shadowToCss(shadow[level])}`).join("\n")}
+
+## Border width
+${buildBorderScale(border.base).map((b) => `- ${b.name}: ${b.px}px`).join("\n")}
+
+## Opacity / transparency
+These drive interactive states — wire them up, don't leave them unused. Apply each via \`var(--opacity-…)\` (or an rgba/overlay at that alpha):
+
+${buildOpacityScale(opacity.base).map((o) => `- ${o.name} (${(o.value * 100).toFixed(1)}%): ${OPACITY_USAGE[o.name] ?? "interactive state"}`).join("\n")}
+
+Every clickable element (buttons, links, cards) should show a hover state and a disabled state using these values. Use \`overlay\` for scrims behind modals/drawers.
+
+## Motion / Animation
+Base duration ${motion.base}ms, easing: ${motion.easing} (${EASING_PRESETS[motion.easing]}).
+
+${buildDurations(motion.base).map((d) => `- ${d.name}: ${d.ms}ms`).join("\n")}
+
+Use \`--duration-normal\` as the default transition. Prefer \`--duration-fast\` for hover states and micro-interactions. Reserve \`--duration-page\` for route/page-level transitions.
 
 ## Output guidance
 - Maintain the proportional relationships above when laying out a page.
 - Do not introduce new hues. If you need additional shades, derive them by adjusting OKLCH lightness only, keeping hue and chroma fixed.
 - Respect the modular scale — pick from the listed sizes rather than introducing new ones.
+- Use only the listed spacing values; do not improvise intermediate gaps.
 - ${SCALE_STEPS.length} type sizes is intentional. Use semantic mapping: h1-h5 for headings, body for paragraphs, small/caption for metadata.
 `;
+}
+
+// Tokens Studio (Figma "Tokens Studio" plugin) format — designers import this
+// JSON to get colors/type/spacing/etc. as Figma variables & styles. Note this
+// schema uses `value`/`type` (not W3C's `$value`/`$type`) and string values.
+export function tokensStudioJson(
+  colors: ResolvedToken[],
+  typography: Typography,
+  spacing: Spacing,
+  radius: Radius,
+  shadow: Shadow,
+  motion: Motion,
+  border: Border,
+  opacity: Opacity,
+): string {
+  const tok = (value: unknown, type: string) => ({ value, type });
+
+  const color: Record<string, unknown> = {};
+  for (const c of colors) {
+    color[c.role === "unassigned" ? c.id : c.role] = tok(c.displayHex, "color");
+  }
+  const fontSizes: Record<string, unknown> = {};
+  for (const s of buildScale(typography)) fontSizes[s.name] = tok(`${s.px}`, "fontSizes");
+  const spacingGroup: Record<string, unknown> = {};
+  for (const s of buildSpacing(spacing.base)) spacingGroup[s.name] = tok(`${s.px}`, "spacing");
+  const borderRadius: Record<string, unknown> = {};
+  for (const r of buildRadius(radius.base)) borderRadius[r.name] = tok(`${r.px}`, "borderRadius");
+  const borderWidth: Record<string, unknown> = {};
+  for (const b of buildBorderScale(border.base)) borderWidth[b.name] = tok(`${b.px}`, "borderWidth");
+  const boxShadow: Record<string, unknown> = {};
+  for (const level of ["sm", "md", "lg"] as const) {
+    const s = shadow[level];
+    boxShadow[level] = tok(
+      { x: "0", y: `${s.offsetY}`, blur: `${s.blur}`, spread: "0", color: `rgba(0,0,0,${s.opacity})`, type: "dropShadow" },
+      "boxShadow",
+    );
+  }
+  const opacityGroup: Record<string, unknown> = {};
+  for (const o of buildOpacityScale(opacity.base)) {
+    opacityGroup[o.name] = tok(`${Math.round(o.value * 100)}%`, "opacity");
+  }
+
+  return JSON.stringify(
+    {
+      global: {
+        color,
+        fontFamilies: {
+          body: tok(typography.fontFamily, "fontFamilies"),
+          heading: tok(typography.headingFamily, "fontFamilies"),
+        },
+        fontWeights: {
+          body: tok(`${typography.fontWeight}`, "fontWeights"),
+          bold: tok(`${boldWeight(typography.fontWeight)}`, "fontWeights"),
+        },
+        fontSizes,
+        lineHeights: { body: tok(`${typography.lineHeight}`, "lineHeights") },
+        letterSpacing: { body: tok(`${typography.letterSpacing}em`, "letterSpacing") },
+        spacing: spacingGroup,
+        borderRadius,
+        borderWidth,
+        boxShadow,
+        opacity: opacityGroup,
+        motion: Object.fromEntries(
+          buildDurations(motion.base).map((d) => [d.name, tok(`${d.ms}ms`, "other")]),
+        ),
+      },
+    },
+    null,
+    2,
+  );
 }
 
 export function downloadFile(filename: string, content: string, mime = "text/plain") {

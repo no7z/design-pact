@@ -6,9 +6,12 @@ import {
   tailwindConfig,
   cssVars,
   aiPrompt,
+  tokensStudioJson,
   downloadFile,
   type ResolvedToken,
 } from "@/lib/export";
+import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
+import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
 
 type Tab = "json" | "tailwind" | "css" | "ai";
 
@@ -16,37 +19,39 @@ export function Export() {
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
   const typography = useTokens((s) => s.typography);
+  const spacing = useTokens((s) => s.spacing);
+  const radius = useTokens((s) => s.radius);
+  const shadow = useTokens((s) => s.shadow);
+  const motion = useTokens((s) => s.motion);
+  const border = useTokens((s) => s.border);
+  const opacity = useTokens((s) => s.opacity);
   const [tab, setTab] = useState<Tab>("json");
   const [copied, setCopied] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [visualOpen, setVisualOpen] = useState(true);
+  const [vBusy, setVBusy] = useState(false);
 
   const resolved: ResolvedToken[] = useMemo(
     () => colors.map((c) => ({ ...c, displayHex: computedHex(c, globals) })),
     [colors, globals],
   );
 
-  const content = useMemo(() => {
-    switch (tab) {
-      case "json":
-        return JSON.stringify(w3cTokens(resolved, typography), null, 2);
-      case "tailwind":
-        return tailwindConfig(resolved, typography);
-      case "css":
-        return cssVars(resolved, typography);
-      case "ai":
-        return aiPrompt(resolved, typography);
-    }
-  }, [tab, resolved, typography]);
-
   if (resolved.length === 0) return null;
 
+  const content = (() => {
+    switch (tab) {
+      case "json":     return JSON.stringify(w3cTokens(resolved, typography, spacing, radius, shadow, motion, border, opacity), null, 2);
+      case "tailwind": return tailwindConfig(resolved, typography, spacing, radius, shadow, motion, border, opacity);
+      case "css":      return cssVars(resolved, typography, spacing, radius, shadow, motion, border, opacity);
+      case "ai":       return aiPrompt(resolved, typography, spacing, radius, shadow, motion, border, opacity);
+    }
+  })();
+
   const filename =
-    tab === "json"
-      ? "design-tokens.json"
-      : tab === "tailwind"
-        ? "tailwind.config.js"
-        : tab === "css"
-          ? "tokens.css"
-          : "design-prompt.md";
+    tab === "json"      ? "design-tokens.json"
+    : tab === "tailwind" ? "tailwind.config.js"
+    : tab === "css"      ? "tokens.css"
+    :                      "design-prompt.md";
 
   const onCopy = async () => {
     await navigator.clipboard.writeText(content);
@@ -54,50 +59,129 @@ export function Export() {
     setTimeout(() => setCopied(false), 1500);
   };
 
+  const boardSvg = () => document.getElementById(BOARD_SVG_ID) as SVGSVGElement | null;
+
+  const exportSvg = () => {
+    const svg = boardSvg();
+    if (svg) downloadFile("design-system.svg", serializeSvg(svg), "image/svg+xml");
+  };
+  const exportHtml = () => {
+    const svg = boardSvg();
+    if (svg) downloadFile("design-system.html", htmlStyleGuide(serializeSvg(svg), "设计系统总览"), "text/html");
+  };
+  const openHtml = () => {
+    const svg = boardSvg();
+    if (!svg) return;
+    const html = htmlStyleGuide(serializeSvg(svg), "设计系统总览");
+    const url = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+    window.open(url, "_blank", "noopener");
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+  };
+  const exportFigma = () =>
+    downloadFile(
+      "tokens-studio.json",
+      tokensStudioJson(resolved, typography, spacing, radius, shadow, motion, border, opacity),
+      "application/json",
+    );
+  const exportPng = async () => {
+    const svg = boardSvg();
+    if (!svg) return;
+    setVBusy(true);
+    try {
+      const blob = await svgToPngBlob(serializeSvg(svg), 2);
+      downloadBlob("design-system.png", blob);
+    } finally {
+      setVBusy(false);
+    }
+  };
+
+  const visualBtn =
+    "rounded border border-neutral-300 px-2.5 py-1 text-xs hover:bg-neutral-100 disabled:opacity-40 dark:border-neutral-700 dark:hover:bg-neutral-800";
+
   return (
-    <section className="rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-sm font-semibold">导出</h3>
-        <div className="flex gap-2">
-          <button
-            onClick={onCopy}
-            className="rounded border border-neutral-300 px-2 py-1 text-xs hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
-          >
-            {copied ? "已复制" : "复制"}
-          </button>
-          <button
-            onClick={() => downloadFile(filename, content)}
-            className="rounded bg-neutral-900 px-2 py-1 text-xs text-white hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
-          >
-            下载 {filename}
-          </button>
+    <div className="space-y-4">
+      <section className="rounded-xl border border-neutral-200 dark:border-neutral-800">
+        <button
+          onClick={() => setVisualOpen((o) => !o)}
+          className="flex w-full items-center justify-between px-4 py-3 text-left"
+        >
+          <span className="text-xs font-semibold">设计系统总览 · 视觉导出</span>
+          <span className="text-xs text-neutral-400">{visualOpen ? "收起 ↑" : "展开 ↓"}</span>
+        </button>
+        {visualOpen && (
+          <div className="space-y-3 border-t border-neutral-200 px-4 pb-4 pt-3 dark:border-neutral-800">
+            <div className="flex flex-wrap items-center gap-1.5">
+              <button onClick={openHtml} className="rounded bg-neutral-900 px-2.5 py-1 text-xs text-white hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-neutral-200">
+                在新窗口打开 ↗
+              </button>
+              <span className="mx-1 text-[10px] text-neutral-300 dark:text-neutral-600">下载：</span>
+              <button onClick={exportHtml} className={visualBtn}>HTML</button>
+              <button onClick={exportPng} disabled={vBusy} className={visualBtn}>PNG</button>
+              <button onClick={exportSvg} className={visualBtn}>SVG</button>
+              <button onClick={exportFigma} className={visualBtn}>Figma 令牌</button>
+              {vBusy && <span className="text-xs text-neutral-400">导出中…</span>}
+              <span className="ml-auto text-[10px] text-neutral-400">SVG 可直接拖进 Figma / Illustrator</span>
+            </div>
+            <div className="max-h-[520px] overflow-auto rounded-lg border border-neutral-200 bg-white dark:border-neutral-800">
+              <DesignSystemBoard />
+            </div>
+          </div>
+        )}
+      </section>
+
+    <section className="rounded-xl border border-neutral-200 dark:border-neutral-800">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center justify-between px-4 py-3 text-left"
+      >
+        <span className="text-xs font-semibold">导出 Tokens</span>
+        <span className="text-xs text-neutral-400">{open ? "收起 ↑" : "展开 ↓"}</span>
+      </button>
+
+      {open && (
+        <div className="border-t border-neutral-200 px-4 pb-4 pt-3 dark:border-neutral-800">
+          <div className="mb-2 flex flex-wrap gap-1 border-b border-neutral-200 dark:border-neutral-800">
+            {(
+              [
+                ["json", "W3C"],
+                ["tailwind", "Tailwind"],
+                ["css", "CSS"],
+                ["ai", "AI prompt"],
+              ] as const
+            ).map(([key, label]) => (
+              <button
+                key={key}
+                onClick={() => setTab(key)}
+                className={`-mb-px border-b-2 px-2.5 py-1 text-xs ${
+                  tab === key
+                    ? "border-neutral-900 font-medium dark:border-white"
+                    : "border-transparent text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+            <div className="ml-auto flex gap-1.5">
+              <button
+                onClick={onCopy}
+                className="rounded border border-neutral-300 px-2 py-0.5 text-xs hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              >
+                {copied ? "已复制" : "复制"}
+              </button>
+              <button
+                onClick={() => downloadFile(filename, content)}
+                className="rounded bg-neutral-900 px-2 py-0.5 text-xs text-white hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
+              >
+                下载
+              </button>
+            </div>
+          </div>
+          <pre className="max-h-72 overflow-auto rounded-lg bg-neutral-50 p-3 font-mono text-[10px] leading-relaxed dark:bg-neutral-900">
+            <code>{content}</code>
+          </pre>
         </div>
-      </div>
-      <div className="mb-2 flex flex-wrap gap-1 border-b border-neutral-200 dark:border-neutral-800">
-        {(
-          [
-            ["json", "W3C Tokens"],
-            ["tailwind", "Tailwind"],
-            ["css", "CSS vars"],
-            ["ai", "AI prompt"],
-          ] as const
-        ).map(([key, label]) => (
-          <button
-            key={key}
-            onClick={() => setTab(key)}
-            className={`-mb-px border-b-2 px-3 py-1.5 text-xs ${
-              tab === key
-                ? "border-neutral-900 font-medium dark:border-white"
-                : "border-transparent text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <pre className="max-h-[480px] overflow-auto rounded-lg bg-neutral-50 p-3 font-mono text-[11px] leading-relaxed dark:bg-neutral-900">
-        <code>{content}</code>
-      </pre>
+      )}
     </section>
+    </div>
   );
 }

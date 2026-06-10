@@ -3,8 +3,9 @@ import { useState } from "react";
 import { Uploader } from "./Uploader";
 import { UrlFetcher } from "./UrlFetcher";
 import { AllTemplatesBrowser } from "./AllTemplatesBrowser";
+import { TokenImport } from "./TokenImport";
 
-type Tab = "template" | "image" | "url";
+type Tab = "template" | "image" | "url" | "json";
 
 export function InputSource({ onSuccess }: { onSuccess?: () => void } = {}) {
   const [tab, setTab] = useState<Tab>("template");
@@ -17,6 +18,7 @@ export function InputSource({ onSuccess }: { onSuccess?: () => void } = {}) {
             ["template", "模板"],
             ["image", "图片"],
             ["url", "网址"],
+            ["json", "JSON"],
           ] as const
         ).map(([key, label]) => (
           <button
@@ -36,8 +38,10 @@ export function InputSource({ onSuccess }: { onSuccess?: () => void } = {}) {
         <AllTemplatesBrowser onPicked={() => onSuccess?.()} />
       ) : tab === "image" ? (
         <Uploader onSuccess={() => onSuccess?.()} />
-      ) : (
+      ) : tab === "url" ? (
         <UrlFetcher onSuccess={() => onSuccess?.()} />
+      ) : (
+        <TokenImport onSuccess={() => onSuccess?.()} />
       )}
     </section>
   );

@@ -14,6 +14,7 @@ import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
 import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
 import { GeneratePage } from "./GeneratePage";
 import { ShareLink } from "./ShareLink";
+import { darkTokens } from "@/lib/darkMode";
 
 type Tab = "json" | "tailwind" | "css" | "ai";
 
@@ -27,6 +28,7 @@ export function Export() {
   const motion = useTokens((s) => s.motion);
   const border = useTokens((s) => s.border);
   const opacity = useTokens((s) => s.opacity);
+  const dark = useTokens((s) => s.dark);
   const [tab, setTab] = useState<Tab>("json");
   const [copied, setCopied] = useState(false);
   const [open, setOpen] = useState(false);
@@ -38,21 +40,29 @@ export function Export() {
     [colors, globals],
   );
 
+  const darkResolved: ResolvedToken[] | null = useMemo(
+    () =>
+      dark.enabled
+        ? darkTokens(colors, globals, dark.overrides).map((c) => ({ ...c, displayHex: c.hex }))
+        : null,
+    [colors, globals, dark],
+  );
+
   const promptText = useMemo(
     () =>
       resolved.length > 0
-        ? aiPrompt(resolved, typography, spacing, radius, shadow, motion, border, opacity)
+        ? aiPrompt(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved)
         : "",
-    [resolved, typography, spacing, radius, shadow, motion, border, opacity],
+    [resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved],
   );
 
   if (resolved.length === 0) return null;
 
   const content = (() => {
     switch (tab) {
-      case "json":     return JSON.stringify(w3cTokens(resolved, typography, spacing, radius, shadow, motion, border, opacity), null, 2);
+      case "json":     return JSON.stringify(w3cTokens(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved), null, 2);
       case "tailwind": return tailwindConfig(resolved, typography, spacing, radius, shadow, motion, border, opacity);
-      case "css":      return cssVars(resolved, typography, spacing, radius, shadow, motion, border, opacity);
+      case "css":      return cssVars(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved);
       case "ai":       return promptText;
     }
   })();

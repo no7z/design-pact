@@ -26,6 +26,8 @@ export type ImportedTokens = {
   motion?: Partial<Motion>;
   border?: Partial<Border>;
   opacity?: Partial<Opacity>;
+  /** Dark hex per colors[] index, when the export carried dark pairs. */
+  darkHexes?: (string | undefined)[];
 };
 
 const ROLES = new Set<SemanticRole>([
@@ -68,6 +70,7 @@ export function parseW3CTokens(jsonText: string): ImportedTokens {
   const colorGroup = asObj(root.color);
   if (!colorGroup) throw new Error("缺少 color 分组——这不是本工具导出的 design-tokens.json？");
   const colors: ColorToken[] = [];
+  const darkHexes: (string | undefined)[] = [];
   for (const [key, node] of Object.entries(colorGroup)) {
     const hex = value(node);
     if (typeof hex !== "string" || !HEX_RE.test(hex)) continue;
@@ -80,10 +83,13 @@ export function parseW3CTokens(jsonText: string): ImportedTokens {
       role: ROLES.has(key as SemanticRole) ? (key as SemanticRole) : "unassigned",
       name: key,
     });
+    const dark = asObj(asObj(asObj(node)?.["$extensions"])?.["ui-generator"])?.dark;
+    darkHexes.push(typeof dark === "string" && HEX_RE.test(dark) ? dark.toLowerCase() : undefined);
   }
   if (colors.length === 0) throw new Error("color 分组里没有可识别的颜色");
 
   const out: ImportedTokens = { colors };
+  if (darkHexes.some((d) => d !== undefined)) out.darkHexes = darkHexes;
 
   // ── typography ──
   const typo = asObj(root.typography);

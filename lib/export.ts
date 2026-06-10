@@ -24,16 +24,22 @@ export function w3cTokens(
   motion: Motion,
   border: Border,
   opacity: Opacity,
+  darkColors?: ResolvedToken[] | null,
 ) {
+  const darkById = new Map((darkColors ?? []).map((c) => [c.id, c.displayHex]));
   const colorGroup: Record<string, unknown> = {};
   for (const c of colors) {
     const key = c.role === "unassigned" ? c.id : c.role;
+    const ext: Record<string, unknown> = {
+      proportion: c.proportion,
+      oklch: oklchString(c.displayHex),
+    };
+    const dark = darkById.get(c.id);
+    if (dark) ext.dark = dark;
     colorGroup[key] = {
       $value: c.displayHex,
       $type: "color",
-      $extensions: {
-        "ui-generator": { proportion: c.proportion, oklch: oklchString(c.displayHex) },
-      },
+      $extensions: { "ui-generator": ext },
     };
   }
   const fontSizes: Record<string, unknown> = {};
@@ -186,6 +192,7 @@ export function cssVars(
   motion: Motion,
   border: Border,
   opacity: Opacity,
+  darkColors?: ResolvedToken[] | null,
 ): string {
   const colorLines = colors
     .map((c) => `  --color-${c.role === "unassigned" ? c.id : c.role}: ${c.displayHex};`)
@@ -211,6 +218,12 @@ export function cssVars(
   const opacityLines = buildOpacityScale(opacity.base)
     .map((o) => `  --opacity-${o.name}: ${o.value};`)
     .join("\n");
+  const darkBlock =
+    darkColors && darkColors.length > 0
+      ? `\n@media (prefers-color-scheme: dark) {\n  :root {\n${darkColors
+          .map((c) => `    --color-${c.role === "unassigned" ? c.id : c.role}: ${c.displayHex};`)
+          .join("\n")}\n  }\n}\n`
+      : "";
   return `:root {
 ${colorLines}
   --font-family-body: ${typography.fontFamily};
@@ -228,7 +241,7 @@ ${durationLines}
   --easing-standard: ${EASING_PRESETS[motion.easing]};
 ${opacityLines}
 }
-`;
+${darkBlock}`;
 }
 
 export function aiPrompt(
@@ -240,6 +253,7 @@ export function aiPrompt(
   motion: Motion,
   border: Border,
   opacity: Opacity,
+  darkColors?: ResolvedToken[] | null,
 ): string {
   const sorted = [...colors].sort((a, b) => b.proportion - a.proportion);
   const palette = sorted
@@ -253,7 +267,14 @@ export function aiPrompt(
     .join("\n");
   const dominant = sorted[0];
   const accent = sorted.find((c) => c.role === "accent") ?? sorted[1];
-  const rootBlock = cssVars(colors, typography, spacing, radius, shadow, motion, border, opacity);
+  const rootBlock = cssVars(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors);
+  const darkSection =
+    darkColors && darkColors.length > 0
+      ? `
+## Dark mode
+The \`@media (prefers-color-scheme: dark)\` block above overrides COLOR variables only — every other token (type, spacing, radius, shadow, motion) stays identical in dark mode. Do not hand-pick dark colors or adjust non-color tokens for dark mode; the block is authoritative.
+`
+      : "";
   return `# Design system
 
 ## Machine-readable tokens — COPY THIS BLOCK VERBATIM
@@ -321,7 +342,7 @@ Base duration ${motion.base}ms, easing: ${motion.easing} (${EASING_PRESETS[motio
 ${buildDurations(motion.base).map((d) => `- ${d.name}: ${d.ms}ms`).join("\n")}
 
 Use \`--duration-normal\` as the default transition. Prefer \`--duration-fast\` for hover states and micro-interactions. Reserve \`--duration-page\` for route/page-level transitions.
-
+${darkSection}
 ## Output guidance
 - Maintain the proportional relationships above when laying out a page.
 - Do not introduce new hues. If you need additional shades, derive them by adjusting OKLCH lightness only, keeping hue and chroma fixed.

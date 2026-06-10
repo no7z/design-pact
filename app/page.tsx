@@ -5,6 +5,7 @@ import { StoreHydration } from "@/components/StoreHydration";
 import { DescribeStep } from "@/components/DescribeStep";
 import { WorkflowNav } from "@/components/WorkflowNav";
 import { Editor } from "@/components/Editor";
+import { DarkModePanel } from "@/components/DarkModePanel";
 import { Preview } from "@/components/Preview";
 import { TypographyStep } from "@/components/TypographyStep";
 import { StyleStep } from "@/components/StyleStep";
@@ -69,6 +70,7 @@ function WorkArea() {
                 </p>
               </header>
               <Editor />
+              <DarkModePanel />
             </div>
             <div className="space-y-4">
               <header className="space-y-1">

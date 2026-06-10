@@ -2,7 +2,10 @@
 import { useState, useMemo } from "react";
 import { useTokens } from "@/lib/store";
 import { resolvePalette } from "@/lib/mockup";
+import { darkTokens } from "@/lib/darkMode";
 import { MockupView, type MockupKind } from "@/components/MockupViews";
+
+const ZERO_GLOBALS = { dL: 0, dC: 0, dH: 0 };
 
 type PreviewKind = MockupKind | "all";
 
@@ -29,14 +32,24 @@ const LABELS: Record<MockupKind, string> = {
 export function Preview() {
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
-  const palette = useMemo(() => resolvePalette(colors, globals), [colors, globals]);
+  const dark = useTokens((s) => s.dark);
   const [kind, setKind] = useState<PreviewKind>("all");
+  const [scheme, setScheme] = useState<"light" | "dark">("light");
+
+  const showDark = dark.enabled && scheme === "dark";
+  const palette = useMemo(
+    () =>
+      showDark
+        ? resolvePalette(darkTokens(colors, globals, dark.overrides), ZERO_GLOBALS)
+        : resolvePalette(colors, globals),
+    [colors, globals, showDark, dark.overrides],
+  );
 
   if (colors.length === 0) return null;
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap items-center gap-1">
         {KINDS.map((k) => (
           <button
             key={k.id}
@@ -50,6 +63,24 @@ export function Preview() {
             {k.label}
           </button>
         ))}
+        {dark.enabled && (
+          <div className="ml-auto flex gap-0.5 rounded-full border border-neutral-300 p-0.5 dark:border-neutral-700">
+            {(["light", "dark"] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setScheme(s)}
+                aria-pressed={scheme === s}
+                className={`rounded-full px-2.5 py-0.5 text-[10px] transition ${
+                  scheme === s
+                    ? "bg-neutral-900 text-white dark:bg-white dark:text-black"
+                    : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
+                }`}
+              >
+                {s === "light" ? "亮" : "暗"}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {kind === "all" ? (

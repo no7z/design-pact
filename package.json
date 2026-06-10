@@ -6,13 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "eval": "tsx test/harness/run.ts",
+    "eval:score": "tsx test/harness/score.ts"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.61",
     "ai": "^6.0.175",
     "colorthief": "^3.3.1",
     "culori": "^4.0.2",
+    "lenis": "^1.3.23",
     "next": "16.2.4",
     "playwright": "^1.59.1",
     "react": "19.2.4",
@@ -29,6 +32,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
+    "tsx": "^4.22.4",
     "typescript": "^5"
   }
 }

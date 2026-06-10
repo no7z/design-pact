@@ -135,7 +135,6 @@ export function auditTokens(colors: ColorToken[], displayHexById: Map<string, st
   // OKLCH distribution checks — only on chromatic colors (chroma > 0.02)
   const oklchs = resolved.map((c) => ({ ...c, oklch: hexToOklch(c.displayHex) }));
   const Ls = oklchs.map((c) => c.oklch.l);
-  const Cs = oklchs.map((c) => c.oklch.c);
   const lSpread = Math.max(...Ls) - Math.min(...Ls);
   const chromatic = oklchs.filter((c) => c.oklch.c > 0.04);
 

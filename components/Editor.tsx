@@ -358,8 +358,13 @@ function ColorDetail({
   const display = computedHex(token, globals);
   const [pickerColor, setPickerColor] = useState(token.baseHex);
 
-  // Only reset picker when switching to a different token, not when globals shift display
-  useEffect(() => { setPickerColor(token.baseHex); }, [token.id]);
+  // Only reset picker when switching to a different token, not when globals
+  // shift display — adjust during render instead of via an effect.
+  const [pickerForId, setPickerForId] = useState(token.id);
+  if (pickerForId !== token.id) {
+    setPickerForId(token.id);
+    setPickerColor(token.baseHex);
+  }
 
   return (
     <div className="mt-2 space-y-3 rounded-lg border border-neutral-200 p-3 dark:border-neutral-800">

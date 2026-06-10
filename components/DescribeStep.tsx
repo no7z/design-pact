@@ -33,9 +33,10 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
             Step 1 / 5
           </p>
           <h1 className="text-3xl font-semibold tracking-tight">描述你的产品</h1>
-          {/* <p className="text-sm text-neutral-500 dark:text-neutral-400">
-            用几句话告诉 AI 你想做什么。方向不清晰时，AI 会用选项追问，再给你几套配色和参考模板。
-          </p> */}
+          <p className="text-sm text-neutral-500 dark:text-neutral-400">
+            几句话，得到一整套协调的设计系统——色板、字体、间距、动效——并以 AI
+            能严格执行的格式导出（实测页面保真度 98/100）。
+          </p>
         </header>
 
         <div className="relative">

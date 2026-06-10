@@ -1,6 +1,6 @@
 "use client";
 import { useMemo } from "react";
-import { useTokens, computedHex } from "@/lib/store";
+import { useTokens } from "@/lib/store";
 import { contrastRatio } from "@/lib/color";
 import { resolvePalette } from "@/lib/mockup";
 

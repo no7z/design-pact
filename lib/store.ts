@@ -55,21 +55,10 @@ export type Opacity = { base: number }; // interactive state base opacity
 
 export type Globals = { dL: number; dC: number; dH: number };
 
-export type Variant = {
-  id: string;
-  name: string;
-  createdAt: number;
-  colors: ColorToken[];
-  typography: Typography;
-  globals: Globals;
-};
-
 type State = {
   colors: ColorToken[];
   typography: Typography;
   globals: Globals;
-  variants: Variant[];
-  activeVariantId: string | null;
   description: string;
   recommendations: string[];
   activeBrand: string | null;
@@ -98,11 +87,6 @@ type State = {
   setBorder: (b: Partial<Border>) => void;
   setOpacity: (o: Partial<Opacity>) => void;
   reset: () => void;
-  saveAsVariant: (name: string) => string;
-  updateActiveVariant: () => void;
-  loadVariant: (id: string) => void;
-  renameVariant: (id: string, name: string) => void;
-  deleteVariant: (id: string) => void;
 };
 
 const defaultTypography: Typography = {
@@ -140,12 +124,10 @@ const inferRole = (idx: number, total: number): SemanticRole => {
 
 export const useTokens = create<State>()(
   persist(
-    (set, get): State => ({
+    (set): State => ({
       colors: [],
       typography: defaultTypography,
       globals: { dL: 0, dC: 0, dH: 0 },
-      variants: [],
-      activeVariantId: null,
       description: "",
       recommendations: [],
       activeBrand: null,
@@ -226,60 +208,7 @@ export const useTokens = create<State>()(
           colors: [],
           typography: defaultTypography,
           globals: { dL: 0, dC: 0, dH: 0 },
-          activeVariantId: null,
           activeBrand: null,
-        })),
-      saveAsVariant: (name) => {
-        const id = `v${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
-        const s = get();
-        const snapshot: Variant = {
-          id,
-          name: name.trim() || `变体 ${s.variants.length + 1}`,
-          createdAt: Date.now(),
-          colors: s.colors.map((c) => ({ ...c })),
-          typography: { ...s.typography },
-          globals: { ...s.globals },
-        };
-        set((cur) => ({
-          variants: [...cur.variants, snapshot],
-          activeVariantId: id,
-        }));
-        return id;
-      },
-      updateActiveVariant: () => {
-        const s = get();
-        if (!s.activeVariantId) return;
-        set((cur) => ({
-          variants: cur.variants.map((v) =>
-            v.id === cur.activeVariantId
-              ? {
-                  ...v,
-                  colors: cur.colors.map((c) => ({ ...c })),
-                  typography: { ...cur.typography },
-                  globals: { ...cur.globals },
-                }
-              : v,
-          ),
-        }));
-      },
-      loadVariant: (id) => {
-        const v = get().variants.find((x) => x.id === id);
-        if (!v) return;
-        set(() => ({
-          colors: v.colors.map((c) => ({ ...c })),
-          typography: { ...v.typography },
-          globals: { ...v.globals },
-          activeVariantId: id,
-        }));
-      },
-      renameVariant: (id, name) =>
-        set((s) => ({
-          variants: s.variants.map((v) => (v.id === id ? { ...v, name: name.trim() || v.name } : v)),
-        })),
-      deleteVariant: (id) =>
-        set((s) => ({
-          variants: s.variants.filter((v) => v.id !== id),
-          activeVariantId: s.activeVariantId === id ? null : s.activeVariantId,
         })),
     }),
     { name: "ui-generator-tokens", skipHydration: true },

@@ -4,7 +4,7 @@ import {
   type Typography,
   type Spacing,
   type Radius,
-} from "@/lib/store";
+} from "./store";
 
 export const BRANDS = [
   "airbnb", "airtable", "apple", "binance", "bmw", "bmw-m", "bugatti",
@@ -29,15 +29,45 @@ export function brandDisplayName(brand: string): string {
     .join(" ");
 }
 
-async function fetchTemplateMd(brand: string): Promise<string> {
-  const url = `https://raw.githubusercontent.com/VoltAgent/awesome-design-md/main/design-md/${brand}/DESIGN.md`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`无法加载 ${brand} 模板 (${res.status})`);
-  return res.text();
+// ─── Template snapshot ───────────────────────────────────────────────────────
+// 73 个 DESIGN.md 在构建时由 scripts/snapshot-templates.ts 解析为
+// public/templates.json，运行时只读本地快照，不再依赖 GitHub。
+// 刷新快照：npm run snapshot:templates
+
+export type SnapshotColor = { hex: string; role: SemanticRole; name?: string };
+
+export type TemplateEntry = {
+  colors: SnapshotColor[];
+  typography: Partial<Typography>;
+  spacing: Partial<Spacing>;
+  radius: Partial<Radius>;
+};
+
+export type TemplateSnapshot = {
+  generatedAt: string;
+  source: string;
+  templates: Record<string, TemplateEntry>;
+};
+
+let snapshotPromise: Promise<TemplateSnapshot> | null = null;
+
+function loadSnapshot(): Promise<TemplateSnapshot> {
+  if (!snapshotPromise) {
+    const p = fetch("/templates.json").then(async (res) => {
+      if (!res.ok) throw new Error(`无法加载模板库 (${res.status})`);
+      return (await res.json()) as TemplateSnapshot;
+    });
+    snapshotPromise = p;
+    // 失败后清掉缓存，下次调用可重试
+    p.catch(() => {
+      if (snapshotPromise === p) snapshotPromise = null;
+    });
+  }
+  return snapshotPromise;
 }
 
 export async function fetchTemplateColors(brand: string): Promise<ColorToken[]> {
-  return parseMdColors(await fetchTemplateMd(brand));
+  return (await fetchTemplate(brand)).colors;
 }
 
 export async function fetchTemplate(brand: string): Promise<{
@@ -46,12 +76,21 @@ export async function fetchTemplate(brand: string): Promise<{
   spacing: Partial<Spacing>;
   radius: Partial<Radius>;
 }> {
-  const md = await fetchTemplateMd(brand);
+  const snap = await loadSnapshot();
+  const entry = snap.templates[brand];
+  if (!entry) throw new Error(`无法加载 ${brand} 模板`);
   return {
-    colors: parseMdColors(md),
-    typography: parseMdTypography(md),
-    spacing: parseMdSpacing(md),
-    radius: parseMdRadius(md),
+    colors: entry.colors.map((c) => ({
+      id: uid(),
+      hex: c.hex,
+      baseHex: c.hex,
+      proportion: 1,
+      role: c.role,
+      name: c.name,
+    })),
+    typography: entry.typography,
+    spacing: entry.spacing,
+    radius: entry.radius,
   };
 }
 

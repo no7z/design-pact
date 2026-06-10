@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { generateText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
+import { rateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -25,12 +26,13 @@ const SYSTEM_PROMPT =
   "hex 必须是 6 位十六进制。name 与 rationale 用中文。不要输出 markdown 围栏、解释或额外字段。";
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, "palette", 10);
+  if (limited) return limited;
+
   const apiKey = process.env.AI_GATEWAY_API_KEY;
   if (!apiKey) {
-    return Response.json(
-      { error: "AI_GATEWAY_API_KEY not set. Add it to .env.local and restart." },
-      { status: 500 },
-    );
+    console.error("palette: AI_GATEWAY_API_KEY not set");
+    return Response.json({ error: "服务端未配置 AI 密钥" }, { status: 500 });
   }
 
   let body: Body;

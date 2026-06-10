@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { chromium } from "playwright";
 import { pageExtractionScript, type PageExtraction } from "@/lib/extractFromPage";
+import { rateLimit } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -54,6 +55,9 @@ function classifyExtraction(
 }
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, "extract-url", 5);
+  if (limited) return limited;
+
   let body: { url?: string; mode?: Mode };
   try {
     body = await req.json();

@@ -1,8 +1,15 @@
 "use client";
 import { useState } from "react";
 import { useTokens } from "@/lib/store";
+import { BRANDS } from "@/lib/templates";
 import { InputSource } from "./InputSource";
 import { PaletteFlow } from "./PaletteFlow";
+
+const EXAMPLES = [
+  "极简的个人知识管理工具，黑白灰、阅读优先",
+  "面向设计师的协作白板 SaaS，清爽明亮、一点活力色",
+  "儿童编程教育平台，明亮活泼、温暖友好",
+];
 
 export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
   const description = useTokens((s) => s.description);
@@ -77,6 +84,19 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
           </button>
         </div>
 
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-neutral-400">试试：</span>
+          {EXAMPLES.map((ex) => (
+            <button
+              key={ex}
+              onClick={() => setDescription(ex)}
+              className="rounded-full border border-neutral-300 px-3 py-1 text-xs text-neutral-600 transition hover:border-neutral-900 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-white dark:hover:text-white"
+            >
+              {ex.slice(0, ex.indexOf("，"))}
+            </button>
+          ))}
+        </div>
+
         </div>
 
         {started && (
@@ -88,7 +108,7 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
             onClick={() => setShowFallback((v) => !v)}
             className="text-xs text-neutral-500 underline-offset-4 hover:underline dark:text-neutral-400"
           >
-            {showFallback ? "收起" : "浏览全部 73 个模板 / 上传图片 / 网址 ↓"}
+            {showFallback ? "收起" : `不用 AI？浏览全部 ${BRANDS.length} 个品牌模板 / 上传图片 / 网址 / 导入 JSON ↓`}
           </button>
           {showFallback && (
             <div className="mt-3">

@@ -12,6 +12,7 @@ import type {
   Motion,
   Border,
   Opacity,
+  DarkMode,
 } from "./store";
 
 const VERSION = 1;
@@ -27,6 +28,7 @@ type SharePayload = {
   motion: Motion;
   border: Border;
   opacity: Opacity;
+  dark?: DarkMode;
   description: string;
   activeBrand: string | null;
 };
@@ -44,6 +46,7 @@ export function buildShareUrl(): string {
     motion: s.motion,
     border: s.border,
     opacity: s.opacity,
+    dark: s.dark,
     description: s.description,
     activeBrand: s.activeBrand,
   };
@@ -77,6 +80,17 @@ export function applyShareFromUrl(): boolean {
 
   const obj = (x: unknown) => (x && typeof x === "object" ? (x as object) : undefined);
   const cur = useTokens.getState();
+
+  let dark = cur.dark;
+  if (payload.dark && typeof payload.dark.enabled === "boolean") {
+    const rawOverrides = obj(payload.dark.overrides) ?? {};
+    const overrides: Record<string, string> = {};
+    for (const [id, hex] of Object.entries(rawOverrides)) {
+      if (typeof hex === "string" && hexRe.test(hex)) overrides[id] = hex;
+    }
+    dark = { enabled: payload.dark.enabled, overrides };
+  }
+
   useTokens.setState({
     colors,
     typography: { ...cur.typography, ...obj(payload.typography) },
@@ -87,6 +101,7 @@ export function applyShareFromUrl(): boolean {
     motion: { ...cur.motion, ...obj(payload.motion) },
     border: { ...cur.border, ...obj(payload.border) },
     opacity: { ...cur.opacity, ...obj(payload.opacity) },
+    dark,
     description: typeof payload.description === "string" ? payload.description : cur.description,
     activeBrand: typeof payload.activeBrand === "string" ? payload.activeBrand : null,
   });

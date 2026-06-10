@@ -21,6 +21,14 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
       if (parsed.border) s.setBorder(parsed.border);
       if (parsed.opacity) s.setOpacity(parsed.opacity);
       if (parsed.shadow) useTokens.setState({ shadow: parsed.shadow });
+      if (parsed.darkHexes) {
+        // loadTokens re-ids colors to c0..cN in array order — key overrides accordingly.
+        const overrides: Record<string, string> = {};
+        parsed.darkHexes.forEach((hex, i) => {
+          if (hex) overrides[`c${i}`] = hex;
+        });
+        useTokens.setState({ dark: { enabled: true, overrides } });
+      }
       onSuccess?.();
     } catch (e) {
       setError(e instanceof Error ? e.message : "解析失败");

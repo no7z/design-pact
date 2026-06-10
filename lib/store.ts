@@ -55,10 +55,16 @@ export type Opacity = { base: number }; // interactive state base opacity
 
 export type Globals = { dL: number; dC: number; dH: number };
 
+export type DarkMode = {
+  enabled: boolean;
+  overrides: Record<string, string>; // ColorToken.id -> dark hex (else auto-derived)
+};
+
 type State = {
   colors: ColorToken[];
   typography: Typography;
   globals: Globals;
+  dark: DarkMode;
   description: string;
   recommendations: string[];
   activeBrand: string | null;
@@ -86,6 +92,8 @@ type State = {
   setMotion: (m: Partial<Motion>) => void;
   setBorder: (b: Partial<Border>) => void;
   setOpacity: (o: Partial<Opacity>) => void;
+  setDarkEnabled: (enabled: boolean) => void;
+  setDarkOverride: (id: string, hex: string | null) => void;
   reset: () => void;
 };
 
@@ -109,6 +117,7 @@ const defaultShadow: Shadow = {
   advanced: false,
   ...buildShadowsFromIntensity(0.5),
 };
+const defaultDark: DarkMode = { enabled: false, overrides: {} };
 
 export const computedHex = (token: ColorToken, g: Globals): string =>
   adjustHex(token.baseHex, g);
@@ -128,6 +137,7 @@ export const useTokens = create<State>()(
       colors: [],
       typography: defaultTypography,
       globals: { dL: 0, dC: 0, dH: 0 },
+      dark: defaultDark,
       description: "",
       recommendations: [],
       activeBrand: null,
@@ -138,7 +148,7 @@ export const useTokens = create<State>()(
       border: defaultBorder,
       opacity: defaultOpacity,
       setColors: (palette) =>
-        set(() => ({
+        set((s) => ({
           colors: palette.map((c, i) => ({
             id: `c${i}`,
             hex: c.hex,
@@ -148,12 +158,15 @@ export const useTokens = create<State>()(
           })),
           globals: { dL: 0, dC: 0, dH: 0 },
           activeBrand: null,
+          // 新色板 → 旧的暗色微调不再适用
+          dark: { enabled: s.dark.enabled, overrides: {} },
         })),
       loadTokens: (tokens, brand = null) =>
-        set(() => ({
+        set((s) => ({
           colors: tokens.map((t, i) => ({ ...t, id: `c${i}` })),
           globals: { dL: 0, dC: 0, dH: 0 },
           activeBrand: brand,
+          dark: { enabled: s.dark.enabled, overrides: {} },
         })),
       updateColor: (id, patch) =>
         set((s) => ({
@@ -203,11 +216,20 @@ export const useTokens = create<State>()(
       setMotion: (m) => set((cur) => ({ motion: { ...cur.motion, ...m } })),
       setBorder: (b) => set((cur) => ({ border: { ...cur.border, ...b } })),
       setOpacity: (o) => set((cur) => ({ opacity: { ...cur.opacity, ...o } })),
+      setDarkEnabled: (enabled) => set((cur) => ({ dark: { ...cur.dark, enabled } })),
+      setDarkOverride: (id, hex) =>
+        set((cur) => {
+          const overrides = { ...cur.dark.overrides };
+          if (hex === null) delete overrides[id];
+          else overrides[id] = hex;
+          return { dark: { ...cur.dark, overrides } };
+        }),
       reset: () =>
         set(() => ({
           colors: [],
           typography: defaultTypography,
           globals: { dL: 0, dC: 0, dH: 0 },
+          dark: defaultDark,
           activeBrand: null,
         })),
     }),

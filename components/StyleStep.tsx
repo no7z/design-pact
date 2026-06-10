@@ -9,6 +9,7 @@ import {
   buildBorderScale,
   buildOpacityScale,
 } from "@/lib/scales";
+import { StatePreview } from "./StatePreview";
 
 const SHADOW_LEVELS = ["sm", "md", "lg"] as const;
 type ShadowParam = "blur" | "offsetY" | "opacity";
@@ -582,6 +583,8 @@ export function StyleStep() {
             </div>
           </div>
         </div>
+
+        <StatePreview />
 
           </div>
         )}

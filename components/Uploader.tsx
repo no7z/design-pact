@@ -3,7 +3,7 @@ import { useCallback, useState } from "react";
 import { extractPalette } from "@/lib/extract";
 import { useTokens } from "@/lib/store";
 
-export function Uploader() {
+export function Uploader({ onSuccess }: { onSuccess?: (previewUrl: string) => void }) {
   const setColors = useTokens((s) => s.setColors);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -18,13 +18,14 @@ export function Uploader() {
         setPreview(dataUrl);
         const palette = await extractPalette(file, 6);
         setColors(palette);
+        onSuccess?.(dataUrl);
       } catch (e) {
         setErr(e instanceof Error ? e.message : "Failed to extract palette");
       } finally {
         setBusy(false);
       }
     },
-    [setColors],
+    [setColors, onSuccess],
   );
 
   const onDrop = (e: React.DragEvent) => {
@@ -47,16 +48,16 @@ export function Uploader() {
       onDragOver={(e) => e.preventDefault()}
       onPaste={onPaste}
       tabIndex={0}
-      className="relative grid place-items-center rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-8 text-center transition hover:border-neutral-400 focus:border-neutral-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-neutral-500"
-      style={{ minHeight: 220 }}
+      className="relative grid place-items-center rounded-xl border-2 border-dashed border-neutral-300 bg-neutral-50 p-6 text-center transition hover:border-neutral-400 focus:border-neutral-500 focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:hover:border-neutral-500"
+      style={{ minHeight: 160 }}
     >
       {preview ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={preview} alt="uploaded" className="max-h-48 rounded-lg shadow" />
+        <img src={preview} alt="uploaded" className="max-h-36 rounded-lg shadow" />
       ) : (
-        <div className="space-y-2">
-          <div className="text-base font-medium">拖入图片 / 粘贴图片 / 选择文件</div>
-          <div className="text-sm text-neutral-500">提取主色 + 比例,生成 design tokens</div>
+        <div className="space-y-1">
+          <div className="text-sm font-medium">拖入图片 / 粘贴 / 选择文件</div>
+          <div className="text-xs text-neutral-500">提取主色生成 design tokens</div>
         </div>
       )}
       <input
@@ -70,7 +71,7 @@ export function Uploader() {
         className="absolute inset-0 cursor-pointer opacity-0"
       />
       {busy && (
-        <div className="absolute inset-0 grid place-items-center bg-white/70 text-sm dark:bg-black/70">
+        <div className="absolute inset-0 grid place-items-center rounded-xl bg-white/70 text-sm dark:bg-black/70">
           提取中…
         </div>
       )}

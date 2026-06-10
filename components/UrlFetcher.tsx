@@ -27,7 +27,11 @@ const MODE_HINT: Record<Mode, string> = {
   screenshot: "直接渲染截图,不识别字体;适合反爬站",
 };
 
-export function UrlFetcher() {
+export function UrlFetcher({
+  onSuccess,
+}: {
+  onSuccess?: (title: string, url: string) => void;
+}) {
   const setColors = useTokens((s) => s.setColors);
   const setTypography = useTokens((s) => s.setTypography);
   const [url, setUrl] = useState("");
@@ -76,22 +80,22 @@ export function UrlFetcher() {
         if (data.extraction.typography.ratio) t.ratio = data.extraction.typography.ratio;
         if (Object.keys(t).length > 0) setTypography(t);
       } else if (data.mode === "screenshot" && data.screenshotDataUrl) {
-        // Run client-side image quantization on the returned screenshot
         const blob = await dataUrlToBlob(data.screenshotDataUrl);
         const palette = await extractPalette(blob, 6);
         if (palette.length === 0) throw new Error("从截图未提取到颜色");
         setColors(palette);
-        // Typography: leave as-is in screenshot mode (user sets manually)
       } else {
         throw new Error("服务端响应缺少颜色数据");
       }
 
+      const title = data.meta.title || url;
       setSuccess({
-        title: data.meta.title || url,
+        title,
         mode: data.mode,
         fallbackReason: data.fallbackReason,
         screenshotDataUrl: data.screenshotDataUrl ?? undefined,
       });
+      onSuccess?.(title, url);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "fetch failed");
     } finally {
@@ -157,14 +161,6 @@ export function UrlFetcher() {
             <div className="text-green-700/70 dark:text-green-400/80">
               真实样式失败,已降级:{success.fallbackReason}
             </div>
-          )}
-          {success.screenshotDataUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={success.screenshotDataUrl}
-              alt="captured screenshot"
-              className="max-h-32 rounded border border-green-300 dark:border-green-800"
-            />
           )}
         </div>
       )}

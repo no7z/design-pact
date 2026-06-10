@@ -1,0 +1,1480 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Haven — Find your perfect place to stay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    /* Colors */
+    --bg:      #ffffff;
+    --fg:      #222222;
+    --primary: #ff385c;
+    --border:  #dddddd;
+    --muted:   #6a6a6a;
+
+    /* Derived shades (OKLCH lightness only, hue+chroma fixed) */
+    --primary-light: #fff0f2;
+    --primary-dark:  #e0002b;
+    --bg-subtle:     #f7f7f7;
+
+    /* Type scale — base 17px, ratio 1.5 */
+    --t-h1:      8.068rem;
+    --t-h2:      5.379rem;
+    --t-h3:      3.586rem;
+    --t-h4:      2.391rem;
+    --t-h5:      1.594rem;
+    --t-body:    1.063rem;
+    --t-small:   0.708rem;
+    --t-caption: 0.473rem;
+
+    /* Spacing — 6px base */
+    --xxs:     6px;
+    --xs:      12px;
+    --sm:      18px;
+    --md:      24px;
+    --lg:      36px;
+    --xl:      48px;
+    --xxl:     72px;
+    --section: 144px;
+
+    /* Border radius */
+    --r-sm:   5.5px;
+    --r-md:   11px;
+    --r-lg:   16.5px;
+    --r-xl:   22px;
+    --r-full: 9999px;
+
+    /* Shadows — intensity 0.35 */
+    --sh-sm: 0 0.7px 3px  0 rgba(0,0,0,0.028);
+    --sh-md: 0 2.8px 8px  0 rgba(0,0,0,0.056);
+    --sh-lg: 0 5.6px 17px 0 rgba(0,0,0,0.084);
+
+    /* Border widths */
+    --bw-thin:    2px;
+    --bw-default: 4px;
+    --bw-thick:   8px;
+
+    /* Motion — ease-in */
+    --ease: cubic-bezier(0.4, 0, 1, 1);
+    --dur-micro:  200ms;
+    --dur-fast:   375ms;
+    --dur-normal: 500ms;
+    --dur-slow:   750ms;
+
+    --font: 'Plus Jakarta Sans', 'Airbnb Cereal VF', Circular, -apple-system, system-ui, 'Helvetica Neue', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
+  body {
+    font-family: var(--font);
+    font-size: var(--t-body);
+    font-weight: 300;
+    line-height: 1.75;
+    letter-spacing: 0em;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font);
+    font-weight: 300;
+    line-height: 1.1;
+    letter-spacing: 0em;
+    margin: 0;
+  }
+  h1 { font-size: var(--t-h1); }
+  h2 { font-size: var(--t-h2); }
+  h3 { font-size: var(--t-h3); }
+  h4 { font-size: var(--t-h4); }
+  h5 { font-size: var(--t-h5); }
+  p  { margin: 0; }
+  a  { color: inherit; text-decoration: none; }
+  img { display: block; }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--xl);
+  }
+
+  /* ── Nav ─────────────────────────────────────── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    border-bottom: var(--bw-thin) solid var(--border);
+  }
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 80px;
+    gap: var(--md);
+  }
+
+  .brand {
+    font-size: var(--t-h5);
+    font-weight: 600;
+    color: var(--primary);
+    flex-shrink: 0;
+  }
+
+  .nav-search {
+    display: flex;
+    align-items: center;
+    border: var(--bw-thin) solid var(--border);
+    border-radius: var(--r-full);
+    box-shadow: var(--sh-sm);
+    overflow: hidden;
+    transition: box-shadow var(--dur-fast) var(--ease);
+  }
+  .nav-search:hover { box-shadow: var(--sh-md); }
+  .nav-search-item {
+    padding: var(--xs) var(--sm);
+    font-size: var(--t-small);
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: pointer;
+    border-right: var(--bw-thin) solid var(--border);
+    color: var(--fg);
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .nav-search-item:last-of-type { border-right: none; }
+  .nav-search-item:hover { background: var(--bg-subtle); }
+  .nav-search-item .item-label { color: var(--muted); font-weight: 300; }
+  .nav-search-btn {
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    border-radius: var(--r-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .nav-search-btn svg { color: #fff; }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: var(--xs);
+    flex-shrink: 0;
+  }
+  .nav-link {
+    font-size: var(--t-small);
+    font-weight: 500;
+    padding: var(--xxs) var(--xs);
+    border-radius: var(--r-full);
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .nav-link:hover { background: var(--bg-subtle); }
+  .nav-user {
+    display: flex;
+    align-items: center;
+    gap: var(--xxs);
+    border: var(--bw-thin) solid var(--border);
+    border-radius: var(--r-full);
+    padding: var(--xxs) var(--xs);
+    cursor: pointer;
+    transition: box-shadow var(--dur-fast) var(--ease);
+  }
+  .nav-user:hover { box-shadow: var(--sh-md); }
+  .nav-user-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--r-full);
+    background: var(--fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-user-icon svg { color: #fff; }
+
+  /* ── Hero ─────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 560px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    border-radius: 0 0 var(--r-xl) var(--r-xl);
+    margin-bottom: var(--xxl);
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to bottom, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.52) 100%),
+      linear-gradient(135deg, #e8c4b8 0%, #f2a7a7 30%, #c9b8e8 60%, #a7c4f2 100%);
+    background-size: cover;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    padding: var(--xxl) var(--xl);
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .hero h1 {
+    color: #fff;
+    font-size: var(--t-h2);
+    max-width: 16ch;
+    margin-bottom: var(--md);
+    line-height: 1.15;
+  }
+  .hero p {
+    color: rgba(255,255,255,0.85);
+    font-size: var(--t-h5);
+    margin-bottom: var(--lg);
+    max-width: 40ch;
+  }
+
+  /* Search bar */
+  .search-bar {
+    display: inline-flex;
+    align-items: stretch;
+    background: var(--bg);
+    border-radius: var(--r-full);
+    box-shadow: var(--sh-lg);
+    overflow: hidden;
+    max-width: 720px;
+    width: 100%;
+  }
+  .sb-field {
+    flex: 1;
+    padding: var(--sm) var(--md);
+    border-right: var(--bw-thin) solid var(--border);
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .sb-field:hover { background: var(--bg-subtle); }
+  .sb-field:last-of-type { border-right: none; }
+  .sb-label {
+    font-size: var(--t-caption);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--fg);
+    display: block;
+  }
+  .sb-value {
+    font-size: var(--t-small);
+    color: var(--muted);
+    display: block;
+  }
+  .sb-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--xxs);
+    background: var(--primary);
+    color: #fff;
+    font-weight: 500;
+    font-size: var(--t-small);
+    padding: var(--sm) var(--md);
+    cursor: pointer;
+    margin: 6px;
+    border-radius: var(--r-full);
+    white-space: nowrap;
+    transition: background var(--dur-fast) var(--ease);
+  }
+  .sb-btn:hover { background: var(--primary-dark); }
+
+  /* ── Category pills ──────────────────────────── */
+  .categories {
+    margin-bottom: var(--xxl);
+  }
+  .categories-scroll {
+    display: flex;
+    gap: var(--md);
+    overflow-x: auto;
+    padding-bottom: var(--xs);
+    scrollbar-width: none;
+  }
+  .categories-scroll::-webkit-scrollbar { display: none; }
+  .cat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--xxs);
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: var(--xs) var(--sm);
+    border-radius: var(--r-md);
+    border-bottom: var(--bw-default) solid transparent;
+    transition:
+      border-color var(--dur-fast) var(--ease),
+      background   var(--dur-fast) var(--ease);
+    opacity: 0.6;
+  }
+  .cat-item:hover, .cat-item.active {
+    opacity: 1;
+    border-bottom-color: var(--fg);
+    background: transparent;
+  }
+  .cat-item.active { opacity: 1; }
+  .cat-icon {
+    font-size: 24px;
+    line-height: 1;
+  }
+  .cat-label {
+    font-size: var(--t-small);
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--fg);
+  }
+
+  /* ── Listings grid ──────────────────────────── */
+  .listings {
+    margin-bottom: var(--section);
+  }
+  .section-title {
+    font-size: var(--t-h4);
+    font-weight: 300;
+    margin-bottom: var(--xl);
+  }
+  .listings-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--md);
+  }
+  .listing-card {
+    cursor: pointer;
+    transition: transform var(--dur-fast) var(--ease);
+  }
+  .listing-card:hover { transform: translateY(-2px); }
+  .listing-card:hover .listing-thumb { box-shadow: var(--sh-lg); }
+
+  .listing-thumb {
+    aspect-ratio: 1;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    margin-bottom: var(--xs);
+    position: relative;
+    transition: box-shadow var(--dur-fast) var(--ease);
+    box-shadow: var(--sh-sm);
+  }
+  .listing-thumb .thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .thumb-a {
+    background: linear-gradient(135deg, #f9dbc2 0%, #f5b9a1 40%, #e8a09a 100%);
+  }
+  .thumb-b {
+    background: linear-gradient(135deg, #c2daf9 0%, #a1c2f5 40%, #9ab0e8 100%);
+  }
+  .thumb-c {
+    background: linear-gradient(135deg, #c2f9e4 0%, #a1f0c5 40%, #9ae8b0 100%);
+  }
+  .thumb-d {
+    background: linear-gradient(135deg, #f9f0c2 0%, #f5e0a1 40%, #e8c89a 100%);
+  }
+  .thumb-e {
+    background: linear-gradient(135deg, #e4c2f9 0%, #cda1f5 40%, #b89ae8 100%);
+  }
+  .thumb-f {
+    background: linear-gradient(135deg, #f9c2c2 0%, #f5a1a1 40%, #e89a9a 100%);
+  }
+  .thumb-g {
+    background: linear-gradient(135deg, #c2f9f9 0%, #a1f0f5 40%, #9ae0e8 100%);
+  }
+  .thumb-h {
+    background: linear-gradient(135deg, #f9e4c2 0%, #f5cca1 40%, #e8b89a 100%);
+  }
+
+  .heart-btn {
+    position: absolute;
+    top: var(--sm);
+    right: var(--sm);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform var(--dur-fast) var(--ease);
+  }
+  .heart-btn:hover { transform: scale(1.15); }
+  .heart-btn svg { color: rgba(0,0,0,0.55); filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3)); }
+  .heart-btn.liked svg { color: var(--primary); }
+
+  .listing-loc {
+    font-size: var(--t-small);
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--xxs);
+    margin-bottom: 2px;
+  }
+  .listing-rating {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: var(--t-small);
+    flex-shrink: 0;
+  }
+  .listing-rating svg { color: var(--fg); }
+  .listing-sub {
+    font-size: var(--t-small);
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .listing-price {
+    font-size: var(--t-small);
+  }
+  .listing-price strong { font-weight: 500; }
+
+  /* ── Value props ─────────────────────────────── */
+  .value-props {
+    padding: var(--section) 0;
+    border-top: var(--bw-thin) solid var(--border);
+    margin-bottom: 0;
+  }
+  .vp-eyebrow {
+    font-size: var(--t-small);
+    font-weight: 500;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--md);
+  }
+  .vp-title {
+    font-size: var(--t-h3);
+    max-width: 18ch;
+    margin-bottom: var(--xxl);
+    line-height: 1.2;
+  }
+  .vp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--xl);
+  }
+  .vp-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sm);
+  }
+  .vp-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--r-lg);
+    background: var(--primary-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--xxs);
+  }
+  .vp-icon svg { color: var(--primary); }
+  .vp-card h4 { font-size: var(--t-h5); line-height: 1.3; }
+  .vp-card p  { color: var(--muted); font-size: var(--t-body); }
+
+  /* ── Host CTA ────────────────────────────────── */
+  .host-cta {
+    padding: var(--section) 0;
+    border-top: var(--bw-thin) solid var(--border);
+  }
+  .host-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--xxl);
+    align-items: center;
+    background: var(--bg-subtle);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+  }
+  .host-text {
+    padding: var(--xxl);
+  }
+  .host-text .vp-eyebrow { margin-bottom: var(--sm); }
+  .host-text h2 {
+    font-size: var(--t-h3);
+    margin-bottom: var(--md);
+    line-height: 1.2;
+  }
+  .host-text p {
+    color: var(--muted);
+    margin-bottom: var(--xl);
+    font-size: var(--t-body);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--xxs);
+    padding: var(--sm) var(--md);
+    border-radius: var(--r-full);
+    font-family: var(--font);
+    font-size: var(--t-small);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background   var(--dur-fast) var(--ease),
+      box-shadow   var(--dur-fast) var(--ease),
+      transform    var(--dur-fast) var(--ease);
+  }
+  .btn-primary {
+    background: var(--fg);
+    color: var(--bg);
+    border: var(--bw-thin) solid var(--fg);
+  }
+  .btn-primary:hover {
+    background: #111;
+    box-shadow: var(--sh-md);
+    transform: translateY(-1px);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--fg);
+    border: var(--bw-thin) solid var(--fg);
+  }
+  .btn-outline:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .btn-coral {
+    background: var(--primary);
+    color: #fff;
+    border: var(--bw-thin) solid var(--primary);
+  }
+  .btn-coral:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    box-shadow: var(--sh-md);
+    transform: translateY(-1px);
+  }
+
+  .host-visual {
+    height: 400px;
+    background:
+      linear-gradient(to bottom left, rgba(255,56,92,0.12) 0%, transparent 60%),
+      linear-gradient(135deg, #f9e4c2 0%, #e8b89a 40%, #c2d8f9 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .host-stat {
+    position: absolute;
+    background: var(--bg);
+    border-radius: var(--r-lg);
+    padding: var(--sm) var(--md);
+    box-shadow: var(--sh-lg);
+    display: flex;
+    flex-direction: column;
+  }
+  .host-stat .stat-val {
+    font-size: var(--t-h4);
+    font-weight: 300;
+    color: var(--fg);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .host-stat .stat-label {
+    font-size: var(--t-small);
+    color: var(--muted);
+  }
+  .stat-1 { top: var(--xl); left: var(--md); }
+  .stat-2 { bottom: var(--xl); right: var(--md); }
+  .stat-2 .stat-val { color: var(--primary); }
+
+  /* ── Experiences ────────────────────────────── */
+  .experiences {
+    padding: var(--section) 0;
+    border-top: var(--bw-thin) solid var(--border);
+  }
+  .exp-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: var(--xl);
+    gap: var(--md);
+  }
+  .exp-header h2 { font-size: var(--t-h3); line-height: 1.2; }
+  .exp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--md);
+  }
+  .exp-card {
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 3/4;
+    cursor: pointer;
+    box-shadow: var(--sh-sm);
+    transition: box-shadow var(--dur-fast) var(--ease), transform var(--dur-fast) var(--ease);
+  }
+  .exp-card:hover { box-shadow: var(--sh-lg); transform: translateY(-4px); }
+  .exp-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    transition: transform var(--dur-slow) var(--ease);
+  }
+  .exp-card:hover .exp-bg { transform: scale(1.04); }
+  .exp-bg-a { background: linear-gradient(170deg, #f9ccc2 0%, #e88080 40%, #b85050 100%); }
+  .exp-bg-b { background: linear-gradient(170deg, #c2daf9 0%, #8095e8 40%, #504ab8 100%); }
+  .exp-bg-c { background: linear-gradient(170deg, #c2f9e0 0%, #50c878 40%, #209050 100%); }
+  .exp-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 50%);
+  }
+  .exp-body {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--md);
+    color: #fff;
+  }
+  .exp-type {
+    font-size: var(--t-small);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+    margin-bottom: var(--xxs);
+  }
+  .exp-name {
+    font-size: var(--t-h5);
+    font-weight: 300;
+    margin-bottom: var(--xxs);
+    line-height: 1.3;
+  }
+  .exp-meta {
+    font-size: var(--t-small);
+    opacity: 0.75;
+  }
+  .exp-price-badge {
+    position: absolute;
+    top: var(--sm);
+    left: var(--sm);
+    background: var(--bg);
+    color: var(--fg);
+    border-radius: var(--r-full);
+    padding: var(--xxs) var(--xs);
+    font-size: var(--t-small);
+    font-weight: 500;
+    box-shadow: var(--sh-sm);
+  }
+
+  /* ── Testimonials ────────────────────────────── */
+  .testimonials {
+    padding: var(--section) 0;
+    background: var(--bg-subtle);
+    border-radius: var(--r-xl);
+    margin: 0 var(--xl) var(--section);
+  }
+  .test-inner { padding: 0 var(--xl); }
+  .test-header {
+    text-align: center;
+    margin-bottom: var(--xxl);
+  }
+  .test-header h2 { font-size: var(--t-h3); }
+  .test-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--md);
+  }
+  .test-card {
+    background: var(--bg);
+    border-radius: var(--r-xl);
+    padding: var(--lg);
+    box-shadow: var(--sh-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--md);
+  }
+  .test-stars { color: var(--primary); font-size: var(--t-body); }
+  .test-quote { color: var(--fg); font-size: var(--t-body); line-height: 1.7; font-weight: 300; }
+  .test-attr {
+    display: flex;
+    align-items: center;
+    gap: var(--xs);
+    margin-top: auto;
+  }
+  .test-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--r-full);
+    flex-shrink: 0;
+  }
+  .test-avatar-a { background: linear-gradient(135deg, #f9ccc2, #e88080); }
+  .test-avatar-b { background: linear-gradient(135deg, #c2daf9, #8095e8); }
+  .test-avatar-c { background: linear-gradient(135deg, #c2f9e4, #50c878); }
+  .test-name { font-weight: 500; font-size: var(--t-small); }
+  .test-loc  { color: var(--muted); font-size: var(--t-small); font-weight: 300; }
+
+  /* ── App banner ──────────────────────────────── */
+  .app-banner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--xxl);
+    align-items: center;
+    border: var(--bw-thin) solid var(--border);
+    border-radius: var(--r-xl);
+    margin: 0 var(--xl) var(--section);
+    overflow: hidden;
+  }
+  .app-text { padding: var(--xxl); }
+  .app-text h2 { font-size: var(--t-h3); margin-bottom: var(--md); line-height: 1.2; }
+  .app-text p  { color: var(--muted); margin-bottom: var(--xl); }
+  .app-btns { display: flex; gap: var(--xs); flex-wrap: wrap; }
+  .app-store-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--xs);
+    border: var(--bw-thin) solid var(--fg);
+    border-radius: var(--r-md);
+    padding: var(--xs) var(--md);
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+  }
+  .app-store-btn:hover { background: var(--fg); color: var(--bg); }
+  .app-store-btn:hover svg { color: var(--bg); }
+  .app-store-btn svg { flex-shrink: 0; }
+  .app-store-label { font-size: var(--t-caption); color: var(--muted); display: block; font-weight: 300; }
+  .app-store-name  { font-size: var(--t-small); font-weight: 500; display: block; }
+
+  .app-visual {
+    height: 360px;
+    background: linear-gradient(135deg, var(--primary-light) 0%, #ffe0e6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--md);
+    padding: var(--md);
+  }
+  .phone-mockup {
+    width: 120px;
+    height: 220px;
+    background: var(--fg);
+    border-radius: 20px;
+    box-shadow: var(--sh-lg);
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .phone-mockup.sm { width: 100px; height: 185px; transform: translateY(24px); opacity: 0.65; }
+  .phone-screen {
+    position: absolute;
+    inset: 6px;
+    border-radius: 14px;
+    background: linear-gradient(170deg, #f9e4c2 0%, #f9c2c2 100%);
+    overflow: hidden;
+  }
+  .phone-notch {
+    width: 40px;
+    height: 6px;
+    background: var(--fg);
+    border-radius: var(--r-full);
+    margin: 10px auto 0;
+  }
+  .phone-content { padding: var(--xxs) var(--xxs); }
+  .phone-line { height: 8px; background: rgba(0,0,0,0.1); border-radius: 4px; margin-bottom: var(--xxs); }
+  .phone-line.short { width: 60%; }
+  .phone-line.accent { background: var(--primary); width: 40%; }
+  .phone-card-thumb {
+    height: 64px;
+    background: linear-gradient(135deg, #e8b89a, #c2a0f0);
+    border-radius: var(--r-sm);
+    margin: var(--xxs) 0;
+  }
+
+  /* ── Footer ──────────────────────────────────── */
+  footer {
+    border-top: var(--bw-thin) solid var(--border);
+    padding: var(--xxl) 0 var(--xl);
+  }
+  .foot-top {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--xl);
+    margin-bottom: var(--xxl);
+    padding-bottom: var(--xxl);
+    border-bottom: var(--bw-thin) solid var(--border);
+  }
+  .foot-col h5 {
+    font-size: var(--t-small);
+    font-weight: 500;
+    margin-bottom: var(--md);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .foot-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--xxs); }
+  .foot-col li a {
+    font-size: var(--t-small);
+    color: var(--muted);
+    font-weight: 300;
+    transition: color var(--dur-fast) var(--ease);
+  }
+  .foot-col li a:hover { color: var(--fg); text-decoration: underline; }
+  .foot-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--md);
+    flex-wrap: wrap;
+  }
+  .foot-legal {
+    font-size: var(--t-small);
+    color: var(--muted);
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    gap: var(--sm);
+    flex-wrap: wrap;
+  }
+  .foot-legal a:hover { text-decoration: underline; color: var(--fg); }
+  .foot-social {
+    display: flex;
+    gap: var(--xs);
+  }
+  .social-btn {
+    width: 36px;
+    height: 36px;
+    border: var(--bw-thin) solid var(--border);
+    border-radius: var(--r-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+    color: var(--muted);
+  }
+  .social-btn:hover { border-color: var(--fg); color: var(--fg); }
+
+  /* ── Responsive ─────────────────────────────── */
+  @media (max-width: 1024px) {
+    :root {
+      --t-h1: 5.379rem;
+      --t-h2: 3.586rem;
+      --t-h3: 2.391rem;
+      --section: 72px;
+    }
+    .listings-grid { grid-template-columns: repeat(2, 1fr); }
+    .exp-grid      { grid-template-columns: 1fr 1fr; }
+    .exp-grid .exp-card:nth-child(3) { display: none; }
+    .host-inner    { grid-template-columns: 1fr; }
+    .host-visual   { height: 260px; }
+    .app-banner    { grid-template-columns: 1fr; }
+    .app-visual    { height: 220px; }
+    .foot-top      { grid-template-columns: 1fr 1fr; gap: var(--lg); }
+  }
+  @media (max-width: 640px) {
+    :root {
+      --t-h1: 3.586rem;
+      --t-h2: 2.391rem;
+      --t-h3: 1.594rem;
+      --xl: 24px;
+      --xxl: 48px;
+    }
+    .container    { padding: 0 var(--md); }
+    .nav-search   { display: none; }
+    .listings-grid { grid-template-columns: 1fr 1fr; }
+    .vp-grid       { grid-template-columns: 1fr; }
+    .test-grid     { grid-template-columns: 1fr; }
+    .exp-grid      { grid-template-columns: 1fr; }
+    .testimonials, .app-banner { margin-left: var(--md); margin-right: var(--md); }
+    .foot-top      { grid-template-columns: 1fr; }
+    .hero-content  { padding: var(--xl) var(--md); }
+    .search-bar    { flex-direction: column; border-radius: var(--r-xl); }
+    .sb-field      { border-right: none; border-bottom: var(--bw-thin) solid var(--border); }
+    .sb-btn        { margin: var(--xs); border-radius: var(--r-lg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav">
+  <div class="container nav-row">
+    <a href="#" class="brand">haven</a>
+
+    <div class="nav-search">
+      <div class="nav-search-item">
+        <div style="font-size:var(--t-small);font-weight:500;">Anywhere</div>
+      </div>
+      <div class="nav-search-item">
+        <div style="font-size:var(--t-small);font-weight:500;">Any week</div>
+      </div>
+      <div class="nav-search-item">
+        <div style="font-size:var(--t-small);color:var(--muted);font-weight:300;">Add guests</div>
+      </div>
+      <div class="nav-search-btn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <a href="#" class="nav-link">Haven your home</a>
+      <div class="nav-user">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+        <div class="nav-user-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <h1>Find a place to call home, anywhere.</h1>
+      <p>Unique stays, local experiences, and the feeling of belonging — wherever you go.</p>
+      <div class="search-bar">
+        <div class="sb-field">
+          <span class="sb-label">Where</span>
+          <span class="sb-value">Search destinations</span>
+        </div>
+        <div class="sb-field">
+          <span class="sb-label">Check in</span>
+          <span class="sb-value">Add dates</span>
+        </div>
+        <div class="sb-field">
+          <span class="sb-label">Check out</span>
+          <span class="sb-value">Add dates</span>
+        </div>
+        <div class="sb-field">
+          <span class="sb-label">Who</span>
+          <span class="sb-value">Add guests</span>
+        </div>
+        <div class="sb-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          Search
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="container">
+
+    <!-- CATEGORIES -->
+    <div class="categories">
+      <div class="categories-scroll">
+        <div class="cat-item active">
+          <span class="cat-icon">🏝️</span>
+          <span class="cat-label">Islands</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">🏔️</span>
+          <span class="cat-label">Mountains</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">🌊</span>
+          <span class="cat-label">Beachfront</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">🏡</span>
+          <span class="cat-label">Countryside</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">🏙️</span>
+          <span class="cat-label">City stays</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">🌲</span>
+          <span class="cat-label">Forest</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">🏰</span>
+          <span class="cat-label">Historic</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">⛵</span>
+          <span class="cat-label">Boats</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">🛖</span>
+          <span class="cat-label">Cabins</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">🧖</span>
+          <span class="cat-label">Spa</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">🪵</span>
+          <span class="cat-label">Chalets</span>
+        </div>
+        <div class="cat-item">
+          <span class="cat-icon">🌵</span>
+          <span class="cat-label">Desert</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTINGS -->
+    <section class="listings">
+      <div class="listings-grid">
+
+        <article class="listing-card">
+          <div class="listing-thumb thumb-a">
+            <div class="heart-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="listing-loc">
+            <span>Santorini, Greece</span>
+            <div class="listing-rating">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              4.96
+            </div>
+          </div>
+          <div class="listing-sub">Cliffside Villa · 4 nights</div>
+          <div class="listing-price"><strong>$380</strong> night</div>
+        </article>
+
+        <article class="listing-card">
+          <div class="listing-thumb thumb-b">
+            <div class="heart-btn liked">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="listing-loc">
+            <span>Kyoto, Japan</span>
+            <div class="listing-rating">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              4.88
+            </div>
+          </div>
+          <div class="listing-sub">Traditional Machiya · 3 nights</div>
+          <div class="listing-price"><strong>$145</strong> night</div>
+        </article>
+
+        <article class="listing-card">
+          <div class="listing-thumb thumb-c">
+            <div class="heart-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="listing-loc">
+            <span>Tulum, Mexico</span>
+            <div class="listing-rating">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              4.93
+            </div>
+          </div>
+          <div class="listing-sub">Eco Jungle Lodge · 7 nights</div>
+          <div class="listing-price"><strong>$210</strong> night</div>
+        </article>
+
+        <article class="listing-card">
+          <div class="listing-thumb thumb-d">
+            <div class="heart-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="listing-loc">
+            <span>Amalfi Coast, Italy</span>
+            <div class="listing-rating">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              5.0
+            </div>
+          </div>
+          <div class="listing-sub">Terraced Villa · 5 nights</div>
+          <div class="listing-price"><strong>$520</strong> night</div>
+        </article>
+
+        <article class="listing-card">
+          <div class="listing-thumb thumb-e">
+            <div class="heart-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="listing-loc">
+            <span>Bali, Indonesia</span>
+            <div class="listing-rating">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              4.91
+            </div>
+          </div>
+          <div class="listing-sub">Rice Terrace Villa · 6 nights</div>
+          <div class="listing-price"><strong>$175</strong> night</div>
+        </article>
+
+        <article class="listing-card">
+          <div class="listing-thumb thumb-f">
+            <div class="heart-btn liked">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="listing-loc">
+            <span>Marrakech, Morocco</span>
+            <div class="listing-rating">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              4.85
+            </div>
+          </div>
+          <div class="listing-sub">Riad · 4 nights</div>
+          <div class="listing-price"><strong>$95</strong> night</div>
+        </article>
+
+        <article class="listing-card">
+          <div class="listing-thumb thumb-g">
+            <div class="heart-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="listing-loc">
+            <span>Reykjavik, Iceland</span>
+            <div class="listing-rating">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              4.97
+            </div>
+          </div>
+          <div class="listing-sub">Glass Aurora Cabin · 3 nights</div>
+          <div class="listing-price"><strong>$290</strong> night</div>
+        </article>
+
+        <article class="listing-card">
+          <div class="listing-thumb thumb-h">
+            <div class="heart-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+            </div>
+          </div>
+          <div class="listing-loc">
+            <span>Cape Town, South Africa</span>
+            <div class="listing-rating">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              4.90
+            </div>
+          </div>
+          <div class="listing-sub">Mountain View Loft · 5 nights</div>
+          <div class="listing-price"><strong>$165</strong> night</div>
+        </article>
+
+      </div>
+    </section>
+
+  </div><!-- /.container -->
+
+  <!-- VALUE PROPS -->
+  <section class="value-props">
+    <div class="container">
+      <div class="vp-eyebrow">Why Haven</div>
+      <p class="vp-title">Everything you need to travel with confidence.</p>
+      <div class="vp-grid">
+        <div class="vp-card">
+          <div class="vp-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h4>Book with confidence</h4>
+          <p>Every stay is covered by Haven's guest guarantee. If something isn't right, we'll help you find a solution or offer a full refund — no questions asked.</p>
+        </div>
+        <div class="vp-card">
+          <div class="vp-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+            </svg>
+          </div>
+          <h4>Stays in 190+ countries</h4>
+          <p>From a studio in Seoul to a lighthouse off the coast of Portugal — Haven has over 7 million unique places to stay in more than 190 countries worldwide.</p>
+        </div>
+        <div class="vp-card">
+          <div class="vp-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <h4>Real hosts, real stories</h4>
+          <p>Every listing is hosted by a real person. Read their story, check verified reviews, and message them directly before you book. Travel that feels personal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCES -->
+  <section class="experiences">
+    <div class="container">
+      <div class="exp-header">
+        <div>
+          <div class="vp-eyebrow">Experiences</div>
+          <h2>Things to do, led by locals.</h2>
+        </div>
+        <a href="#" class="btn btn-outline">Show all experiences</a>
+      </div>
+      <div class="exp-grid">
+        <article class="exp-card">
+          <div class="exp-bg exp-bg-a"></div>
+          <div class="exp-overlay"></div>
+          <div class="exp-price-badge">From $45</div>
+          <div class="exp-body">
+            <div class="exp-type">Cooking</div>
+            <div class="exp-name">Handmade pasta with a Florentine nonna</div>
+            <div class="exp-meta">3 hrs · Florence, Italy · ★ 4.98 (312)</div>
+          </div>
+        </article>
+        <article class="exp-card">
+          <div class="exp-bg exp-bg-b"></div>
+          <div class="exp-overlay"></div>
+          <div class="exp-price-badge">From $80</div>
+          <div class="exp-body">
+            <div class="exp-type">Adventure</div>
+            <div class="exp-name">Sunrise hike to a hidden waterfall</div>
+            <div class="exp-meta">4 hrs · Bali, Indonesia · ★ 4.95 (207)</div>
+          </div>
+        </article>
+        <article class="exp-card">
+          <div class="exp-bg exp-bg-c"></div>
+          <div class="exp-overlay"></div>
+          <div class="exp-price-badge">From $35</div>
+          <div class="exp-body">
+            <div class="exp-type">Arts</div>
+            <div class="exp-name">Ceramics workshop in a Kyoto studio</div>
+            <div class="exp-meta">2.5 hrs · Kyoto, Japan · ★ 4.99 (441)</div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOST CTA -->
+  <section class="host-cta">
+    <div class="container">
+      <div class="host-inner">
+        <div class="host-text">
+          <div class="vp-eyebrow">For hosts</div>
+          <h2>Turn your space into extra income.</h2>
+          <p>Whether it's a spare room or a second property — Haven makes it simple to start hosting, set your own schedule, and earn on your terms.</p>
+          <div style="display:flex;gap:var(--xs);flex-wrap:wrap;">
+            <a href="#" class="btn btn-primary">Start hosting →</a>
+            <a href="#" class="btn btn-outline">Learn more</a>
+          </div>
+        </div>
+        <div class="host-visual">
+          <div class="host-stat stat-1">
+            <span class="stat-val">$2,400</span>
+            <span class="stat-label">avg. monthly earnings</span>
+          </div>
+          <div class="host-stat stat-2">
+            <span class="stat-val">4.9 ★</span>
+            <span class="stat-label">average host rating</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <div class="testimonials">
+    <div class="test-inner">
+      <div class="test-header">
+        <p class="vp-eyebrow">Guest stories</p>
+        <h2>Trips that stayed with them.</h2>
+      </div>
+      <div class="test-grid">
+        <div class="test-card">
+          <div class="test-stars">★★★★★</div>
+          <p class="test-quote">"Haven found us a cave house in Cappadocia that no hotel could ever match. Our host left us a handwritten note and local wine. It was the best trip of our lives."</p>
+          <div class="test-attr">
+            <div class="test-avatar test-avatar-a"></div>
+            <div>
+              <div class="test-name">Sofia & Luca</div>
+              <div class="test-loc">Milan, Italy</div>
+            </div>
+          </div>
+        </div>
+        <div class="test-card">
+          <div class="test-stars">★★★★★</div>
+          <p class="test-quote">"I was skeptical about staying with strangers, but our host in Lisbon became a real friend. She showed us the city through the eyes of someone who actually lived there."</p>
+          <div class="test-attr">
+            <div class="test-avatar test-avatar-b"></div>
+            <div>
+              <div class="test-name">James H.</div>
+              <div class="test-loc">Toronto, Canada</div>
+            </div>
+          </div>
+        </div>
+        <div class="test-card">
+          <div class="test-stars">★★★★★</div>
+          <p class="test-quote">"The treehouse in Costa Rica was jaw-dropping. Woke up to monkeys in the canopy. Honestly, I've already booked my next Haven stay. Already planning the next one."</p>
+          <div class="test-attr">
+            <div class="test-avatar test-avatar-c"></div>
+            <div>
+              <div class="test-name">Mei L.</div>
+              <div class="test-loc">Singapore</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP BANNER -->
+  <div class="app-banner">
+    <div class="app-text">
+      <h2>Book and explore on the go.</h2>
+      <p>Save wishlists, message hosts, and manage your trips — wherever you are. The Haven app is free on iOS and Android.</p>
+      <div class="app-btns">
+        <div class="app-store-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 2a10 10 0 0 1 0 20A10 10 0 0 1 12 2z"/>
+            <path d="M8 12l4-4 4 4M12 8v8"/>
+          </svg>
+          <div>
+            <span class="app-store-label">Download on the</span>
+            <span class="app-store-name">App Store</span>
+          </div>
+        </div>
+        <div class="app-store-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          <div>
+            <span class="app-store-label">Get it on</span>
+            <span class="app-store-name">Google Play</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="app-visual">
+      <div class="phone-mockup sm">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="phone-content">
+            <div class="phone-card-thumb"></div>
+            <div class="phone-line"></div>
+            <div class="phone-line short"></div>
+            <div class="phone-line accent"></div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-mockup">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="phone-content">
+            <div class="phone-card-thumb" style="background:linear-gradient(135deg,#f9e4c2,#e8b89a);"></div>
+            <div class="phone-line"></div>
+            <div class="phone-line short"></div>
+            <div class="phone-line accent"></div>
+            <div class="phone-line" style="width:80%;margin-top:var(--xxs);"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot-top">
+      <div class="foot-col">
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Help Centre</a></li>
+          <li><a href="#">AirCover</a></li>
+          <li><a href="#">Anti-discrimination</a></li>
+          <li><a href="#">Disability support</a></li>
+          <li><a href="#">Cancellation options</a></li>
+          <li><a href="#">Report a concern</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Community</h5>
+        <ul>
+          <li><a href="#">Haven.org</a></li>
+          <li><a href="#">Hosts forum</a></li>
+          <li><a href="#">Referrals</a></li>
+          <li><a href="#">Gift cards</a></li>
+          <li><a href="#">Haven Blog</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Hosting</h5>
+        <ul>
+          <li><a href="#">Haven your home</a></li>
+          <li><a href="#">AirCover for hosts</a></li>
+          <li><a href="#">Hosting resources</a></li>
+          <li><a href="#">Community forum</a></li>
+          <li><a href="#">Hosting responsibly</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Haven</h5>
+        <ul>
+          <li><a href="#">Newsroom</a></li>
+          <li><a href="#">New features</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Investors</a></li>
+          <li><a href="#">Gift cards</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div class="foot-legal">
+        <span>© 2026 Haven, Inc.</span>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Sitemap</a>
+        <a href="#">Company details</a>
+      </div>
+      <div class="foot-social">
+        <div class="social-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+          </svg>
+        </div>
+        <div class="social-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+          </svg>
+        </div>
+        <div class="social-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

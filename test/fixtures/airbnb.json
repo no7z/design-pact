@@ -1,0 +1,31 @@
+{
+  "name": "airbnb",
+  "colors": [
+    { "id": "c0", "hex": "#ffffff", "baseHex": "#ffffff", "displayHex": "#ffffff", "proportion": 0.62, "role": "background" },
+    { "id": "c1", "hex": "#ff385c", "baseHex": "#ff385c", "displayHex": "#ff385c", "proportion": 0.10, "role": "primary" },
+    { "id": "c2", "hex": "#222222", "baseHex": "#222222", "displayHex": "#222222", "proportion": 0.18, "role": "foreground" },
+    { "id": "c3", "hex": "#dddddd", "baseHex": "#dddddd", "displayHex": "#dddddd", "proportion": 0.05, "role": "border" },
+    { "id": "c4", "hex": "#6a6a6a", "baseHex": "#6a6a6a", "displayHex": "#6a6a6a", "proportion": 0.05, "role": "muted" }
+  ],
+  "typography": {
+    "base": 17,
+    "ratio": 1.5,
+    "fontFamily": "'Airbnb Cereal VF', Circular, sans-serif",
+    "headingFamily": "'Airbnb Cereal VF', Circular, -apple-system, system-ui, Roboto, 'Helvetica Neue', sans-serif",
+    "fontWeight": 300,
+    "lineHeight": 1.75,
+    "letterSpacing": 0
+  },
+  "spacing": { "base": 6 },
+  "radius": { "base": 11 },
+  "shadow": {
+    "intensity": 0.35,
+    "advanced": false,
+    "sm": { "blur": 3, "offsetY": 0.7, "opacity": 0.028 },
+    "md": { "blur": 8, "offsetY": 2.8, "opacity": 0.056 },
+    "lg": { "blur": 17, "offsetY": 5.6, "opacity": 0.084 }
+  },
+  "motion": { "base": 500, "easing": "ease-in" },
+  "border": { "base": 4 },
+  "opacity": { "base": 0.09 }
+}

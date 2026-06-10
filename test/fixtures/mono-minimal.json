@@ -1,0 +1,31 @@
+{
+  "name": "mono-minimal",
+  "colors": [
+    { "id": "c0", "hex": "#ffffff", "baseHex": "#ffffff", "displayHex": "#ffffff", "proportion": 0.66, "role": "background" },
+    { "id": "c1", "hex": "#111111", "baseHex": "#111111", "displayHex": "#111111", "proportion": 0.20, "role": "foreground" },
+    { "id": "c2", "hex": "#2563eb", "baseHex": "#2563eb", "displayHex": "#2563eb", "proportion": 0.06, "role": "primary" },
+    { "id": "c3", "hex": "#e5e5e5", "baseHex": "#e5e5e5", "displayHex": "#e5e5e5", "proportion": 0.05, "role": "border" },
+    { "id": "c4", "hex": "#737373", "baseHex": "#737373", "displayHex": "#737373", "proportion": 0.03, "role": "muted" }
+  ],
+  "typography": {
+    "base": 16,
+    "ratio": 1.25,
+    "fontFamily": "Inter, system-ui, sans-serif",
+    "headingFamily": "Inter, system-ui, sans-serif",
+    "fontWeight": 400,
+    "lineHeight": 1.5,
+    "letterSpacing": 0
+  },
+  "spacing": { "base": 4 },
+  "radius": { "base": 2 },
+  "shadow": {
+    "intensity": 0.2,
+    "advanced": false,
+    "sm": { "blur": 2, "offsetY": 0.4, "opacity": 0.016 },
+    "md": { "blur": 5, "offsetY": 1.6, "opacity": 0.032 },
+    "lg": { "blur": 10, "offsetY": 3.2, "opacity": 0.048 }
+  },
+  "motion": { "base": 200, "easing": "ease-in-out" },
+  "border": { "base": 1 },
+  "opacity": { "base": 0.06 }
+}

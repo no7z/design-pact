@@ -12,6 +12,8 @@ import {
 } from "@/lib/export";
 import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
 import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
+import { GeneratePage } from "./GeneratePage";
+import { ShareLink } from "./ShareLink";
 
 type Tab = "json" | "tailwind" | "css" | "ai";
 
@@ -36,6 +38,14 @@ export function Export() {
     [colors, globals],
   );
 
+  const promptText = useMemo(
+    () =>
+      resolved.length > 0
+        ? aiPrompt(resolved, typography, spacing, radius, shadow, motion, border, opacity)
+        : "",
+    [resolved, typography, spacing, radius, shadow, motion, border, opacity],
+  );
+
   if (resolved.length === 0) return null;
 
   const content = (() => {
@@ -43,7 +53,7 @@ export function Export() {
       case "json":     return JSON.stringify(w3cTokens(resolved, typography, spacing, radius, shadow, motion, border, opacity), null, 2);
       case "tailwind": return tailwindConfig(resolved, typography, spacing, radius, shadow, motion, border, opacity);
       case "css":      return cssVars(resolved, typography, spacing, radius, shadow, motion, border, opacity);
-      case "ai":       return aiPrompt(resolved, typography, spacing, radius, shadow, motion, border, opacity);
+      case "ai":       return promptText;
     }
   })();
 
@@ -100,6 +110,10 @@ export function Export() {
 
   return (
     <div className="space-y-4">
+      <GeneratePage prompt={promptText} />
+
+      <ShareLink />
+
       <section className="rounded-xl border border-neutral-200 dark:border-neutral-800">
         <button
           onClick={() => setVisualOpen((o) => !o)}

@@ -70,9 +70,6 @@ export function StatePreview() {
 
   return (
     <div>
-      <p className="mb-2 text-[10px] text-neutral-400">
-        可交互 · 移上去 / 按住 / 点输入框，亲手感受 fast {fastMs}ms · {motion.easing} 的过渡——状态样式来自「细节」步骤的 token
-      </p>
       <div
         className="flex flex-wrap items-start gap-5 rounded-xl p-6"
         style={{ background: palette.bg, border: `1px solid ${palette.border}` }}

@@ -6,6 +6,7 @@ import { DescribeStep } from "@/components/DescribeStep";
 import { WorkflowNav } from "@/components/WorkflowNav";
 import { Editor } from "@/components/Editor";
 import { DarkModePanel } from "@/components/DarkModePanel";
+import { SchemePanel } from "@/components/SchemePanel";
 import { Preview } from "@/components/Preview";
 import { TypographyStep } from "@/components/TypographyStep";
 import { StyleStep } from "@/components/StyleStep";
@@ -61,6 +62,7 @@ function WorkArea() {
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-neutral-400">
             Step 2 / 5
           </p>
+          <SchemePanel />
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <div className="space-y-4">
               <header className="space-y-1">

@@ -60,11 +60,33 @@ export type DarkMode = {
   overrides: Record<string, string>; // ColorToken.id -> dark hex (else auto-derived)
 };
 
+// Full snapshot of every token field — saving/loading a scheme restores the
+// complete design system, not just colors.
+export type Scheme = {
+  id: string;
+  name: string;
+  createdAt: number;
+  colors: ColorToken[];
+  typography: Typography;
+  globals: Globals;
+  spacing: Spacing;
+  radius: Radius;
+  shadow: Shadow;
+  motion: Motion;
+  border: Border;
+  opacity: Opacity;
+  dark: DarkMode;
+  activeBrand: string | null;
+};
+
+const MAX_SCHEMES = 8;
+
 type State = {
   colors: ColorToken[];
   typography: Typography;
   globals: Globals;
   dark: DarkMode;
+  schemes: Scheme[];
   description: string;
   recommendations: string[];
   activeBrand: string | null;
@@ -94,6 +116,9 @@ type State = {
   setOpacity: (o: Partial<Opacity>) => void;
   setDarkEnabled: (enabled: boolean) => void;
   setDarkOverride: (id: string, hex: string | null) => void;
+  saveScheme: (name: string) => string;
+  loadScheme: (id: string) => void;
+  deleteScheme: (id: string) => void;
   reset: () => void;
 };
 
@@ -133,11 +158,12 @@ const inferRole = (idx: number, total: number): SemanticRole => {
 
 export const useTokens = create<State>()(
   persist(
-    (set): State => ({
+    (set, get): State => ({
       colors: [],
       typography: defaultTypography,
       globals: { dL: 0, dC: 0, dH: 0 },
       dark: defaultDark,
+      schemes: [],
       description: "",
       recommendations: [],
       activeBrand: null,
@@ -216,6 +242,47 @@ export const useTokens = create<State>()(
       setMotion: (m) => set((cur) => ({ motion: { ...cur.motion, ...m } })),
       setBorder: (b) => set((cur) => ({ border: { ...cur.border, ...b } })),
       setOpacity: (o) => set((cur) => ({ opacity: { ...cur.opacity, ...o } })),
+      saveScheme: (name) => {
+        const s = get();
+        const id = `s${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+        const scheme: Scheme = {
+          id,
+          name: name.trim() || `方案 ${s.schemes.length + 1}`,
+          createdAt: Date.now(),
+          colors: s.colors.map((c) => ({ ...c })),
+          typography: { ...s.typography },
+          globals: { ...s.globals },
+          spacing: { ...s.spacing },
+          radius: { ...s.radius },
+          shadow: { ...s.shadow, sm: { ...s.shadow.sm }, md: { ...s.shadow.md }, lg: { ...s.shadow.lg } },
+          motion: { ...s.motion },
+          border: { ...s.border },
+          opacity: { ...s.opacity },
+          dark: { enabled: s.dark.enabled, overrides: { ...s.dark.overrides } },
+          activeBrand: s.activeBrand,
+        };
+        set((cur) => ({ schemes: [...cur.schemes, scheme].slice(-MAX_SCHEMES) }));
+        return id;
+      },
+      loadScheme: (id) => {
+        const scheme = get().schemes.find((x) => x.id === id);
+        if (!scheme) return;
+        set(() => ({
+          colors: scheme.colors.map((c) => ({ ...c })),
+          typography: { ...scheme.typography },
+          globals: { ...scheme.globals },
+          spacing: { ...scheme.spacing },
+          radius: { ...scheme.radius },
+          shadow: { ...scheme.shadow, sm: { ...scheme.shadow.sm }, md: { ...scheme.shadow.md }, lg: { ...scheme.shadow.lg } },
+          motion: { ...scheme.motion },
+          border: { ...scheme.border },
+          opacity: { ...scheme.opacity },
+          dark: { enabled: scheme.dark.enabled, overrides: { ...scheme.dark.overrides } },
+          activeBrand: scheme.activeBrand,
+        }));
+      },
+      deleteScheme: (id) =>
+        set((cur) => ({ schemes: cur.schemes.filter((x) => x.id !== id) })),
       setDarkEnabled: (enabled) => set((cur) => ({ dark: { ...cur.dark, enabled } })),
       setDarkOverride: (id, hex) =>
         set((cur) => {

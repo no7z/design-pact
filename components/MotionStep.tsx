@@ -7,6 +7,7 @@ import {
   type DurationEntry,
   type EasingPreset,
 } from "@/lib/scales";
+import { StatePreview } from "./StatePreview";
 
 const EASING_LABELS: Record<EasingPreset, string> = {
   "ease-out":    "起快终慢 · 标准退出",
@@ -380,16 +381,24 @@ export function MotionStep() {
         </div>
 
         {view === "instance" && (
-          <div className="grid grid-cols-2 gap-3 p-6 lg:grid-cols-3">
-            {durations.map((d, i) => (
-              <DemoCard
-                key={d.name}
-                duration={d}
-                easing={motion.easing}
-                primaryHex={primaryHex}
-                index={i}
-              />
-            ))}
+          <div className="space-y-4 p-6">
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+              {durations.map((d, i) => (
+                <DemoCard
+                  key={d.name}
+                  duration={d}
+                  easing={motion.easing}
+                  primaryHex={primaryHex}
+                  index={i}
+                />
+              ))}
+            </div>
+            <div>
+              <p className="mb-2 text-[10px] text-neutral-400">
+                可交互 · 移上去 / 按住 / 点输入框试试
+              </p>
+              <StatePreview />
+            </div>
           </div>
         )}
 

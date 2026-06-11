@@ -9,6 +9,7 @@ import {
   buildBorderScale,
   buildOpacityScale,
 } from "@/lib/scales";
+import { StatePreview } from "./StatePreview";
 
 const SHADOW_LEVELS = ["sm", "md", "lg"] as const;
 type ShadowParam = "blur" | "offsetY" | "opacity";
@@ -369,8 +370,8 @@ export function StyleStep() {
               >
                 <span className="text-xs font-medium text-neutral-700 dark:text-neutral-200">今日任务</span>
                 <span
-                  className="text-[10px] font-semibold text-white"
-                  style={{ background: primaryHex, borderRadius: 9999, padding: `1px ${sp("xxs", 4)}px` }}
+                  className="grid h-4 w-4 shrink-0 place-items-center text-[10px] font-semibold text-white"
+                  style={{ background: primaryHex, borderRadius: "50%" }}
                 >
                   3
                 </span>
@@ -582,6 +583,8 @@ export function StyleStep() {
             </div>
           </div>
         </div>
+
+        <StatePreview />
 
           </div>
         )}

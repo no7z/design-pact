@@ -109,27 +109,6 @@ export function TypographyStep() {
           </div>
         </label>
 
-        {/* Body family */}
-        <div className="space-y-2">
-          <label className="text-xs font-medium">正文字体</label>
-          <select
-            value={bodyPreset}
-            onChange={(e) => onPresetSelect("fontFamily", e.target.value)}
-            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs dark:border-neutral-700 dark:bg-neutral-900"
-          >
-            {FONT_PRESETS.map((p) => (
-              <option key={p.id} value={p.id}>{p.label}</option>
-            ))}
-            <option value="custom">自定义…</option>
-          </select>
-          <input
-            type="text"
-            value={typography.fontFamily}
-            onChange={(e) => setTypography({ fontFamily: e.target.value })}
-            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 font-mono text-[10px] text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
-          />
-        </div>
-
         {/* Heading family */}
         <div className="space-y-2">
           <label className="text-xs font-medium">标题字体</label>
@@ -147,6 +126,27 @@ export function TypographyStep() {
             type="text"
             value={typography.headingFamily}
             onChange={(e) => setTypography({ headingFamily: e.target.value })}
+            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 font-mono text-[10px] text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
+          />
+        </div>
+
+        {/* Body family */}
+        <div className="space-y-2">
+          <label className="text-xs font-medium">正文字体</label>
+          <select
+            value={bodyPreset}
+            onChange={(e) => onPresetSelect("fontFamily", e.target.value)}
+            className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs dark:border-neutral-700 dark:bg-neutral-900"
+          >
+            {FONT_PRESETS.map((p) => (
+              <option key={p.id} value={p.id}>{p.label}</option>
+            ))}
+            <option value="custom">自定义…</option>
+          </select>
+          <input
+            type="text"
+            value={typography.fontFamily}
+            onChange={(e) => setTypography({ fontFamily: e.target.value })}
             className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 font-mono text-[10px] text-neutral-600 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-400"
           />
         </div>

@@ -357,11 +357,11 @@ export function StyleStep() {
         )}
 
         {view === "instance" && (
-          <div className="space-y-4 p-6">
+          <div className="space-y-4 rounded-b-xl p-6" style={{ background: palette.bg }}>
 
         {/* Spacing — task list card, rendered in the actual palette */}
         <div>
-          <p className="mb-2 text-[10px] text-neutral-400">间距 · 列表卡片</p>
+          <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>间距 · 列表卡片</p>
           <div
             className="overflow-hidden"
             style={{
@@ -427,8 +427,8 @@ export function StyleStep() {
 
         {/* Combined instance: shadow + border + opacity on one realistic card */}
         <div>
-          <p className="mb-2 text-[10px] text-neutral-400">阴影 · 描边 · 透明度 · 组合实例</p>
-          <div className="rounded-xl p-6" style={{ background: palette.bg }}>
+          <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>阴影 · 描边 · 透明度 · 组合实例</p>
+          <div>
             <div
               style={{
                 background: palette.surface,

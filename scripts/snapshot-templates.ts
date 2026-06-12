@@ -10,13 +10,15 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   BRANDS,
-  parseMdColors,
+  parseMdColorsAll,
   parseMdTypography,
   parseMdSpacing,
   parseMdRadius,
   type TemplateEntry,
   type TemplateSnapshot,
 } from "../lib/templates";
+import { normalizePalette } from "../lib/templateNormalize";
+import { contrastRatio } from "../lib/color";
 
 const SOURCE = "https://raw.githubusercontent.com/VoltAgent/awesome-design-md/main/design-md";
 const OUT = join(__dirname, "..", "public", "templates.json");
@@ -30,14 +32,30 @@ async function fetchMd(brand: string): Promise<string> {
 
 async function buildEntry(brand: string): Promise<TemplateEntry> {
   const md = await fetchMd(brand);
-  const colors = parseMdColors(md).map(({ hex, role, name }) => ({ hex, role, name }));
-  if (colors.length === 0) throw new Error("解析不出任何颜色");
+  const pool = parseMdColorsAll(md).map(({ hex, role, name }) => ({ hex, role, name }));
+  if (pool.length === 0) throw new Error("解析不出任何颜色");
+  const colors = normalizePalette(pool);
+  assertContract(brand, colors);
   return {
     colors,
     typography: parseMdTypography(md),
     spacing: parseMdSpacing(md),
     radius: parseMdRadius(md),
   };
+}
+
+// The standard every template in the snapshot must meet — fail the build
+// rather than ship an unreadable palette.
+function assertContract(brand: string, colors: { hex: string; role: string }[]) {
+  const byRole = (r: string) => colors.find((c) => c.role === r)?.hex;
+  const bg = byRole("background");
+  const fg = byRole("foreground");
+  const primary = byRole("primary");
+  if (!bg || !fg || !primary) throw new Error(`${brand}: 缺角色 bg/fg/primary`);
+  const crFg = contrastRatio(bg, fg);
+  if (crFg < 4.5) throw new Error(`${brand}: fg/bg 对比 ${crFg.toFixed(2)} < 4.5`);
+  const crP = contrastRatio(bg, primary);
+  if (crP < 1.3) throw new Error(`${brand}: primary≈bg 对比 ${crP.toFixed(2)}`);
 }
 
 async function main() {

@@ -159,6 +159,14 @@ const LIST_RE = /^[ \t]*[-*][ \t]+([^:`\n*]+?)[ \t]*:[ \t]*`?(#[0-9a-fA-F]{6})`?
 const HEADER_RE = /^#{2,5}[ \t]+(.+?)\s*$/;
 
 export function parseMdColors(md: string): ColorToken[] {
+  return selectKeyColors(parseMdColorsAll(md));
+}
+
+/**
+ * Every color found in the markdown, before role quotas — the candidate pool
+ * the snapshot normalizer (lib/templateNormalize.ts) re-selects roles from.
+ */
+export function parseMdColorsAll(md: string): ColorToken[] {
   const seen = new Map<string, { hex: string; role: SemanticRole }>();
   let sectionRole: SemanticRole | undefined;
 
@@ -213,7 +221,7 @@ export function parseMdColors(md: string): ColorToken[] {
       name,
     });
   }
-  return selectKeyColors(all);
+  return all;
 }
 
 // ─── Typography parsing ─────────────────────────────────────────────────────

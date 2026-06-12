@@ -9,7 +9,8 @@ import {
   buildBorderScale,
   buildOpacityScale,
 } from "@/lib/scales";
-import { hexA } from "@/lib/mockup";
+import { hexA, resolvePalette } from "@/lib/mockup";
+import { relativeLuminance } from "@/lib/color";
 
 const SHADOW_LEVELS = ["sm", "md", "lg"] as const;
 type ShadowParam = "blur" | "offsetY" | "opacity";
@@ -27,6 +28,8 @@ export function StyleStep() {
   const shadow = useTokens((s) => s.shadow);
   const border = useTokens((s) => s.border);
   const opacity = useTokens((s) => s.opacity);
+  const colors = useTokens((s) => s.colors);
+  const globals = useTokens((s) => s.globals);
   const setSpacing = useTokens((s) => s.setSpacing);
   const setRadius = useTokens((s) => s.setRadius);
   const setShadowIntensity = useTokens((s) => s.setShadowIntensity);
@@ -38,6 +41,8 @@ export function StyleStep() {
   const [view, setView] = useState<"instance" | "basic">("instance");
 
   const primaryHex = usePrimaryHex();
+  const palette = useMemo(() => resolvePalette(colors, globals), [colors, globals]);
+  const onPrimary = relativeLuminance(palette.primary) < 0.45 ? "#ffffff" : "#111111";
   const spacingScale = useMemo(() => buildSpacing(spacing.base), [spacing.base]);
   const radiusScale = useMemo(() => buildRadius(radius.base), [radius.base]);
   const borderScale = useMemo(() => buildBorderScale(border.base), [border.base]);
@@ -354,141 +359,68 @@ export function StyleStep() {
         {view === "instance" && (
           <div className="space-y-4 p-6">
 
-        {/* Row 1: Spacing | Radius */}
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-
-          {/* Spacing — task list card: header + items + footer all driven by scale */}
-          <div>
-            <p className="mb-2 text-[10px] text-neutral-400">间距 · 列表卡片</p>
+        {/* Spacing — task list card, rendered in the actual palette */}
+        <div>
+          <p className="mb-2 text-[10px] text-neutral-400">间距 · 列表卡片</p>
+          <div
+            className="overflow-hidden"
+            style={{
+              border: `1px solid ${palette.border}`,
+              borderRadius: Math.min(rd("lg", 12), sp("xs", 8) + 8),
+              background: palette.surface,
+            }}
+          >
             <div
-              className="overflow-hidden border border-neutral-200 dark:border-neutral-700"
-              style={{ borderRadius: Math.min(rd("lg", 12), sp("xs", 8) + 8) }}
+              className="flex items-center justify-between"
+              style={{ padding: `${sp("xs", 8)}px ${sp("md", 16)}px`, borderBottom: `1px solid ${palette.border}` }}
             >
-              <div
-                className="flex items-center justify-between border-b border-neutral-100 bg-white dark:border-neutral-800 dark:bg-neutral-900"
-                style={{ padding: `${sp("xs", 8)}px ${sp("md", 16)}px` }}
+              <span className="text-xs font-medium" style={{ color: palette.fg }}>今日任务</span>
+              <span
+                className="grid h-4 w-4 shrink-0 place-items-center text-[10px] font-semibold"
+                style={{ background: palette.primary, color: onPrimary, borderRadius: "50%" }}
               >
-                <span className="text-xs font-medium text-neutral-700 dark:text-neutral-200">今日任务</span>
-                <span
-                  className="grid h-4 w-4 shrink-0 place-items-center text-[10px] font-semibold text-white"
-                  style={{ background: primaryHex, borderRadius: "50%" }}
-                >
-                  3
-                </span>
-              </div>
-              {[
-                { label: "整理设计规范", done: true },
-                { label: "组件库评审", done: false },
-                { label: "输出交互文档", done: false },
-              ].map(({ label, done }) => (
-                <div
-                  key={label}
-                  className="flex items-center border-b border-neutral-100 bg-white last:border-0 dark:border-neutral-800 dark:bg-neutral-900"
-                  style={{ padding: `${sp("xs", 8)}px ${sp("md", 16)}px`, gap: sp("xs", 8) }}
-                >
-                  <span
-                    style={{
-                      flexShrink: 0,
-                      width: 14,
-                      height: 14,
-                      borderRadius: "50%",
-                      border: done ? "none" : "1.5px solid rgb(212 212 212)",
-                      background: done ? primaryHex : "transparent",
-                      display: "inline-block",
-                    }}
-                  />
-                  <span className={`text-xs ${done ? "line-through text-neutral-400" : "text-neutral-600 dark:text-neutral-300"}`}>
-                    {label}
-                  </span>
-                </div>
-              ))}
-              <div
-                className="flex items-center justify-between border-t border-neutral-100 bg-white dark:border-neutral-800 dark:bg-neutral-900"
-                style={{ padding: `${sp("xs", 8)}px ${sp("md", 16)}px` }}
-              >
-                <span className="text-[10px] text-neutral-400">今天 · 2 未完成</span>
-                <span className="text-[10px]" style={{ color: primaryHex }}>＋ 添加</span>
-              </div>
+                3
+              </span>
             </div>
-          </div>
-
-          {/* Radius — each level labeled with its actual use case + current px */}
-          <div>
-            <p className="mb-2 text-[10px] text-neutral-400">圆角 · 使用场景</p>
-            <div className="space-y-3">
-
-              <div className="space-y-1">
-                <span className="font-mono text-[10px] text-neutral-400">输入框 · sm &nbsp;{rd("sm", 4)}px</span>
-                <div
-                  className="flex items-center border border-neutral-200 dark:border-neutral-700"
-                  style={{ padding: `${sp("xxs", 4)}px ${sp("sm", 12)}px`, borderRadius: rd("sm", 4) }}
-                >
-                  <span className="flex-1 text-xs text-neutral-400">搜索组件…</span>
-                  <span className="text-[10px] text-neutral-300">⌘K</span>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <span className="font-mono text-[10px] text-neutral-400">按钮 · md &nbsp;{rd("md", 8)}px</span>
-                <div className="flex" style={{ gap: sp("xs", 8) }}>
-                  <button
-                    className="border border-neutral-200 text-xs text-neutral-600 dark:border-neutral-700 dark:text-neutral-400"
-                    style={{ padding: `${sp("xxs", 4)}px ${sp("sm", 12)}px`, borderRadius: rd("md", 8) }}
-                  >
-                    取消
-                  </button>
-                  <button
-                    className="text-xs text-white"
-                    style={{ padding: `${sp("xxs", 4)}px ${sp("sm", 12)}px`, borderRadius: rd("md", 8), background: primaryHex }}
-                  >
-                    确认
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <span className="font-mono text-[10px] text-neutral-400">卡片 · lg &nbsp;{rd("lg", 12)}px</span>
-                <div
-                  className="border border-neutral-200 dark:border-neutral-700"
-                  style={{ padding: `${sp("xs", 8)}px ${sp("sm", 12)}px`, borderRadius: rd("lg", 12) }}
-                >
-                  <div className="flex flex-col gap-1.5">
-                    <div className="h-1.5 w-3/4 rounded bg-neutral-200 dark:bg-neutral-700" />
-                    <div className="h-1.5 w-full rounded bg-neutral-200 dark:bg-neutral-700" />
-                    <div className="h-1.5 w-1/2 rounded bg-neutral-200 dark:bg-neutral-700" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-1">
-                <span className="font-mono text-[10px] text-neutral-400">弹窗 / 缩略图 · xl &nbsp;{rd("xl", 16)}px</span>
-                <div className="flex items-center" style={{ gap: sp("sm", 12) }}>
-                  <div
-                    className="shrink-0"
-                    style={{ width: 44, height: 44, borderRadius: rd("xl", 16), background: primaryHex + "30" }}
-                  />
-                  <div
-                    className="flex-1 border border-neutral-200 dark:border-neutral-700"
-                    style={{ padding: `${sp("xs", 8)}px ${sp("sm", 12)}px`, borderRadius: rd("xl", 16) }}
-                  >
-                    <div className="mb-1 h-1.5 w-1/2 rounded bg-neutral-200 dark:bg-neutral-700" />
-                    <div className="h-1.5 w-3/4 rounded bg-neutral-200 dark:bg-neutral-700" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
+            {[
+              { label: "整理设计规范", done: true },
+              { label: "组件库评审", done: false },
+              { label: "输出交互文档", done: false },
+            ].map(({ label, done }, i, arr) => (
+              <div
+                key={label}
+                className="flex items-center"
+                style={{
+                  padding: `${sp("xs", 8)}px ${sp("md", 16)}px`,
+                  gap: sp("xs", 8),
+                  borderBottom: i < arr.length - 1 ? `1px solid ${palette.border}` : "none",
+                }}
+              >
                 <span
-                  className="text-[10px]"
-                  style={{ padding: `2px ${sp("xs", 8)}px`, borderRadius: 9999, background: primaryHex + "18", color: primaryHex }}
+                  style={{
+                    flexShrink: 0,
+                    width: 14,
+                    height: 14,
+                    borderRadius: "50%",
+                    border: done ? "none" : `1.5px solid ${palette.border}`,
+                    background: done ? palette.primary : "transparent",
+                    display: "inline-block",
+                  }}
+                />
+                <span
+                  className="text-xs"
+                  style={{ color: done ? palette.muted : palette.fg, textDecoration: done ? "line-through" : "none" }}
                 >
-                  徽标
-                </span>
-                <span className="font-mono text-[10px] text-neutral-400">
-                  full 固定 9999px — 胶囊 / 圆形，不随 base 变化
+                  {label}
                 </span>
               </div>
-
+            ))}
+            <div
+              className="flex items-center justify-between"
+              style={{ padding: `${sp("xs", 8)}px ${sp("md", 16)}px`, borderTop: `1px solid ${palette.border}` }}
+            >
+              <span className="text-[10px]" style={{ color: palette.muted }}>今天 · 2 未完成</span>
+              <span className="text-[10px]" style={{ color: palette.primary }}>＋ 添加</span>
             </div>
           </div>
         </div>
@@ -496,21 +428,21 @@ export function StyleStep() {
         {/* Combined instance: shadow + border + opacity on one realistic card */}
         <div>
           <p className="mb-2 text-[10px] text-neutral-400">阴影 · 描边 · 透明度 · 组合实例</p>
-          <div className="rounded-xl p-6" style={{ background: "rgb(226 232 240)" }}>
+          <div className="rounded-xl p-6" style={{ background: palette.bg }}>
             <div
               style={{
-                background: "white",
-                border: `${border.base}px solid rgb(203 213 225)`,
+                background: palette.surface,
+                border: `${border.base}px solid ${palette.border}`,
                 borderRadius: Math.min(rd("lg", 12), sp("md", 16) + 4),
                 boxShadow: shadowToCss(shadow.md),
                 padding: `${sp("md", 16)}px`,
               }}
             >
-              <div style={{ fontWeight: 600, fontSize: 12, color: "rgb(23 23 23)" }}>发布更新</div>
+              <div style={{ fontWeight: 600, fontSize: 12, color: palette.fg }}>发布更新</div>
               <div
                 style={{
                   fontSize: 11,
-                  color: "rgb(115 115 115)",
+                  color: palette.muted,
                   marginTop: 2,
                   marginBottom: sp("sm", 12),
                 }}
@@ -526,17 +458,17 @@ export function StyleStep() {
                   const w = s.strong ? bw("strong", border.base * 2) : bw("default", border.base);
                   return (
                     <div key={s.label} className="flex flex-col gap-1">
-                      <span className="font-mono text-[10px] text-neutral-400">
+                      <span className="font-mono text-[10px]" style={{ color: palette.muted }}>
                         {s.label} · {w}px
                       </span>
                       <div
                         style={{
-                          border: `${w}px solid ${s.strong ? primaryHex : "rgb(209 213 219)"}`,
+                          border: `${w}px solid ${s.strong ? palette.primary : palette.border}`,
                           borderRadius: rd("sm", 4),
                           padding: `${sp("xxs", 4)}px ${sp("sm", 12)}px`,
                           fontSize: 11,
-                          color: "rgb(115 115 115)",
-                          background: "white",
+                          color: palette.muted,
+                          background: palette.bg,
                           boxShadow: s.focus
                             ? `0 0 0 3px ${hexA(primaryHex, opacityScale.find((o) => o.name === "focus")?.value ?? 0.16)}`
                             : "none",
@@ -562,18 +494,18 @@ export function StyleStep() {
                           <span
                             className="relative"
                             style={{
-                              background: "white",
+                              background: palette.surface,
                               borderRadius: rd("sm", 4),
                               padding: "2px 8px",
                               fontSize: 9,
-                              color: "rgb(23 23 23)",
+                              color: palette.fg,
                               boxShadow: shadowToCss(shadow.md),
                             }}
                           >
                             弹窗
                           </span>
                         </div>
-                        <span className="font-mono text-[10px]" style={{ color: "rgb(148 163 184)" }}>
+                        <span className="font-mono text-[10px]" style={{ color: palette.muted }}>
                           {o.name}
                         </span>
                       </div>
@@ -588,12 +520,12 @@ export function StyleStep() {
                           position: "relative",
                           borderRadius: rd("md", 8),
                           border: isFocus
-                            ? `${bw("strong", border.base * 2)}px solid ${primaryHex}`
-                            : `${bw("default", border.base)}px solid rgb(209 213 219)`,
+                            ? `${bw("strong", border.base * 2)}px solid ${palette.primary}`
+                            : `${bw("default", border.base)}px solid ${palette.border}`,
                           padding: `${sp("xxs", 4)}px ${sp("sm", 12)}px`,
-                          background: "white",
+                          background: palette.bg,
                           fontSize: 11,
-                          color: isDisabled ? "rgb(163 163 163)" : "rgb(23 23 23)",
+                          color: isDisabled ? palette.muted : palette.fg,
                           opacity: isDisabled ? o.value : 1,
                           boxShadow: isFocus ? `0 0 0 3px ${hexA(primaryHex, o.value)}` : "none",
                           overflow: "hidden",
@@ -612,7 +544,7 @@ export function StyleStep() {
                           />
                         )}
                       </div>
-                      <span className="font-mono text-[10px]" style={{ color: "rgb(148 163 184)" }}>
+                      <span className="font-mono text-[10px]" style={{ color: palette.muted }}>
                         {o.name}
                       </span>
                     </div>

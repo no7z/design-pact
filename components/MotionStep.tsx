@@ -1,12 +1,14 @@
 "use client";
 import { useEffect, useRef, useMemo, useState } from "react";
-import { useTokens, computedHex } from "@/lib/store";
+import { useTokens } from "@/lib/store";
 import {
   buildDurations,
   EASING_PRESETS,
   type DurationEntry,
   type EasingPreset,
 } from "@/lib/scales";
+import { resolvePalette, hexA, type MockupPalette } from "@/lib/mockup";
+import { relativeLuminance } from "@/lib/color";
 import { StatePreview } from "./StatePreview";
 
 const EASING_LABELS: Record<EasingPreset, string> = {
@@ -25,12 +27,13 @@ const DEMO_HINTS: Record<string, string> = {
   page:   "内容入场",
 };
 
-function usePrimaryHex(): string {
+function usePalette(): MockupPalette {
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
-  const primary = colors.find((c) => c.role === "primary") ?? colors[0];
-  return primary ? computedHex(primary, globals) : "#5e6ad2";
+  return useMemo(() => resolvePalette(colors, globals), [colors, globals]);
 }
+
+const onPrimary = (hex: string) => (relativeLuminance(hex) < 0.45 ? "#ffffff" : "#111111");
 
 // ── Animation loop utility ─────────────────────────────────────────────────
 
@@ -67,28 +70,28 @@ function loopAnimate(
 
 // ── Demo scenes ────────────────────────────────────────────────────────────
 
-type DemoProps = { ms: number; easingValue: string; primaryHex: string; initialDelay: number };
+type DemoProps = { ms: number; easingValue: string; palette: MockupPalette; initialDelay: number };
 
-function ButtonPressDemo({ ms, easingValue, primaryHex, initialDelay }: DemoProps) {
+function ButtonPressDemo({ ms, easingValue, palette, initialDelay }: DemoProps) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!ref.current) return;
     return loopAnimate(
       ref.current,
       [
-        { transform: "scale(1)", boxShadow: `0 4px 12px ${primaryHex}50` },
+        { transform: "scale(1)", boxShadow: `0 4px 12px ${palette.primary}50` },
         { transform: "scale(0.93)", boxShadow: "none" },
       ],
       ms, easingValue, 600, 500, initialDelay,
     );
-  }, [ms, easingValue, primaryHex, initialDelay]);
+  }, [ms, easingValue, palette, initialDelay]);
 
   return (
     <div className="flex h-full items-center justify-center p-4">
       <div
         ref={ref}
-        className="select-none rounded-lg px-5 py-2 text-xs font-medium text-white"
-        style={{ background: primaryHex }}
+        className="select-none rounded-lg px-5 py-2 text-xs font-medium"
+        style={{ background: palette.primary, color: onPrimary(palette.primary) }}
       >
         保存更改
       </div>
@@ -96,7 +99,7 @@ function ButtonPressDemo({ ms, easingValue, primaryHex, initialDelay }: DemoProp
   );
 }
 
-function HoverHighlightDemo({ ms, easingValue, primaryHex, initialDelay }: DemoProps) {
+function HoverHighlightDemo({ ms, easingValue, palette, initialDelay }: DemoProps) {
   const bgRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
@@ -109,7 +112,7 @@ function HoverHighlightDemo({ ms, easingValue, primaryHex, initialDelay }: DemoP
       if (stopped || !bg!.isConnected) return;
       bg!.animate([{ opacity: 0 }, { opacity: 1 }], { duration: ms, easing: easingValue, fill: "forwards" });
       const t = text!.animate(
-        [{ color: "rgb(115,115,115)" }, { color: primaryHex }],
+        [{ color: palette.muted }, { color: palette.primary }],
         { duration: ms, easing: easingValue, fill: "forwards" },
       );
       try { await t.finished; } catch { return; }
@@ -118,7 +121,7 @@ function HoverHighlightDemo({ ms, easingValue, primaryHex, initialDelay }: DemoP
       if (stopped) return;
       bg!.animate([{ opacity: 1 }, { opacity: 0 }], { duration: ms, easing: easingValue, fill: "forwards" });
       const t2 = text!.animate(
-        [{ color: primaryHex }, { color: "rgb(115,115,115)" }],
+        [{ color: palette.primary }, { color: palette.muted }],
         { duration: ms, easing: easingValue, fill: "forwards" },
       );
       try { await t2.finished; } catch { return; }
@@ -129,7 +132,7 @@ function HoverHighlightDemo({ ms, easingValue, primaryHex, initialDelay }: DemoP
 
     setTimeout(tick, initialDelay);
     return () => { stopped = true; };
-  }, [ms, easingValue, primaryHex, initialDelay]);
+  }, [ms, easingValue, palette, initialDelay]);
 
   const items = ["首页", "文档", "设置"];
   return (
@@ -140,16 +143,15 @@ function HoverHighlightDemo({ ms, easingValue, primaryHex, initialDelay }: DemoP
             <div
               ref={bgRef}
               className="absolute inset-0 rounded"
-              style={{ background: primaryHex + "18", opacity: 0 }}
+              style={{ background: palette.primary + "18", opacity: 0 }}
             />
           )}
           <span
             ref={i === 1 ? textRef : undefined}
             className="relative z-10"
-            style={{ color: i === 1 ? "rgb(115,115,115)" : undefined }}
+            style={{ color: palette.muted }}
           >
-            {i !== 1 && <span className="text-neutral-400">{item}</span>}
-            {i === 1 && item}
+            {item}
           </span>
         </div>
       ))}
@@ -157,7 +159,7 @@ function HoverHighlightDemo({ ms, easingValue, primaryHex, initialDelay }: DemoP
   );
 }
 
-function DropdownDemo({ ms, easingValue, primaryHex, initialDelay }: DemoProps) {
+function DropdownDemo({ ms, easingValue, palette, initialDelay }: DemoProps) {
   const dropRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!dropRef.current) return;
@@ -173,20 +175,32 @@ function DropdownDemo({ ms, easingValue, primaryHex, initialDelay }: DemoProps) 
 
   return (
     <div className="flex h-full flex-col justify-center px-4 py-3">
-      <div className="flex w-full items-center gap-1.5 rounded border border-neutral-200 px-2.5 py-1.5 text-xs dark:border-neutral-700">
-        <span className="flex-1 text-neutral-500 dark:text-neutral-400">选择选项</span>
-        <span className="text-[10px] text-neutral-400">▾</span>
+      <div
+        className="flex w-full items-center gap-1.5 rounded px-2.5 py-1.5 text-xs"
+        style={{ border: `1px solid ${palette.border}` }}
+      >
+        <span className="flex-1" style={{ color: palette.muted }}>选择选项</span>
+        <span className="text-[10px]" style={{ color: palette.muted }}>▾</span>
       </div>
       <div
         ref={dropRef}
-        className="mt-1 overflow-hidden rounded border border-neutral-200 bg-white text-xs shadow-md dark:border-neutral-700 dark:bg-neutral-900"
-        style={{ opacity: 0, transformOrigin: "top center" }}
+        className="mt-1 overflow-hidden rounded text-xs shadow-md"
+        style={{
+          opacity: 0,
+          transformOrigin: "top center",
+          background: palette.surface,
+          border: `1px solid ${palette.border}`,
+        }}
       >
         {["选项一", "选项二", "选项三"].map((o, i) => (
           <div
             key={o}
-            className="border-b border-neutral-100 px-2.5 py-1.5 text-neutral-600 last:border-0 dark:border-neutral-800 dark:text-neutral-300"
-            style={i === 0 ? { color: primaryHex, fontWeight: 500 } : {}}
+            className="px-2.5 py-1.5"
+            style={{
+              color: i === 0 ? palette.primary : palette.fg,
+              fontWeight: i === 0 ? 500 : 400,
+              borderBottom: i < 2 ? `1px solid ${palette.border}` : "none",
+            }}
           >
             {o}
           </div>
@@ -196,7 +210,7 @@ function DropdownDemo({ ms, easingValue, primaryHex, initialDelay }: DemoProps) 
   );
 }
 
-function SlidePanelDemo({ ms, easingValue, primaryHex, initialDelay }: DemoProps) {
+function SlidePanelDemo({ ms, easingValue, palette, initialDelay }: DemoProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!panelRef.current) return;
@@ -210,28 +224,33 @@ function SlidePanelDemo({ ms, easingValue, primaryHex, initialDelay }: DemoProps
     );
   }, [ms, easingValue, initialDelay]);
 
+  const bar = hexA(palette.fg, 0.12);
   return (
-    <div className="relative h-full overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-700">
-      <div className="h-full w-full bg-neutral-50 p-3 dark:bg-neutral-800/50">
-        <div className="mb-2 h-2 w-16 rounded bg-neutral-200 dark:bg-neutral-700" />
-        <div className="mb-1.5 h-2 w-24 rounded bg-neutral-200 dark:bg-neutral-700" />
-        <div className="h-2 w-20 rounded bg-neutral-200 dark:bg-neutral-700" />
+    <div className="relative h-full overflow-hidden rounded-lg" style={{ border: `1px solid ${palette.border}` }}>
+      <div className="h-full w-full p-3" style={{ background: palette.bg }}>
+        <div className="mb-2 h-2 w-16 rounded" style={{ background: bar }} />
+        <div className="mb-1.5 h-2 w-24 rounded" style={{ background: bar }} />
+        <div className="h-2 w-20 rounded" style={{ background: bar }} />
       </div>
       <div
         ref={panelRef}
-        className="absolute right-0 top-0 h-full w-2/5 border-l border-neutral-200 bg-white p-3 shadow-xl dark:border-neutral-700 dark:bg-neutral-900"
-        style={{ transform: "translateX(110%)" }}
+        className="absolute right-0 top-0 h-full w-2/5 p-3 shadow-xl"
+        style={{
+          transform: "translateX(110%)",
+          background: palette.surface,
+          borderLeft: `1px solid ${palette.border}`,
+        }}
       >
-        <div className="mb-2 h-2 rounded" style={{ width: "80%", background: primaryHex + "70" }} />
-        <div className="mb-1.5 h-1.5 w-full rounded bg-neutral-200 dark:bg-neutral-700" />
-        <div className="mb-1.5 h-1.5 w-4/5 rounded bg-neutral-200 dark:bg-neutral-700" />
-        <div className="h-1.5 w-3/5 rounded bg-neutral-200 dark:bg-neutral-700" />
+        <div className="mb-2 h-2 rounded" style={{ width: "80%", background: palette.primary + "70" }} />
+        <div className="mb-1.5 h-1.5 w-full rounded" style={{ background: bar }} />
+        <div className="mb-1.5 h-1.5 w-4/5 rounded" style={{ background: bar }} />
+        <div className="h-1.5 w-3/5 rounded" style={{ background: bar }} />
       </div>
     </div>
   );
 }
 
-function PageEnterDemo({ ms, easingValue, primaryHex, initialDelay }: DemoProps) {
+function PageEnterDemo({ ms, easingValue, palette, initialDelay }: DemoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!containerRef.current) return;
@@ -245,13 +264,14 @@ function PageEnterDemo({ ms, easingValue, primaryHex, initialDelay }: DemoProps)
     );
   }, [ms, easingValue, initialDelay]);
 
+  const bar = hexA(palette.fg, 0.12);
   return (
     <div className="flex h-full flex-col justify-center px-4 py-3">
       <div ref={containerRef} className="space-y-1.5" style={{ opacity: 0 }}>
-        <div className="h-3 rounded" style={{ width: "85%", background: primaryHex + "35" }} />
-        <div className="h-2 w-full rounded bg-neutral-200 dark:bg-neutral-700" />
-        <div className="h-2 w-5/6 rounded bg-neutral-200 dark:bg-neutral-700" />
-        <div className="h-2 w-2/3 rounded bg-neutral-200 dark:bg-neutral-700" />
+        <div className="h-3 rounded" style={{ width: "85%", background: palette.primary + "35" }} />
+        <div className="h-2 w-full rounded" style={{ background: bar }} />
+        <div className="h-2 w-5/6 rounded" style={{ background: bar }} />
+        <div className="h-2 w-2/3 rounded" style={{ background: bar }} />
       </div>
     </div>
   );
@@ -270,33 +290,44 @@ const DEMO_COMPONENTS: Record<string, (p: DemoProps) => React.ReactElement> = {
 function DemoCard({
   duration,
   easing,
-  primaryHex,
+  palette,
   index,
 }: {
   duration: DurationEntry;
   easing: EasingPreset;
-  primaryHex: string;
+  palette: MockupPalette;
   index: number;
 }) {
   const Demo = DEMO_COMPONENTS[duration.name];
   const easingValue = EASING_PRESETS[easing];
   return (
-    <div className="flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
-      <div className="flex items-center gap-1.5 border-b border-neutral-100 px-3 py-2 dark:border-neutral-800">
-        <span className="font-mono text-[10px] font-semibold text-neutral-700 dark:text-neutral-200">
+    <div
+      className="flex flex-col overflow-hidden rounded-xl"
+      style={{ background: palette.surface, border: `1px solid ${palette.border}` }}
+    >
+      <div
+        className="flex items-center gap-1.5 px-3 py-2"
+        style={{ borderBottom: `1px solid ${palette.border}` }}
+      >
+        <span className="font-mono text-[10px] font-semibold" style={{ color: palette.fg }}>
           {duration.name}
         </span>
-        <span className="rounded bg-neutral-100 px-1.5 py-0.5 font-mono text-[10px] text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
+        <span
+          className="rounded px-1.5 py-0.5 font-mono text-[10px]"
+          style={{ background: hexA(palette.fg, 0.08), color: palette.muted }}
+        >
           {duration.ms}ms
         </span>
-        <span className="ml-auto text-[10px] text-neutral-400">{DEMO_HINTS[duration.name]}</span>
+        <span className="ml-auto text-[10px]" style={{ color: palette.muted }}>
+          {DEMO_HINTS[duration.name]}
+        </span>
       </div>
       <div className="h-32">
         {Demo && (
           <Demo
             ms={duration.ms}
             easingValue={easingValue}
-            primaryHex={primaryHex}
+            palette={palette}
             initialDelay={index * 250}
           />
         )}
@@ -311,7 +342,8 @@ export function MotionStep() {
   const motion = useTokens((s) => s.motion);
   const setMotion = useTokens((s) => s.setMotion);
   const hasColors = useTokens((s) => s.colors.length > 0);
-  const primaryHex = usePrimaryHex();
+  const palette = usePalette();
+  const primaryHex = palette.primary; // basic-view charts only need the brand color
   const [view, setView] = useState<"instance" | "basic">("instance");
 
   const durations = useMemo(() => buildDurations(motion.base), [motion.base]);
@@ -382,16 +414,18 @@ export function MotionStep() {
 
         {view === "instance" && (
           <div className="space-y-4 p-6">
-            <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-              {durations.map((d, i) => (
-                <DemoCard
-                  key={d.name}
-                  duration={d}
-                  easing={motion.easing}
-                  primaryHex={primaryHex}
-                  index={i}
-                />
-              ))}
+            <div className="rounded-xl p-4" style={{ background: palette.bg }}>
+              <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+                {durations.map((d, i) => (
+                  <DemoCard
+                    key={d.name}
+                    duration={d}
+                    easing={motion.easing}
+                    palette={palette}
+                    index={i}
+                  />
+                ))}
+              </div>
             </div>
             <div>
               <p className="mb-2 text-[10px] text-neutral-400">

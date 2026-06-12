@@ -2,6 +2,8 @@
 import { useMemo, useState } from "react";
 import { useTokens } from "@/lib/store";
 import { buildScale, SCALE_STEPS } from "@/lib/typography";
+import { resolvePalette } from "@/lib/mockup";
+import { relativeLuminance } from "@/lib/color";
 
 const FONT_PRESETS = [
   {
@@ -48,9 +50,13 @@ function matchPreset(stack: string): string {
 export function TypographyStep() {
   const typography = useTokens((s) => s.typography);
   const setTypography = useTokens((s) => s.setTypography);
-  const hasColors = useTokens((s) => s.colors.length > 0);
+  const colors = useTokens((s) => s.colors);
+  const globals = useTokens((s) => s.globals);
+  const hasColors = colors.length > 0;
   const [view, setView] = useState<"instance" | "basic">("basic");
 
+  const palette = useMemo(() => resolvePalette(colors, globals), [colors, globals]);
+  const onPrimary = relativeLuminance(palette.primary) < 0.45 ? "#ffffff" : "#111111";
   const scale = useMemo(() => buildScale(typography), [typography]);
   const bodyPreset = matchPreset(typography.fontFamily);
   const headingPreset = matchPreset(typography.headingFamily);
@@ -266,12 +272,15 @@ export function TypographyStep() {
         )}
 
         {view === "instance" && (
-          <div className="space-y-6 p-6">
+          <div className="space-y-6 rounded-b-xl p-6" style={{ background: palette.bg }}>
             {/* Article card */}
-            <article className="space-y-3 rounded-xl border border-neutral-100 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+            <article
+              className="space-y-3 rounded-xl p-5"
+              style={{ background: palette.surface, border: `1px solid ${palette.border}` }}
+            >
               <h2
-                className="text-neutral-900 dark:text-neutral-100"
                 style={{
+                  color: palette.fg,
                   fontFamily: typography.headingFamily,
                   fontSize: `${size("h2", 32)}px`,
                   fontWeight: Math.min(900, typography.fontWeight + 200),
@@ -282,8 +291,9 @@ export function TypographyStep() {
                 设计 Token 如何改变前端协作
               </h2>
               <p
-                className="font-mono text-neutral-400"
+                className="font-mono"
                 style={{
+                  color: palette.muted,
                   fontSize: `${size("caption", 10)}px`,
                   letterSpacing: `${typography.letterSpacing}em`,
                 }}
@@ -291,8 +301,8 @@ export function TypographyStep() {
                 2026 年 5 月 28 日 · 5 分钟阅读
               </p>
               <p
-                className="text-neutral-700 dark:text-neutral-300"
                 style={{
+                  color: palette.fg,
                   fontFamily: typography.fontFamily,
                   fontSize: `${size("body", 16)}px`,
                   fontWeight: typography.fontWeight,
@@ -306,8 +316,8 @@ export function TypographyStep() {
                 上下文里精确表达视觉语言。
               </p>
               <p
-                className="text-neutral-500 dark:text-neutral-400"
                 style={{
+                  color: palette.muted,
                   fontFamily: typography.fontFamily,
                   fontSize: `${size("small", 13)}px`,
                   fontWeight: typography.fontWeight,
@@ -320,10 +330,13 @@ export function TypographyStep() {
             </article>
 
             {/* UI label group */}
-            <div className="space-y-3 rounded-xl border border-neutral-100 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+            <div
+              className="space-y-3 rounded-xl p-5"
+              style={{ background: palette.surface, border: `1px solid ${palette.border}` }}
+            >
               <h4
-                className="text-neutral-900 dark:text-neutral-100"
                 style={{
+                  color: palette.fg,
                   fontFamily: typography.headingFamily,
                   fontSize: `${size("h4", 20)}px`,
                   fontWeight: Math.min(900, typography.fontWeight + 200),
@@ -335,8 +348,10 @@ export function TypographyStep() {
               </h4>
               <div className="flex items-center gap-3">
                 <button
-                  className="rounded-md bg-neutral-900 px-3 py-1.5 text-white dark:bg-white dark:text-black"
+                  className="rounded-md px-3 py-1.5"
                   style={{
+                    background: palette.primary,
+                    color: onPrimary,
                     fontFamily: typography.fontFamily,
                     fontSize: `${size("small", 13)}px`,
                     fontWeight: Math.min(900, typography.fontWeight + 100),
@@ -346,8 +361,9 @@ export function TypographyStep() {
                   继续阅读
                 </button>
                 <a
-                  className="text-neutral-500 underline-offset-2 hover:underline dark:text-neutral-400"
+                  className="underline-offset-2 hover:underline"
                   style={{
+                    color: palette.primary,
                     fontFamily: typography.fontFamily,
                     fontSize: `${size("small", 13)}px`,
                     fontWeight: typography.fontWeight,

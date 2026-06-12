@@ -227,7 +227,7 @@ export function TypographyStep() {
       </div>
 
       {/* Preview */}
-      <div className="min-w-0 rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="flex min-w-0 flex-col rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-2.5 dark:border-neutral-800">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
             字体预览
@@ -272,7 +272,7 @@ export function TypographyStep() {
         )}
 
         {view === "instance" && (
-          <div className="space-y-6 rounded-b-xl p-6" style={{ background: palette.bg }}>
+          <div className="flex-1 space-y-6 rounded-b-xl p-6" style={{ background: palette.bg }}>
             {/* Article card */}
             <article
               className="space-y-3 rounded-xl p-5"

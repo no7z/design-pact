@@ -9,6 +9,7 @@ import {
   buildBorderScale,
   buildOpacityScale,
 } from "@/lib/scales";
+import { hexA } from "@/lib/mockup";
 
 const SHADOW_LEVELS = ["sm", "md", "lg"] as const;
 type ShadowParam = "blur" | "offsetY" | "opacity";
@@ -460,28 +461,32 @@ export function StyleStep() {
               </div>
 
               <div className="space-y-1">
-                <span className="font-mono text-[10px] text-neutral-400">徽标 · full &nbsp;pill</span>
-                <div className="flex flex-wrap" style={{ gap: sp("xxs", 4) }}>
-                  {[
-                    { label: "已发布", active: true },
-                    { label: "草稿", active: false },
-                    { label: "审核中", active: false },
-                  ].map(({ label, active }) => (
-                    <span
-                      key={label}
-                      className="text-xs"
-                      style={{
-                        padding: `2px ${sp("xs", 8)}px`,
-                        borderRadius: 9999,
-                        background: active ? primaryHex + "18" : "rgb(245 245 245)",
-                        color: active ? primaryHex : "rgb(115 115 115)",
-                        border: `1px solid ${active ? primaryHex + "40" : "rgb(229 229 229)"}`,
-                      }}
-                    >
-                      {label}
-                    </span>
-                  ))}
+                <span className="font-mono text-[10px] text-neutral-400">弹窗 / 缩略图 · xl &nbsp;{rd("xl", 16)}px</span>
+                <div className="flex items-center" style={{ gap: sp("sm", 12) }}>
+                  <div
+                    className="shrink-0"
+                    style={{ width: 44, height: 44, borderRadius: rd("xl", 16), background: primaryHex + "30" }}
+                  />
+                  <div
+                    className="flex-1 border border-neutral-200 dark:border-neutral-700"
+                    style={{ padding: `${sp("xs", 8)}px ${sp("sm", 12)}px`, borderRadius: rd("xl", 16) }}
+                  >
+                    <div className="mb-1 h-1.5 w-1/2 rounded bg-neutral-200 dark:bg-neutral-700" />
+                    <div className="h-1.5 w-3/4 rounded bg-neutral-200 dark:bg-neutral-700" />
+                  </div>
                 </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span
+                  className="text-[10px]"
+                  style={{ padding: `2px ${sp("xs", 8)}px`, borderRadius: 9999, background: primaryHex + "18", color: primaryHex }}
+                >
+                  徽标
+                </span>
+                <span className="font-mono text-[10px] text-neutral-400">
+                  full 固定 9999px — 胶囊 / 圆形，不随 base 变化
+                </span>
               </div>
 
             </div>
@@ -532,7 +537,9 @@ export function StyleStep() {
                           fontSize: 11,
                           color: "rgb(115 115 115)",
                           background: "white",
-                          boxShadow: s.focus ? `0 0 0 3px ${primaryHex}33` : "none",
+                          boxShadow: s.focus
+                            ? `0 0 0 3px ${hexA(primaryHex, opacityScale.find((o) => o.name === "focus")?.value ?? 0.16)}`
+                            : "none",
                         }}
                       >
                         搜索…
@@ -541,43 +548,76 @@ export function StyleStep() {
                   );
                 })}
               </div>
-              <div className="flex flex-wrap" style={{ gap: sp("sm", 12) }}>
-                {opacityScale.map((o) => (
-                  <div key={o.name} className="flex flex-col items-center gap-1">
-                    <div
-                      style={{
-                        position: "relative",
-                        borderRadius: rd("md", 8),
-                        border:
-                          o.name === "focus"
-                            ? `2px solid ${primaryHex}`
-                            : `${border.base}px solid rgb(209 213 219)`,
-                        padding: `${sp("xxs", 4)}px ${sp("sm", 12)}px`,
-                        background: "white",
-                        fontSize: 11,
-                        color: o.name === "disabled" ? "rgb(163 163 163)" : "rgb(23 23 23)",
-                        opacity: o.name === "disabled" ? 0.38 : 1,
-                        overflow: "hidden",
-                      }}
-                    >
-                      发布
-                      {(o.name === "hover" || o.name === "pressed" || o.name === "overlay") && (
-                        <span
-                          style={{
-                            position: "absolute",
-                            inset: 0,
-                            background: primaryHex,
-                            opacity: o.value,
-                            pointerEvents: "none",
-                          }}
-                        />
-                      )}
+              <div className="flex flex-wrap items-start" style={{ gap: sp("sm", 12) }}>
+                {opacityScale.map((o) => {
+                  // overlay = modal/drawer scrim — show it over a thumbnail, not as a button tint.
+                  if (o.name === "overlay") {
+                    return (
+                      <div key={o.name} className="flex flex-col items-center gap-1">
+                        <div
+                          className="relative grid place-items-center overflow-hidden"
+                          style={{ width: 76, height: 34, borderRadius: rd("md", 8), background: primaryHex + "30" }}
+                        >
+                          <span style={{ position: "absolute", inset: 0, background: hexA("#000000", o.value) }} />
+                          <span
+                            className="relative"
+                            style={{
+                              background: "white",
+                              borderRadius: rd("sm", 4),
+                              padding: "2px 8px",
+                              fontSize: 9,
+                              color: "rgb(23 23 23)",
+                              boxShadow: shadowToCss(shadow.md),
+                            }}
+                          >
+                            弹窗
+                          </span>
+                        </div>
+                        <span className="font-mono text-[10px]" style={{ color: "rgb(148 163 184)" }}>
+                          {o.name}
+                        </span>
+                      </div>
+                    );
+                  }
+                  const isFocus = o.name === "focus";
+                  const isDisabled = o.name === "disabled";
+                  return (
+                    <div key={o.name} className="flex flex-col items-center gap-1">
+                      <div
+                        style={{
+                          position: "relative",
+                          borderRadius: rd("md", 8),
+                          border: isFocus
+                            ? `${bw("strong", border.base * 2)}px solid ${primaryHex}`
+                            : `${bw("default", border.base)}px solid rgb(209 213 219)`,
+                          padding: `${sp("xxs", 4)}px ${sp("sm", 12)}px`,
+                          background: "white",
+                          fontSize: 11,
+                          color: isDisabled ? "rgb(163 163 163)" : "rgb(23 23 23)",
+                          opacity: isDisabled ? o.value : 1,
+                          boxShadow: isFocus ? `0 0 0 3px ${hexA(primaryHex, o.value)}` : "none",
+                          overflow: "hidden",
+                        }}
+                      >
+                        发布
+                        {(o.name === "hover" || o.name === "pressed") && (
+                          <span
+                            style={{
+                              position: "absolute",
+                              inset: 0,
+                              background: primaryHex,
+                              opacity: o.value,
+                              pointerEvents: "none",
+                            }}
+                          />
+                        )}
+                      </div>
+                      <span className="font-mono text-[10px]" style={{ color: "rgb(148 163 184)" }}>
+                        {o.name}
+                      </span>
                     </div>
-                    <span className="font-mono text-[10px]" style={{ color: "rgb(148 163 184)" }}>
-                      {o.name}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

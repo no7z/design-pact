@@ -404,7 +404,7 @@ export function MotionStep() {
       </div>
 
       {/* Preview */}
-      <div className="rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="flex flex-col rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-2.5 dark:border-neutral-800">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
             动效演示
@@ -413,22 +413,20 @@ export function MotionStep() {
         </div>
 
         {view === "instance" && (
-          <div className="space-y-4 p-6">
-            <div className="rounded-xl p-4" style={{ background: palette.bg }}>
-              <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-                {durations.map((d, i) => (
-                  <DemoCard
-                    key={d.name}
-                    duration={d}
-                    easing={motion.easing}
-                    palette={palette}
-                    index={i}
-                  />
-                ))}
-              </div>
+          <div className="flex-1 space-y-4 rounded-b-xl p-6" style={{ background: palette.bg }}>
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+              {durations.map((d, i) => (
+                <DemoCard
+                  key={d.name}
+                  duration={d}
+                  easing={motion.easing}
+                  palette={palette}
+                  index={i}
+                />
+              ))}
             </div>
             <div>
-              <p className="mb-2 text-[10px] text-neutral-400">
+              <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>
                 可交互 · 移上去 / 按住 / 点输入框试试
               </p>
               <StatePreview />

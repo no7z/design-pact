@@ -245,7 +245,7 @@ export function StyleStep() {
       </div>
 
       {/* Preview */}
-      <div className="rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="flex flex-col rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-2.5 dark:border-neutral-800">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
             组件细节
@@ -357,7 +357,7 @@ export function StyleStep() {
         )}
 
         {view === "instance" && (
-          <div className="space-y-4 rounded-b-xl p-6" style={{ background: palette.bg }}>
+          <div className="flex-1 space-y-4 rounded-b-xl p-6" style={{ background: palette.bg }}>
 
         {/* Spacing — task list card, rendered in the actual palette */}
         <div>

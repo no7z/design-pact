@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useTokens, type Scheme } from "@/lib/store";
+import { useTokens, computedHex, type Scheme } from "@/lib/store";
 import { resolvePalette, type MockupPalette } from "@/lib/mockup";
 import { MockupView, type MockupKind } from "@/components/MockupViews";
 
@@ -37,6 +37,7 @@ export function SchemePanel() {
   const radius = useTokens((s) => s.radius);
   const motion = useTokens((s) => s.motion);
   const schemes = useTokens((s) => s.schemes);
+  const activeSchemeId = useTokens((s) => s.activeSchemeId);
   const saveScheme = useTokens((s) => s.saveScheme);
   const loadScheme = useTokens((s) => s.loadScheme);
   const deleteScheme = useTokens((s) => s.deleteScheme);
@@ -56,7 +57,7 @@ export function SchemePanel() {
     const m = scheme ? scheme.motion : motion;
     const swatches = [...c]
       .sort((x, y) => SWATCH_ORDER.indexOf(x.role) - SWATCH_ORDER.indexOf(y.role))
-      .map((x) => x.hex)
+      .map((x) => computedHex(x, g))
       .slice(0, 6);
     return {
       label: scheme ? scheme.name : "当前状态",
@@ -117,6 +118,7 @@ export function SchemePanel() {
           <SchemeChip
             key={s.id}
             scheme={s}
+            active={activeSchemeId === s.id}
             onLoad={() => loadScheme(s.id)}
             onDelete={() => {
               deleteScheme(s.id);
@@ -189,10 +191,12 @@ export function SchemePanel() {
 
 function SchemeChip({
   scheme,
+  active,
   onLoad,
   onDelete,
 }: {
   scheme: Scheme;
+  active: boolean;
   onLoad: () => void;
   onDelete: () => void;
 }) {
@@ -200,25 +204,43 @@ function SchemeChip({
     .sort((x, y) => SWATCH_ORDER.indexOf(x.role) - SWATCH_ORDER.indexOf(y.role))
     .slice(0, 4);
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 py-0.5 pl-1.5 pr-1 text-xs dark:border-neutral-700">
-      <span className="flex h-3.5 w-9 overflow-hidden rounded-sm">
+    <span
+      role="button"
+      tabIndex={0}
+      aria-pressed={active}
+      onClick={onLoad}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onLoad();
+        }
+      }}
+      title={active ? "当前已载入" : "点击载入此方案"}
+      className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border py-0.5 pl-1.5 pr-1 text-xs transition ${
+        active
+          ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-black"
+          : "border-neutral-200 hover:border-neutral-900 dark:border-neutral-700 dark:hover:border-white"
+      }`}
+    >
+      <span className="flex h-3.5 w-9 shrink-0 overflow-hidden rounded-sm">
         {swatches.map((c) => (
-          <span key={c.id} className="flex-1" style={{ background: c.hex }} />
+          <span key={c.id} className="flex-1" style={{ background: computedHex(c, scheme.globals) }} />
         ))}
       </span>
       <span className="max-w-24 truncate">{scheme.name}</span>
+      {active && <span className="text-[10px]" aria-hidden>✓</span>}
       <button
-        onClick={onLoad}
-        title="载入此方案"
-        className="rounded px-1 text-[10px] text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-white"
-      >
-        载入
-      </button>
-      <button
-        onClick={onDelete}
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
         title="删除此方案"
         aria-label={`删除方案 ${scheme.name}`}
-        className="rounded px-1 text-[10px] text-neutral-400 hover:bg-neutral-100 hover:text-red-600 dark:hover:bg-neutral-800"
+        className={`rounded px-1 text-[10px] transition ${
+          active
+            ? "text-white/60 hover:text-white dark:text-black/60 dark:hover:text-black"
+            : "text-neutral-400 hover:text-red-600"
+        }`}
       >
         ×
       </button>

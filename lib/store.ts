@@ -87,6 +87,7 @@ type State = {
   globals: Globals;
   dark: DarkMode;
   schemes: Scheme[];
+  activeSchemeId: string | null;
   description: string;
   recommendations: string[];
   activeBrand: string | null;
@@ -164,6 +165,7 @@ export const useTokens = create<State>()(
       globals: { dL: 0, dC: 0, dH: 0 },
       dark: defaultDark,
       schemes: [],
+      activeSchemeId: null,
       description: "",
       recommendations: [],
       activeBrand: null,
@@ -184,6 +186,7 @@ export const useTokens = create<State>()(
           })),
           globals: { dL: 0, dC: 0, dH: 0 },
           activeBrand: null,
+          activeSchemeId: null,
           // 新色板 → 旧的暗色微调不再适用
           dark: { enabled: s.dark.enabled, overrides: {} },
         })),
@@ -192,6 +195,7 @@ export const useTokens = create<State>()(
           colors: tokens.map((t, i) => ({ ...t, id: `c${i}` })),
           globals: { dL: 0, dC: 0, dH: 0 },
           activeBrand: brand,
+          activeSchemeId: null,
           dark: { enabled: s.dark.enabled, overrides: {} },
         })),
       updateColor: (id, patch) =>
@@ -261,7 +265,10 @@ export const useTokens = create<State>()(
           dark: { enabled: s.dark.enabled, overrides: { ...s.dark.overrides } },
           activeBrand: s.activeBrand,
         };
-        set((cur) => ({ schemes: [...cur.schemes, scheme].slice(-MAX_SCHEMES) }));
+        set((cur) => ({
+          schemes: [...cur.schemes, scheme].slice(-MAX_SCHEMES),
+          activeSchemeId: id,
+        }));
         return id;
       },
       loadScheme: (id) => {
@@ -279,10 +286,14 @@ export const useTokens = create<State>()(
           opacity: { ...scheme.opacity },
           dark: { enabled: scheme.dark.enabled, overrides: { ...scheme.dark.overrides } },
           activeBrand: scheme.activeBrand,
+          activeSchemeId: id,
         }));
       },
       deleteScheme: (id) =>
-        set((cur) => ({ schemes: cur.schemes.filter((x) => x.id !== id) })),
+        set((cur) => ({
+          schemes: cur.schemes.filter((x) => x.id !== id),
+          activeSchemeId: cur.activeSchemeId === id ? null : cur.activeSchemeId,
+        })),
       setDarkEnabled: (enabled) => set((cur) => ({ dark: { ...cur.dark, enabled } })),
       setDarkOverride: (id, hex) =>
         set((cur) => {
@@ -298,6 +309,7 @@ export const useTokens = create<State>()(
           globals: { dL: 0, dC: 0, dH: 0 },
           dark: defaultDark,
           activeBrand: null,
+          activeSchemeId: null,
         })),
     }),
     { name: "ui-generator-tokens", skipHydration: true },

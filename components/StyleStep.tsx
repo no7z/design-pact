@@ -365,9 +365,10 @@ export function StyleStep() {
           <div
             className="overflow-hidden"
             style={{
-              border: `1px solid ${palette.border}`,
+              border: `${bw("default", border.base)}px solid ${palette.border}`,
               borderRadius: Math.min(rd("lg", 12), sp("xs", 8) + 8),
               background: palette.surface,
+              boxShadow: shadowToCss(shadow.sm),
             }}
           >
             <div

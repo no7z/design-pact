@@ -218,7 +218,7 @@ function SchemeChip({
       title={active ? "当前已载入" : "点击载入此方案"}
       className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border py-0.5 pl-1.5 pr-1 text-xs transition ${
         active
-          ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-black"
+          ? "border-neutral-900 dark:border-white"
           : "border-neutral-200 hover:border-neutral-900 dark:border-neutral-700 dark:hover:border-white"
       }`}
     >
@@ -236,11 +236,7 @@ function SchemeChip({
         }}
         title="删除此方案"
         aria-label={`删除方案 ${scheme.name}`}
-        className={`rounded px-1 text-[10px] transition ${
-          active
-            ? "text-white/60 hover:text-white dark:text-black/60 dark:hover:text-black"
-            : "text-neutral-400 hover:text-red-600"
-        }`}
+        className="rounded px-1 text-[10px] text-neutral-400 transition hover:text-red-600"
       >
         ×
       </button>

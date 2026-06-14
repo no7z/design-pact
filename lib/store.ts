@@ -102,7 +102,6 @@ type State = {
   updateColor: (id: string, patch: Partial<ColorToken>) => void;
   setRole: (id: string, role: SemanticRole) => void;
   setGlobal: (g: Partial<Globals>) => void;
-  bakeGlobals: () => void;
   resetGlobals: () => void;
   setTypography: (t: Partial<Typography>) => void;
   setDescription: (s: string) => void;
@@ -213,11 +212,6 @@ export const useTokens = create<State>()(
       setRole: (id, role) =>
         set((s) => ({ colors: s.colors.map((c) => (c.id === id ? { ...c, role } : c)) })),
       setGlobal: (g) => set((s) => ({ globals: { ...s.globals, ...g } })),
-      bakeGlobals: () =>
-        set((s) => ({
-          colors: s.colors.map((c) => ({ ...c, baseHex: computedHex(c, s.globals), hex: computedHex(c, s.globals) })),
-          globals: { dL: 0, dC: 0, dH: 0 },
-        })),
       resetGlobals: () => set(() => ({ globals: { dL: 0, dC: 0, dH: 0 } })),
       setTypography: (t) => set((s) => ({ typography: { ...s.typography, ...t } })),
       setDescription: (s) => set(() => ({ description: s })),

@@ -39,13 +39,11 @@ function ColorWheel({
   colors,
   onChange,
   onReset,
-  onBake,
 }: {
   globals: Globals;
   colors: ColorToken[];
   onChange: (patch: Partial<Globals>) => void;
   onReset: () => void;
-  onBake: () => void;
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
   const dragging = useRef(false);
@@ -210,12 +208,6 @@ function ColorWheel({
             className="rounded border border-neutral-300 px-2 py-0.5 text-xs hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
           >
             重置
-          </button>
-          <button
-            onClick={onBake}
-            className="rounded bg-neutral-900 px-2 py-0.5 text-xs text-white hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
-          >
-            固化
           </button>
         </div>
       </div>
@@ -413,7 +405,6 @@ export function Editor() {
   const colors   = useTokens((s) => s.colors);
   const globals  = useTokens((s) => s.globals);
   const setGlobal     = useTokens((s) => s.setGlobal);
-  const bakeGlobals   = useTokens((s) => s.bakeGlobals);
   const resetGlobals  = useTokens((s) => s.resetGlobals);
   const updateColor   = useTokens((s) => s.updateColor);
   const setRole       = useTokens((s) => s.setRole);
@@ -430,7 +421,6 @@ export function Editor() {
         colors={colors}
         onChange={setGlobal}
         onReset={resetGlobals}
-        onBake={bakeGlobals}
       />
 
       <section className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">

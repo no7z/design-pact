@@ -4,7 +4,7 @@ import { ReactLenis, useLenis } from "lenis/react";
 import { StoreHydration } from "@/components/StoreHydration";
 import { DescribeStep } from "@/components/DescribeStep";
 import { WorkflowNav } from "@/components/WorkflowNav";
-import { Editor } from "@/components/Editor";
+import { Editor, DarkPairingToggle } from "@/components/Editor";
 import { SchemePanel } from "@/components/SchemePanel";
 import { Preview } from "@/components/Preview";
 import { TypographyStep } from "@/components/TypographyStep";
@@ -65,7 +65,10 @@ function WorkArea() {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <div className="space-y-4">
               <header className="space-y-1">
-                <h2 className="text-2xl font-semibold tracking-tight">调色</h2>
+                <div className="flex items-center justify-between gap-3">
+                  <h2 className="text-2xl font-semibold tracking-tight">调色</h2>
+                  <DarkPairingToggle />
+                </div>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">
                   色轮做整体协调，点击色块编辑单色。
                 </p>

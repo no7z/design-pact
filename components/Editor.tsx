@@ -328,11 +328,17 @@ function ColorCard({
           : "border-neutral-200 hover:border-neutral-400 dark:border-neutral-800 dark:hover:border-neutral-600"
       }`}
     >
-      <div className={`w-full ${hero ? "h-24" : "h-16"}`} style={{ background: display }} />
-      {oppositeHex && (
-        // The other face — a thin strip so the pairing reads at a glance.
-        <div className="h-3 w-full" style={{ background: oppositeHex }} title={`另一面 ${oppositeHex}`} />
-      )}
+      <div className={`relative w-full ${hero ? "h-24" : "h-16"}`} style={{ background: display }}>
+        {oppositeHex && (
+          // The other face — a small corner-cut triangle so the pairing reads
+          // at a glance without splitting the swatch.
+          <span
+            className="absolute bottom-0 right-0 h-4 w-4"
+            style={{ background: oppositeHex, clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
+            title={`另一面 ${oppositeHex}`}
+          />
+        )}
+      </div>
       <div className="px-2 py-1.5">
         <div className="font-mono text-[10px] text-neutral-700 dark:text-neutral-300">{display}</div>
         <div className={`mt-1 inline-block rounded px-1.5 py-0.5 text-[9px] font-medium ${ROLE_BADGE[token.role]}`}>
@@ -440,6 +446,29 @@ function ColorDetail({
   );
 }
 
+// ─── Dark-pairing toggle (rendered next to the 调色 title) ────────────────────
+
+export function DarkPairingToggle() {
+  const enabled = useTokens((s) => s.dark.enabled);
+  const setDarkEnabled = useTokens((s) => s.setDarkEnabled);
+  const hasColors = useTokens((s) => s.colors.length > 0);
+  if (!hasColors) return null;
+  return (
+    <button
+      onClick={() => setDarkEnabled(!enabled)}
+      aria-pressed={enabled}
+      title="为每个颜色生成明暗配对，导出 @media (prefers-color-scheme)"
+      className={`shrink-0 rounded-full border px-3 py-1 text-xs transition ${
+        enabled
+          ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-black"
+          : "border-neutral-300 text-neutral-600 hover:border-neutral-900 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-white dark:hover:text-white"
+      }`}
+    >
+      {enabled ? "✓ 明暗配对" : "明暗配对"}
+    </button>
+  );
+}
+
 // ─── Editor ──────────────────────────────────────────────────────────────────
 
 export function Editor() {
@@ -450,7 +479,6 @@ export function Editor() {
   const resetGlobals    = useTokens((s) => s.resetGlobals);
   const updateColor     = useTokens((s) => s.updateColor);
   const setRole         = useTokens((s) => s.setRole);
-  const setDarkEnabled  = useTokens((s) => s.setDarkEnabled);
   const setDarkOverride = useTokens((s) => s.setDarkOverride);
 
   const [openId, setOpenId] = useState<string | null>(null);
@@ -471,21 +499,7 @@ export function Editor() {
       />
 
       <section className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
-        <div className="mb-2.5 flex items-center justify-between">
-          <h3 className="text-xs font-semibold">颜色 ({colors.length})</h3>
-          <button
-            onClick={() => setDarkEnabled(!dark.enabled)}
-            aria-pressed={dark.enabled}
-            title="为每个颜色生成明暗配对，导出 @media (prefers-color-scheme)"
-            className={`rounded-full border px-2.5 py-0.5 text-[10px] transition ${
-              dark.enabled
-                ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-black"
-                : "border-neutral-300 text-neutral-500 hover:border-neutral-900 hover:text-neutral-900 dark:border-neutral-700 dark:hover:border-white dark:hover:text-white"
-            }`}
-          >
-            {dark.enabled ? "✓ 明暗配对" : "明暗配对"}
-          </button>
-        </div>
+        <h3 className="mb-2.5 text-xs font-semibold">颜色 ({colors.length})</h3>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {[...colors]
             .sort((a, b) => (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9))

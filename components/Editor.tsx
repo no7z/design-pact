@@ -333,7 +333,7 @@ function ColorCard({
           // The other face — a small corner-cut triangle so the pairing reads
           // at a glance without splitting the swatch.
           <span
-            className="absolute bottom-0 right-0 h-4 w-4"
+            className={`absolute bottom-0 right-0 ${hero ? "h-9 w-9" : "h-7 w-7"}`}
             style={{ background: oppositeHex, clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
             title={`另一面 ${oppositeHex}`}
           />

@@ -391,18 +391,16 @@ function ColorDetail({
         </button>
       </div>
 
-      {/* Role is low-frequency / advanced — show the current one read-only and
-          tuck the editor behind a 改用途 disclosure. */}
-      <div className="flex items-center gap-2">
-        <span className="text-[10px] text-neutral-500 dark:text-neutral-400">用途</span>
-        <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${ROLE_BADGE[token.role]}`}>
-          {token.role}
-        </span>
+      {/* Role is low-frequency / advanced — the role badge itself is the
+          disclosure: click it to expand the role buttons. */}
+      <div>
         <button
           onClick={() => setShowRoles((v) => !v)}
-          className="text-[10px] text-neutral-400 underline-offset-2 hover:text-neutral-700 hover:underline dark:hover:text-neutral-200"
+          title="点击调整用途"
+          className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${ROLE_BADGE[token.role]}`}
         >
-          {showRoles ? "收起" : "改用途"}
+          {token.role}
+          <span className="opacity-50">{showRoles ? "▴" : "▾"}</span>
         </button>
       </div>
       {showRoles && (
@@ -521,7 +519,7 @@ export function Editor() {
         <h3 className="text-xs font-semibold">颜色 ({colors.length})</h3>
         {rolesUncertain && (
           <p className="mb-2.5 mt-1 text-[10px] leading-relaxed text-amber-600 dark:text-amber-500">
-            颜色用途是从图片/网址按比例自动推测的，可能不准 — 点色块展开后可「改用途」校正。
+            颜色用途是从图片/网址按比例自动推测的，可能不准 — 点色块后点用途标签可校正。
           </p>
         )}
         <div className={`grid grid-cols-2 gap-2 sm:grid-cols-4 ${rolesUncertain ? "" : "mt-2.5"}`}>

@@ -93,6 +93,7 @@ export function applyShareFromUrl(): boolean {
 
   useTokens.setState({
     colors,
+    rolesUncertain: false, // 分享的是成品，角色可靠
     typography: { ...cur.typography, ...obj(payload.typography) },
     globals: { ...cur.globals, ...obj(payload.globals) },
     spacing: { ...cur.spacing, ...obj(payload.spacing) },

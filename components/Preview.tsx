@@ -2,7 +2,7 @@
 import { useState, useMemo } from "react";
 import { useTokens } from "@/lib/store";
 import { resolvePalette } from "@/lib/mockup";
-import { darkTokens } from "@/lib/darkMode";
+import { lightDarkFaces, isDarkPalette } from "@/lib/darkMode";
 import { MockupView, type MockupKind } from "@/components/MockupViews";
 
 const ZERO_GLOBALS = { dL: 0, dC: 0, dH: 0 };
@@ -34,16 +34,17 @@ export function Preview() {
   const globals = useTokens((s) => s.globals);
   const dark = useTokens((s) => s.dark);
   const [kind, setKind] = useState<PreviewKind>("all");
-  const [scheme, setScheme] = useState<"light" | "dark">("light");
-
-  const showDark = dark.enabled && scheme === "dark";
-  const palette = useMemo(
-    () =>
-      showDark
-        ? resolvePalette(darkTokens(colors, globals, dark.overrides), ZERO_GLOBALS)
-        : resolvePalette(colors, globals),
-    [colors, globals, showDark, dark.overrides],
+  // Default the toggle to the base palette's own nature so enabling pairing
+  // doesn't flip a dark-themed brand to light on first view.
+  const [scheme, setScheme] = useState<"light" | "dark">(() =>
+    isDarkPalette(useTokens.getState().colors, useTokens.getState().globals) ? "dark" : "light",
   );
+
+  const palette = useMemo(() => {
+    if (!dark.enabled) return resolvePalette(colors, globals);
+    const faces = lightDarkFaces(colors, globals, dark.overrides);
+    return resolvePalette(scheme === "dark" ? faces.dark : faces.light, ZERO_GLOBALS);
+  }, [colors, globals, dark.enabled, dark.overrides, scheme]);
 
   if (colors.length === 0) return null;
 

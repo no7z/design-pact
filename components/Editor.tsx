@@ -9,6 +9,7 @@ import {
   type SemanticRole,
 } from "@/lib/store";
 import { hexToOklch, oklchToHex } from "@/lib/color";
+import { resolveOppositeHex, isDarkPalette } from "@/lib/darkMode";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -310,9 +311,10 @@ const ROLE_ORDER: Record<SemanticRole, number> = {
 const HERO_ROLES = new Set<SemanticRole>(["background", "primary"]);
 
 function ColorCard({
-  token, globals, isSelected, onToggle, hero,
+  token, globals, isSelected, onToggle, hero, oppositeHex,
 }: {
   token: ColorToken; globals: Globals; isSelected: boolean; onToggle: () => void; hero: boolean;
+  oppositeHex: string | null;
 }) {
   const display = computedHex(token, globals);
   return (
@@ -327,6 +329,10 @@ function ColorCard({
       }`}
     >
       <div className={`w-full ${hero ? "h-24" : "h-16"}`} style={{ background: display }} />
+      {oppositeHex && (
+        // The other face — a thin strip so the pairing reads at a glance.
+        <div className="h-3 w-full" style={{ background: oppositeHex }} title={`另一面 ${oppositeHex}`} />
+      )}
       <div className="px-2 py-1.5">
         <div className="font-mono text-[10px] text-neutral-700 dark:text-neutral-300">{display}</div>
         <div className={`mt-1 inline-block rounded px-1.5 py-0.5 text-[9px] font-medium ${ROLE_BADGE[token.role]}`}>
@@ -341,11 +347,18 @@ function ColorCard({
 
 function ColorDetail({
   token, globals, onUpdate, onRoleChange, onClose,
+  paired, oppositeLabel, oppositeHex, oppositeOverridden, onOppositeChange, onOppositeReset,
 }: {
   token: ColorToken; globals: Globals;
   onUpdate: (hex: string) => void;
   onRoleChange: (role: SemanticRole) => void;
   onClose: () => void;
+  paired: boolean;
+  oppositeLabel: string;
+  oppositeHex: string;
+  oppositeOverridden: boolean;
+  onOppositeChange: (hex: string) => void;
+  onOppositeReset: () => void;
 }) {
   const display = computedHex(token, globals);
   const [pickerColor, setPickerColor] = useState(token.baseHex);
@@ -395,6 +408,34 @@ function ColorDetail({
           编辑此颜色会重置其基线 — 全局调节将以新值为起点。
         </p>
       </div>
+
+      {paired && (
+        <div className="flex items-center gap-2 border-t border-neutral-100 pt-3 dark:border-neutral-800">
+          <span className="text-[10px] text-neutral-500 dark:text-neutral-400">{oppositeLabel}对应</span>
+          <label
+            className="relative h-6 w-9 cursor-pointer overflow-hidden rounded border border-neutral-200 dark:border-neutral-700"
+            style={{ background: oppositeHex }}
+            title={`点击微调${oppositeLabel}`}
+          >
+            <input
+              type="color"
+              value={oppositeHex}
+              onChange={(e) => onOppositeChange(e.target.value)}
+              className="absolute inset-0 cursor-pointer opacity-0"
+            />
+          </label>
+          <span className="font-mono text-[10px] text-neutral-600 dark:text-neutral-300">{oppositeHex}</span>
+          <span className="text-[10px] text-neutral-400">{oppositeOverridden ? "已覆盖" : "自动"}</span>
+          {oppositeOverridden && (
+            <button
+              onClick={onOppositeReset}
+              className="text-[10px] text-neutral-400 underline-offset-2 hover:underline"
+            >
+              重置
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -404,13 +445,19 @@ function ColorDetail({
 export function Editor() {
   const colors   = useTokens((s) => s.colors);
   const globals  = useTokens((s) => s.globals);
-  const setGlobal     = useTokens((s) => s.setGlobal);
-  const resetGlobals  = useTokens((s) => s.resetGlobals);
-  const updateColor   = useTokens((s) => s.updateColor);
-  const setRole       = useTokens((s) => s.setRole);
+  const dark     = useTokens((s) => s.dark);
+  const setGlobal       = useTokens((s) => s.setGlobal);
+  const resetGlobals    = useTokens((s) => s.resetGlobals);
+  const updateColor     = useTokens((s) => s.updateColor);
+  const setRole         = useTokens((s) => s.setRole);
+  const setDarkEnabled  = useTokens((s) => s.setDarkEnabled);
+  const setDarkOverride = useTokens((s) => s.setDarkOverride);
 
   const [openId, setOpenId] = useState<string | null>(null);
   const openToken = colors.find((c) => c.id === openId) ?? null;
+
+  // The opposite face is the light one when the base palette is itself dark.
+  const oppositeLabel = isDarkPalette(colors, globals) ? "亮色" : "暗色";
 
   if (colors.length === 0) return null;
 
@@ -424,7 +471,21 @@ export function Editor() {
       />
 
       <section className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
-        <h3 className="mb-2.5 text-xs font-semibold">颜色 ({colors.length})</h3>
+        <div className="mb-2.5 flex items-center justify-between">
+          <h3 className="text-xs font-semibold">颜色 ({colors.length})</h3>
+          <button
+            onClick={() => setDarkEnabled(!dark.enabled)}
+            aria-pressed={dark.enabled}
+            title="为每个颜色生成明暗配对，导出 @media (prefers-color-scheme)"
+            className={`rounded-full border px-2.5 py-0.5 text-[10px] transition ${
+              dark.enabled
+                ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-black"
+                : "border-neutral-300 text-neutral-500 hover:border-neutral-900 hover:text-neutral-900 dark:border-neutral-700 dark:hover:border-white dark:hover:text-white"
+            }`}
+          >
+            {dark.enabled ? "✓ 明暗配对" : "明暗配对"}
+          </button>
+        </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {[...colors]
             .sort((a, b) => (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9))
@@ -436,6 +497,7 @@ export function Editor() {
                 isSelected={openId === c.id}
                 onToggle={() => setOpenId(openId === c.id ? null : c.id)}
                 hero={HERO_ROLES.has(c.role)}
+                oppositeHex={dark.enabled ? resolveOppositeHex(c, globals, dark.overrides) : null}
               />
             ))}
         </div>
@@ -446,6 +508,12 @@ export function Editor() {
             onUpdate={(hex) => updateColor(openToken.id, { hex })}
             onRoleChange={(role) => setRole(openToken.id, role)}
             onClose={() => setOpenId(null)}
+            paired={dark.enabled}
+            oppositeLabel={oppositeLabel}
+            oppositeHex={resolveOppositeHex(openToken, globals, dark.overrides)}
+            oppositeOverridden={openToken.id in dark.overrides}
+            onOppositeChange={(hex) => setDarkOverride(openToken.id, hex)}
+            onOppositeReset={() => setDarkOverride(openToken.id, null)}
           />
         )}
       </section>

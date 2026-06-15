@@ -14,7 +14,7 @@ import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
 import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
 import { GeneratePage } from "./GeneratePage";
 import { ShareLink } from "./ShareLink";
-import { darkTokens } from "@/lib/darkMode";
+import { lightDarkFaces } from "@/lib/darkMode";
 
 type Tab = "json" | "tailwind" | "css" | "ai";
 
@@ -35,17 +35,23 @@ export function Export() {
   const [visualOpen, setVisualOpen] = useState(true);
   const [vBusy, setVBusy] = useState(false);
 
-  const resolved: ResolvedToken[] = useMemo(
-    () => colors.map((c) => ({ ...c, displayHex: computedHex(c, globals) })),
-    [colors, globals],
-  );
+  // When pairing is on, exports follow the CSS convention regardless of
+  // whether the brand is light- or dark-based: :root is always the LIGHT
+  // face, @media(prefers-color-scheme:dark) the dark face. When off, export
+  // the palette as-is (single theme).
+  const resolved: ResolvedToken[] = useMemo(() => {
+    if (!dark.enabled) {
+      return colors.map((c) => ({ ...c, displayHex: computedHex(c, globals) }));
+    }
+    return lightDarkFaces(colors, globals, dark.overrides).light.map((c) => ({ ...c, displayHex: c.hex }));
+  }, [colors, globals, dark.enabled, dark.overrides]);
 
   const darkResolved: ResolvedToken[] | null = useMemo(
     () =>
       dark.enabled
-        ? darkTokens(colors, globals, dark.overrides).map((c) => ({ ...c, displayHex: c.hex }))
+        ? lightDarkFaces(colors, globals, dark.overrides).dark.map((c) => ({ ...c, displayHex: c.hex }))
         : null,
-    [colors, globals, dark],
+    [colors, globals, dark.enabled, dark.overrides],
   );
 
   const promptText = useMemo(

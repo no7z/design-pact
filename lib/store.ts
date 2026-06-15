@@ -88,6 +88,7 @@ type State = {
   dark: DarkMode;
   schemes: Scheme[];
   activeSchemeId: string | null;
+  rolesUncertain: boolean;
   description: string;
   recommendations: string[];
   activeBrand: string | null;
@@ -165,6 +166,7 @@ export const useTokens = create<State>()(
       dark: defaultDark,
       schemes: [],
       activeSchemeId: null,
+      rolesUncertain: false,
       description: "",
       recommendations: [],
       activeBrand: null,
@@ -186,6 +188,8 @@ export const useTokens = create<State>()(
           globals: { dL: 0, dC: 0, dH: 0 },
           activeBrand: null,
           activeSchemeId: null,
+          // 图片/网址来源的角色是按颜色顺序猜的，可能不准
+          rolesUncertain: true,
           // 新色板 → 旧的暗色微调不再适用
           dark: { enabled: s.dark.enabled, overrides: {} },
         })),
@@ -195,6 +199,8 @@ export const useTokens = create<State>()(
           globals: { dL: 0, dC: 0, dH: 0 },
           activeBrand: brand,
           activeSchemeId: null,
+          // 模板/AI/JSON 导入的角色来自标准化或显式声明，可靠
+          rolesUncertain: false,
           dark: { enabled: s.dark.enabled, overrides: {} },
         })),
       updateColor: (id, patch) =>
@@ -210,7 +216,10 @@ export const useTokens = create<State>()(
           ),
         })),
       setRole: (id, role) =>
-        set((s) => ({ colors: s.colors.map((c) => (c.id === id ? { ...c, role } : c)) })),
+        set((s) => ({
+          colors: s.colors.map((c) => (c.id === id ? { ...c, role } : c)),
+          rolesUncertain: false, // 用户已手动调整用途，不再提示
+        })),
       setGlobal: (g) => set((s) => ({ globals: { ...s.globals, ...g } })),
       resetGlobals: () => set(() => ({ globals: { dL: 0, dC: 0, dH: 0 } })),
       setTypography: (t) => set((s) => ({ typography: { ...s.typography, ...t } })),

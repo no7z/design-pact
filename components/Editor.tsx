@@ -368,6 +368,7 @@ function ColorDetail({
 }) {
   const display = computedHex(token, globals);
   const [pickerColor, setPickerColor] = useState(token.baseHex);
+  const [showRoles, setShowRoles] = useState(false);
 
   // Only reset picker when switching to a different token, not when globals
   // shift display — adjust during render instead of via an effect.
@@ -375,6 +376,7 @@ function ColorDetail({
   if (pickerForId !== token.id) {
     setPickerForId(token.id);
     setPickerColor(token.baseHex);
+    setShowRoles(false);
   }
 
   return (
@@ -389,21 +391,37 @@ function ColorDetail({
         </button>
       </div>
 
-      <div className="flex flex-wrap gap-1">
-        {ROLES.map((r) => (
-          <button
-            key={r}
-            onClick={() => onRoleChange(r)}
-            className={`rounded px-2 py-0.5 text-[10px] font-medium transition ${
-              token.role === r
-                ? ROLE_BADGE[r] + " ring-1 ring-current"
-                : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
-            }`}
-          >
-            {r}
-          </button>
-        ))}
+      {/* Role is low-frequency / advanced — show the current one read-only and
+          tuck the editor behind a 改用途 disclosure. */}
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] text-neutral-500 dark:text-neutral-400">用途</span>
+        <span className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${ROLE_BADGE[token.role]}`}>
+          {token.role}
+        </span>
+        <button
+          onClick={() => setShowRoles((v) => !v)}
+          className="text-[10px] text-neutral-400 underline-offset-2 hover:text-neutral-700 hover:underline dark:hover:text-neutral-200"
+        >
+          {showRoles ? "收起" : "改用途"}
+        </button>
       </div>
+      {showRoles && (
+        <div className="flex flex-wrap gap-1">
+          {ROLES.map((r) => (
+            <button
+              key={r}
+              onClick={() => onRoleChange(r)}
+              className={`rounded px-2 py-0.5 text-[10px] font-medium transition ${
+                token.role === r
+                  ? ROLE_BADGE[r] + " ring-1 ring-current"
+                  : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
+              }`}
+            >
+              {r}
+            </button>
+          ))}
+        </div>
+      )}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
         <HexColorPicker
@@ -475,6 +493,7 @@ export function Editor() {
   const colors   = useTokens((s) => s.colors);
   const globals  = useTokens((s) => s.globals);
   const dark     = useTokens((s) => s.dark);
+  const rolesUncertain = useTokens((s) => s.rolesUncertain);
   const setGlobal       = useTokens((s) => s.setGlobal);
   const resetGlobals    = useTokens((s) => s.resetGlobals);
   const updateColor     = useTokens((s) => s.updateColor);
@@ -499,8 +518,13 @@ export function Editor() {
       />
 
       <section className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
-        <h3 className="mb-2.5 text-xs font-semibold">颜色 ({colors.length})</h3>
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <h3 className="text-xs font-semibold">颜色 ({colors.length})</h3>
+        {rolesUncertain && (
+          <p className="mb-2.5 mt-1 text-[10px] leading-relaxed text-amber-600 dark:text-amber-500">
+            颜色用途是从图片/网址按比例自动推测的，可能不准 — 点色块展开后可「改用途」校正。
+          </p>
+        )}
+        <div className={`grid grid-cols-2 gap-2 sm:grid-cols-4 ${rolesUncertain ? "" : "mt-2.5"}`}>
           {[...colors]
             .sort((a, b) => (ROLE_ORDER[a.role] ?? 9) - (ROLE_ORDER[b.role] ?? 9))
             .map((c) => (

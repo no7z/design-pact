@@ -104,7 +104,7 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
           <PaletteFlow key={runId} description={description} onLoaded={onLoaded} />
         )}
 
-        <div className="max-w-2xl pt-6">
+        <div className="pt-6">
           <button
             onClick={() => setShowFallback((v) => !v)}
             className="text-xs text-neutral-500 underline-offset-4 hover:underline dark:text-neutral-400"

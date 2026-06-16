@@ -49,7 +49,7 @@ export function AllTemplatesBrowser({ onPicked }: { onPicked: (brand: string) =>
         onChange={(e) => setQuery(e.target.value)}
         className="w-full rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs outline-none focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-900 dark:focus:border-neutral-500"
       />
-      <div className="grid grid-cols-2 gap-2.5 rounded-lg border border-neutral-200 p-2.5 dark:border-neutral-800 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+      <div className="grid grid-cols-2 gap-2.5 rounded-lg border border-neutral-200 p-2.5 dark:border-neutral-800 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8">
         {filtered.length === 0 ? (
           <p className="col-span-full p-3 text-xs text-neutral-400">无匹配品牌</p>
         ) : (

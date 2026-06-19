@@ -6,7 +6,7 @@ import { useTokens } from "@/lib/store";
 type Step = { id: string; label: string };
 
 const ALL_STEPS: Step[] = [
-  { id: "step-describe", label: "描述" },
+  { id: "step-describe", label: "开始" },
   { id: "step-edit", label: "调色" },
   { id: "step-typography", label: "字体" },
   { id: "step-tokens", label: "细节" },

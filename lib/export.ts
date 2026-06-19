@@ -422,6 +422,50 @@ export function tokensStudioJson(
   );
 }
 
+// Self-contained, distributable design-system file.
+//
+// One markdown document that serves three readers at once:
+//  - humans: the prose sections render on GitHub / in any editor
+//  - AI agents: the verbatim `:root` contract in the prose is the same one the
+//    eval harness scored ~98/100 — an agent reads the file and generates UI
+//    against it, using ITS OWN compute (no server round-trip)
+//  - tools (the companion CLI): the fenced ```json block at the bottom is the
+//    W3C token set for exact, deterministic conversion to css/tailwind
+//
+// Flow: export this from the web app → drop it in a repo → the agent reads it.
+// The CLI is optional; the file alone is enough for an agent.
+export function designSystemMarkdown(
+  colors: ResolvedToken[],
+  typography: Typography,
+  spacing: Spacing,
+  radius: Radius,
+  shadow: Shadow,
+  motion: Motion,
+  border: Border,
+  opacity: Opacity,
+  darkColors?: ResolvedToken[] | null,
+): string {
+  const prompt = aiPrompt(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors);
+  const tokens = w3cTokens(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors);
+  const generated = new Date().toISOString().slice(0, 10);
+  return `---
+ui-generator: 1
+generated: ${generated}
+---
+
+${prompt}
+---
+
+## 机器可读 tokens (W3C Design Tokens)
+
+人类和 AI 读上面的说明即可。下面这段 JSON 供工具（配套 CLI）精确、确定性地还原设计系统并转成 CSS / Tailwind 等格式。
+
+\`\`\`json
+${JSON.stringify(tokens, null, 2)}
+\`\`\`
+`;
+}
+
 export function downloadFile(filename: string, content: string, mime = "text/plain") {
   const blob = new Blob([content], { type: mime });
   const url = URL.createObjectURL(blob);

@@ -1,4 +1,4 @@
-import type { ColorToken, Typography, Spacing, Radius, Shadow, Motion, Border, Opacity } from "./store";
+import type { ColorToken, Typography, Spacing, Radius, Shadow, Motion, Border, Opacity } from "./tokens-core";
 import { buildScale, SCALE_STEPS } from "./typography";
 import { buildSpacing, buildRadius, shadowToCss, buildDurations, EASING_PRESETS, buildBorderScale, buildOpacityScale, boldWeight } from "./scales";
 import { oklchString } from "./color";

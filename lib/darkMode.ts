@@ -13,7 +13,7 @@
 // OPPOSITE face — i.e. "the other side" of whatever the user is editing.
 
 import { hexToOklch, oklchToHex } from "./color";
-import { computedHex, type ColorToken, type Globals, type SemanticRole } from "./store";
+import { computedHex, type ColorToken, type Globals, type SemanticRole } from "./tokens-core";
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 

@@ -35,7 +35,7 @@ npx design-system-md add design-system.md --format css|tailwind|w3c|all
 #    → tokens.css / tailwind.config.js / design-tokens.json
 ```
 
-- **Skill**：`skill/SKILL.md` 拷到 `~/.claude/skills/`（或项目 `.claude/skills/`），教 agent 识别并应用 `design-system.md`。
+- **Skill**：`skill/SKILL.md` 拷到 `~/.claude/skills/design-system/`（或项目 `.claude/skills/design-system/`）。它是项目起步时的决策入口——先搜 `design-system.md`：**有就按它生成 UI，没有就打开 UI Generator 网页**（默认 `http://localhost:3000`，有线上部署可替换）让你现做、导出后回到项目继续。
 - **CLI**：见 [`packages/cli`](packages/cli/README.md)。纯本地、确定性、不联网、不调 AI；css/json 与网页导出逐字一致，tailwind 复用网页同一套 `tailwindConfig` 生成、零漂移。
 
 ## 开发

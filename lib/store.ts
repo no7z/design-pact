@@ -5,6 +5,13 @@ import { buildShadowsFromIntensity } from "./scales";
 import type { ExtractedColor } from "./extract";
 import {
   computedHex,
+  defaultTypography,
+  defaultSpacing,
+  defaultRadius,
+  defaultMotion,
+  defaultBorder,
+  defaultOpacity,
+  defaultShadow,
   type SemanticRole,
   type ColorToken,
   type Typography,
@@ -103,26 +110,6 @@ type State = {
   reset: () => void;
 };
 
-const defaultTypography: Typography = {
-  base: 16,
-  ratio: 1.25,
-  fontFamily: "Inter, system-ui, sans-serif",
-  headingFamily: "Inter, system-ui, sans-serif",
-  fontWeight: 400,
-  lineHeight: 1.5,
-  letterSpacing: 0,
-};
-
-const defaultSpacing: Spacing = { base: 4 };
-const defaultRadius: Radius = { base: 8 };
-const defaultMotion: Motion = { base: 200, easing: "ease-out" };
-const defaultBorder: Border = { base: 1 };
-const defaultOpacity: Opacity = { base: 0.08 };
-const defaultShadow: Shadow = {
-  intensity: 0.5,
-  advanced: false,
-  ...buildShadowsFromIntensity(0.5),
-};
 const defaultDark: DarkMode = { enabled: false, overrides: {} };
 
 const inferRole = (idx: number, total: number): SemanticRole => {

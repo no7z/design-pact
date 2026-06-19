@@ -6,6 +6,7 @@
 // everything below, so existing `@/lib/store` imports keep working unchanged.
 
 import { adjustHex } from "./color";
+import { buildShadowsFromIntensity } from "./scales";
 import type { EasingPreset } from "./scales";
 
 export type SemanticRole =
@@ -60,3 +61,25 @@ export type Globals = { dL: number; dC: number; dH: number };
 /** A token's on-screen color after the global OKLCH adjustment is applied. */
 export const computedHex = (token: ColorToken, g: Globals): string =>
   adjustHex(token.baseHex, g);
+
+// Default token values — used as the store's initial state and as the base the
+// CLI / importTokens merge parsed partials onto.
+export const defaultTypography: Typography = {
+  base: 16,
+  ratio: 1.25,
+  fontFamily: "Inter, system-ui, sans-serif",
+  headingFamily: "Inter, system-ui, sans-serif",
+  fontWeight: 400,
+  lineHeight: 1.5,
+  letterSpacing: 0,
+};
+export const defaultSpacing: Spacing = { base: 4 };
+export const defaultRadius: Radius = { base: 8 };
+export const defaultMotion: Motion = { base: 200, easing: "ease-out" };
+export const defaultBorder: Border = { base: 1 };
+export const defaultOpacity: Opacity = { base: 0.08 };
+export const defaultShadow: Shadow = {
+  intensity: 0.5,
+  advanced: false,
+  ...buildShadowsFromIntensity(0.5),
+};

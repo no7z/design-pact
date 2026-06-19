@@ -1,59 +1,39 @@
 "use client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { adjustHex } from "./color";
 import { buildShadowsFromIntensity } from "./scales";
-import type { EasingPreset } from "./scales";
 import type { ExtractedColor } from "./extract";
+import {
+  computedHex,
+  type SemanticRole,
+  type ColorToken,
+  type Typography,
+  type Spacing,
+  type Radius,
+  type ShadowToken,
+  type Shadow,
+  type Motion,
+  type Border,
+  type Opacity,
+  type Globals,
+} from "./tokens-core";
 
-export type SemanticRole =
-  | "primary"
-  | "accent"
-  | "background"
-  | "foreground"
-  | "muted"
-  | "border"
-  | "unassigned";
-
-export type ColorToken = {
-  id: string;
-  hex: string;
-  baseHex: string;
-  proportion: number;
-  role: SemanticRole;
-  name?: string;
+// Design-token shape + computedHex live in tokens-core (framework-free, shared
+// with the CLI). Re-export so existing `@/lib/store` imports keep working.
+export { computedHex };
+export type {
+  SemanticRole,
+  ColorToken,
+  Typography,
+  Spacing,
+  Radius,
+  ShadowToken,
+  Shadow,
+  Motion,
+  Border,
+  Opacity,
+  Globals,
 };
-
-export type Typography = {
-  base: number;
-  ratio: number;
-  fontFamily: string;
-  headingFamily: string;
-  fontWeight: number;
-  lineHeight: number;
-  letterSpacing: number; // em units
-};
-
-export type Spacing = { base: number };
-export type Radius = { base: number };
-export type ShadowToken = { blur: number; offsetY: number; opacity: number };
-export type Shadow = {
-  intensity: number; // 0..1, drives sm/md/lg in simple mode
-  advanced: boolean; // when true, sm/md/lg are user-edited and intensity is ignored
-  sm: ShadowToken;
-  md: ShadowToken;
-  lg: ShadowToken;
-};
-
-export type Motion = {
-  base: number;       // ms, 80–500, default 200
-  easing: EasingPreset;
-};
-
-export type Border = { base: number }; // px
-export type Opacity = { base: number }; // interactive state base opacity
-
-export type Globals = { dL: number; dC: number; dH: number };
 
 export type DarkMode = {
   enabled: boolean;
@@ -144,9 +124,6 @@ const defaultShadow: Shadow = {
   ...buildShadowsFromIntensity(0.5),
 };
 const defaultDark: DarkMode = { enabled: false, overrides: {} };
-
-export const computedHex = (token: ColorToken, g: Globals): string =>
-  adjustHex(token.baseHex, g);
 
 const inferRole = (idx: number, total: number): SemanticRole => {
   if (idx === 0) return "background";

@@ -39,28 +39,45 @@ Then branch:
 
 ## Create — no design-system.md yet
 
-The user hasn't built a design system for this project. Open the UI Generator
-web app so they can make one, then resume.
+The user hasn't built a design system for this project. The UI Generator is a
+**local** web app — get it running, point the user at it, and resume once they
+export the file.
 
-1. Open the app in the browser with the OS launcher (pick the one for the
-   platform — check `uname` if unsure):
+`UI_GENERATOR_URL` defaults to `http://localhost:3000`. (If the user has a
+hosted deployment, use that URL and skip the start-server step.)
+
+1. **Check if it's already running:** `curl -sf http://localhost:3000 >/dev/null`.
+   - Reachable → go to step 3.
+   - Not reachable → start it (step 2).
+
+2. **Start the local server** (only if not already running). The app is the
+   UI Generator repo, not the user's current project — never run `npm run dev`
+   in the user's working directory.
+   - If you know the repo path (`$UI_GENERATOR_DIR`, or the user tells you),
+     start it in the background there and wait for the port:
+     `npm --prefix "$UI_GENERATOR_DIR" run dev` (then poll `curl` on :3000).
+   - If you do **not** know where the UI Generator repo lives, ask the user for
+     its path, or tell them to run `npm run dev` in it themselves. Do not guess
+     a directory.
+
+3. **Always print the URL** so the user can open it manually, then also try to
+   launch a browser (the print is the fallback when no browser opens):
+
+   > 打开 UI Generator: **http://localhost:3000**
 
    - macOS: `open "$UI_GENERATOR_URL"`
    - Linux: `xdg-open "$UI_GENERATOR_URL"`
    - Windows: `start "" "$UI_GENERATOR_URL"`
 
-   **`UI_GENERATOR_URL` defaults to `http://localhost:3000`** (the app running
-   locally via `npm run dev`). If the user has a hosted deployment, use that URL
-   instead — ask if you're unsure it's running.
+   If the launcher fails or there's no browser (headless/SSH), that's fine —
+   the printed URL above is the instruction.
 
-2. Tell the user, concisely, what to do there:
-   > 在打开的网页里描述你的产品 → 调好配色/字体/间距等 → 在「导出」区点
+4. Tell the user, concisely, what to do there:
+   > 在网页里描述你的产品 → 调好配色/字体/间距等 → 在「导出」区点
    > **「下载 design-system.md」** → 把下载的文件放到这个项目的根目录。
 
-3. Wait for them to confirm they've added the file (or that they're done).
-   Then re-run the Step 0 search. Once `design-system.md` is present, continue
-   to **Apply**. If the launcher command failed (headless / no browser), give
-   the user the URL to open manually and the same instructions.
+5. Wait for them to confirm they've added the file. Then re-run the Step 0
+   search. Once `design-system.md` is present, continue to **Apply**.
 
 ## Apply — design-system.md is present
 

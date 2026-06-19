@@ -7,6 +7,7 @@ import {
   cssVars,
   aiPrompt,
   tokensStudioJson,
+  designSystemMarkdown,
   downloadFile,
   type ResolvedToken,
 } from "@/lib/export";
@@ -109,6 +110,12 @@ export function Export() {
       tokensStudioJson(resolved, typography, spacing, radius, shadow, motion, border, opacity),
       "application/json",
     );
+  const exportMarkdown = () =>
+    downloadFile(
+      "design-system.md",
+      designSystemMarkdown(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved),
+      "text/markdown",
+    );
   const exportPng = async () => {
     const svg = boardSvg();
     if (!svg) return;
@@ -127,6 +134,21 @@ export function Export() {
   return (
     <div className="space-y-4">
       <GeneratePage prompt={promptText} />
+
+      <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-neutral-200 px-4 py-3 dark:border-neutral-800">
+        <div>
+          <p className="text-xs font-semibold">设计系统文件 · 给 AI / 团队</p>
+          <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400">
+            一个 design-system.md：丢进代码库，让你自己的 AI（Claude Code / Cursor）按它生成 UI——用你自己的算力，无需本工具在线。
+          </p>
+        </div>
+        <button
+          onClick={exportMarkdown}
+          className="shrink-0 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
+        >
+          下载 design-system.md
+        </button>
+      </div>
 
       <ShareLink />
 

@@ -13,7 +13,6 @@ import {
 } from "@/lib/export";
 import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
 import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
-import { GeneratePage } from "./GeneratePage";
 import { ShareLink } from "./ShareLink";
 import { lightDarkFaces } from "@/lib/darkMode";
 
@@ -133,8 +132,6 @@ export function Export() {
 
   return (
     <div className="space-y-4">
-      <GeneratePage prompt={promptText} />
-
       <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-neutral-200 px-4 py-3 dark:border-neutral-800">
         <div>
           <p className="text-xs font-semibold">设计系统文件 · 给 AI / 团队</p>

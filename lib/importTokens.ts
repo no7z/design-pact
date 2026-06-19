@@ -14,7 +14,7 @@ import type {
   Border,
   Opacity,
   SemanticRole,
-} from "./store";
+} from "./tokens-core";
 import { EASING_PRESETS, type EasingPreset } from "./scales";
 
 export type ImportedTokens = {

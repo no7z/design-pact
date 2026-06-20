@@ -2,14 +2,16 @@
 import { useEffect, useState } from "react";
 import { useTokens } from "@/lib/store";
 import { applyShareFromUrl } from "@/lib/share";
+import { applyPaletteFromUrl } from "@/lib/urlPalette";
 
 export function StoreHydration({ children }: { children: React.ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
     let cancelled = false;
     const done = () => {
-      // A share link in the URL overrides whatever was persisted locally.
-      applyShareFromUrl();
+      // A share link (#s=) or a ?p= palette in the URL overrides persisted
+      // state. Share carries the full system, so it wins if both are present.
+      if (!applyShareFromUrl()) applyPaletteFromUrl();
       if (!cancelled) setHydrated(true);
     };
     try {

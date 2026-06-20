@@ -58,56 +58,53 @@ later in the web app.
 
 ### 2. Propose a palette
 
-Pick **6 colors**, one per semantic role, that fit the product. Ensure
-foreground reads on background (aim for ≥ 4.5:1) and primary stands out.
-Write them to `design-tokens.json` in the user's project (this is the file the
-web app imports — minimal W3C Design Tokens shape):
+Pick **6 colors** in this exact role order — background, foreground, primary,
+accent, muted, border — that fit the product. Ensure foreground reads on
+background (aim for ≥ 4.5:1) and primary stands out. If useful, offer the user
+1–3 directions in chat and let them pick one; you'll hand the chosen one to the
+web app via the URL in step 3. Don't hand-author a full `design-system.md` —
+let the web app derive the scales/shadows/dark/contract so they're correct.
 
-```json
-{
-  "color": {
-    "background": { "$value": "#ffffff", "$type": "color" },
-    "foreground": { "$value": "#1a1a1a", "$type": "color" },
-    "primary":    { "$value": "#2f6df6", "$type": "color" },
-    "accent":     { "$value": "#7c3aed", "$type": "color" },
-    "muted":      { "$value": "#6b7280", "$type": "color" },
-    "border":     { "$value": "#e5e7eb", "$type": "color" }
-  }
-}
+### 3. Open the web app with the palette baked into the URL
+
+The web app loads a palette straight from a `?p=` query, so the user lands in
+the color editor **with your colors already applied** — no manual import.
+Build the URL from the 6 chosen hex values (no `#`, in role order, `-`
+separated):
+
+```
+http://localhost:3000/?p=<bg>-<fg>-<primary>-<accent>-<muted>-<border>
+# e.g. http://localhost:3000/?p=ffffff-1a1a1a-2f6df6-7c3aed-6b7280-e5e7eb
 ```
 
-Offer the user 1–3 directions in chat if useful, but write the one they pick.
-Do **not** hand-author a full `design-system.md` — let the web app derive the
-scales/shadows/dark/contract so they're correct.
-
-### 3. Open the web app to turn the palette into a full system
-
-The UI Generator is a **local** web app — get it running, then point the user
-at it. `UI_GENERATOR_URL` defaults to `http://localhost:3000` (use a hosted URL
-instead if the user has one, and skip the start step).
+`UI_GENERATOR_URL` defaults to `http://localhost:3000` (use a hosted URL if the
+user has one, and skip the start step). Then:
 
 - **Check if running:** `curl -sf http://localhost:3000 >/dev/null`. If not,
-  **start it** — but it lives in the UI Generator repo, NOT the user's current
+  **start it** — it lives in the UI Generator repo, NOT the user's current
   project, so never run `npm run dev` in the working directory. If you know the
   repo path (`$UI_GENERATOR_DIR` or the user tells you), start it in the
   background there and poll the port:
   `npm --prefix "$UI_GENERATOR_DIR" run dev`. If you don't know the path, ask
   for it or tell the user to run `npm run dev` there — don't guess.
-- **Always print the URL** (the fallback when no browser opens), then also try
-  to launch a browser:
+- **Always print the full palette URL** (the fallback when no browser opens —
+  opening it manually loads the palette just the same), then also try to launch
+  a browser on that URL:
 
-  > 打开 UI Generator: **http://localhost:3000**
+  > 打开（已带配色）: **http://localhost:3000/?p=…**
 
-  - macOS: `open "$UI_GENERATOR_URL"` · Linux: `xdg-open "$UI_GENERATOR_URL"` ·
-    Windows: `start "" "$UI_GENERATOR_URL"`
+  - macOS: `open "$URL"` · Linux: `xdg-open "$URL"` · Windows: `start "" "$URL"`
 
   Headless / no browser is fine — the printed URL is the instruction.
 
 ### 4. Tell the user what to do there
 
-> 在首屏点 **「导入 agent 配色」** 选刚生成的 `design-tokens.json` → 调色轮 /
-> 字体 / 间距 / 暗色等微调（右侧实时预览 + 对比度审计）→ 在「导出」区点
-> **「下载 design-system.md」** → 把文件放到这个项目的根目录。
+> 网页一进来就带着这套配色在「调色」区。用色轮 / 字体 / 间距 / 暗色微调（右侧
+> 实时预览 + 对比度审计）→ 在「导出」区点 **「下载 design-system.md」** → 把文件
+> 放到这个项目的根目录。
+
+(If they'd rather start from a different base, they can also pick a brand
+template or extract from an image on the first screen.)
 
 ### 5. Resume
 

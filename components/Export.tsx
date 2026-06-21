@@ -5,7 +5,6 @@ import {
   w3cTokens,
   tailwindConfig,
   cssVars,
-  aiPrompt,
   tokensStudioJson,
   designSystemMarkdown,
   downloadFile,
@@ -15,7 +14,7 @@ import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
 import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
 import { lightDarkFaces } from "@/lib/darkMode";
 
-type Tab = "json" | "tailwind" | "css" | "ai";
+type Tab = "json" | "tailwind" | "css";
 
 export function Export() {
   const colors = useTokens((s) => s.colors);
@@ -53,14 +52,6 @@ export function Export() {
     [colors, globals, dark.enabled, dark.overrides],
   );
 
-  const promptText = useMemo(
-    () =>
-      resolved.length > 0
-        ? aiPrompt(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved)
-        : "",
-    [resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved],
-  );
-
   if (resolved.length === 0) return null;
 
   const content = (() => {
@@ -68,15 +59,13 @@ export function Export() {
       case "json":     return JSON.stringify(w3cTokens(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved), null, 2);
       case "tailwind": return tailwindConfig(resolved, typography, spacing, radius, shadow, motion, border, opacity);
       case "css":      return cssVars(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved);
-      case "ai":       return promptText;
     }
   })();
 
   const filename =
     tab === "json"      ? "design-tokens.json"
     : tab === "tailwind" ? "tailwind.config.js"
-    : tab === "css"      ? "tokens.css"
-    :                      "design-prompt.md";
+    :                      "tokens.css";
 
   const onCopy = async () => {
     await navigator.clipboard.writeText(content);
@@ -192,7 +181,6 @@ export function Export() {
                 ["json", "W3C"],
                 ["tailwind", "Tailwind"],
                 ["css", "CSS"],
-                ["ai", "AI prompt"],
               ] as const
             ).map(([key, label]) => (
               <button

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-06-12T11:00:23.859Z",
+ "generatedAt": "2026-06-21T21:16:26.718Z",
  "source": "https://raw.githubusercontent.com/VoltAgent/awesome-design-md/main/design-md",
  "templates": {
   "airbnb": {
@@ -35,6 +35,7 @@
      "name": "muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "'Airbnb Cereal VF', Circular, sans-serif",
@@ -59,14 +60,14 @@
      "name": "primary-active"
     },
     {
-     "hex": "#39bf45",
+     "hex": "#aa2d00",
      "role": "primary",
-     "name": "success-border"
+     "name": "signature-coral"
     },
     {
-     "hex": "#1a3866",
+     "hex": "#f4d35e",
      "role": "accent",
-     "name": "link-active"
+     "name": "signature-yellow"
     },
     {
      "hex": "#dddddd",
@@ -79,6 +80,10 @@
      "name": "border-strong"
     }
    ],
+   "semantic": {
+    "success": "#006400",
+    "info": "#254fad"
+   },
    "typography": {
     "base": 14,
     "fontFamily": "Haas, sans-serif",
@@ -125,6 +130,7 @@
      "name": "auto-muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 17,
     "fontFamily": "SF Pro Text, system-ui, -apple-system, sans-serif",
@@ -171,6 +177,9 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "info": "#3b82f6"
+   },
    "typography": {
     "base": 14,
     "fontFamily": "BinanceNova, sans-serif",
@@ -217,6 +226,11 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "success": "#22c55e",
+    "warning": "#f59e0b",
+    "error": "#dc2626"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "'BMW Type Next Latin', sans-serif",
@@ -248,9 +262,9 @@
      "name": "m-red"
     },
     {
-     "hex": "#0fa336",
+     "hex": "#1c69d4",
      "role": "accent",
-     "name": "success"
+     "name": "m-blue-dark"
     },
     {
      "hex": "#3c3c3c",
@@ -263,6 +277,10 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "success": "#0fa336",
+    "warning": "#f4b400"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "BMWTypeNextLatin Light, BMWTypeNextLatin, sans-serif",
@@ -289,14 +307,9 @@
      "name": "primary"
     },
     {
-     "hex": "#d4a017",
+     "hex": "#ffffff",
      "role": "primary",
-     "name": "warning"
-    },
-    {
-     "hex": "#5fa657",
-     "role": "accent",
-     "name": "success"
+     "name": "auto-primary"
     },
     {
      "hex": "#262626",
@@ -309,6 +322,11 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "success": "#5fa657",
+    "warning": "#d4a017",
+    "info": "#c3d9f3"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Bugatti Text Regular, serif",
@@ -355,6 +373,11 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "success": "#10b981",
+    "warning": "#f59e0b",
+    "error": "#ef4444"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Inter, sans-serif",
@@ -401,6 +424,11 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "success": "#5db872",
+    "warning": "#d4a017",
+    "error": "#c64545"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "StyreneB, Inter, sans-serif",
@@ -447,6 +475,11 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "success": "#22c55e",
+    "warning": "#f59e0b",
+    "error": "#ef4444"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Inter, sans-serif",
@@ -493,6 +526,9 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "warning": "#f59e0b"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Inter, sans-serif",
@@ -524,9 +560,9 @@
      "name": "action-blue"
     },
     {
-     "hex": "#b30000",
+     "hex": "#4c6ee6",
      "role": "accent",
-     "name": "error"
+     "name": "focus-blue"
     },
     {
      "hex": "#d9d9dd",
@@ -539,6 +575,9 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "error": "#b30000"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Unica77 Cohere Web",
@@ -585,6 +624,7 @@
      "name": "muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "'Coinbase Sans', sans-serif",
@@ -631,6 +671,7 @@
      "name": "muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "'abcDiatype', ui-sans-serif, system-ui, sans-serif",
@@ -677,6 +718,7 @@
      "name": "muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "'CursorGothic', sans-serif",
@@ -723,6 +765,7 @@
      "name": "muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "'Inter', sans-serif",
@@ -769,6 +812,7 @@
      "name": "muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "'Inter', sans-serif",
@@ -815,6 +859,7 @@
      "name": "muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 14,
     "fontFamily": "'FerrariSans', sans-serif",
@@ -861,6 +906,7 @@
      "name": "auto-muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 18,
     "fontFamily": "figmaSans",
@@ -907,6 +953,7 @@
      "name": "auto-muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 15,
     "fontFamily": "Inter Variable",
@@ -953,6 +1000,7 @@
      "name": "ink-subtle"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "hashicorpSans",
@@ -999,6 +1047,7 @@
      "name": "ink-muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "IBM Plex Sans",
@@ -1045,6 +1094,7 @@
      "name": "ink-muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Saans",
@@ -1091,6 +1141,7 @@
      "name": "silver-blue"
     }
    ],
+   "semantic": {},
    "typography": {},
    "spacing": {},
    "radius": {}
@@ -1128,6 +1179,9 @@
      "name": "graphite"
     }
    ],
+   "semantic": {
+    "info": "#3860be"
+   },
    "typography": {
     "base": 18,
     "ratio": 1.46
@@ -1172,6 +1226,7 @@
      "name": "ink-subtle"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Linear Text",
@@ -1213,6 +1268,7 @@
      "name": "muted-gray"
     }
    ],
+   "semantic": {},
    "typography": {},
    "spacing": {
     "base": 8
@@ -1254,6 +1310,9 @@
      "name": "slate-gray"
     }
    ],
+   "semantic": {
+    "info": "#3860be"
+   },
    "typography": {
     "base": 16,
     "ratio": 1.32
@@ -1283,9 +1342,9 @@
      "name": "primary"
     },
     {
-     "hex": "#24e400",
+     "hex": "#a121ce",
      "role": "accent",
-     "name": "success-bg"
+     "name": "oculus-purple"
     },
     {
      "hex": "#ced0d4",
@@ -1298,6 +1357,11 @@
      "name": "slate"
     }
    ],
+   "semantic": {
+    "success": "#31a24c",
+    "warning": "#f7b928",
+    "error": "#e41e3f"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Optimistic VF",
@@ -1344,6 +1408,9 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "success": "#1ba673"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "DM Sans",
@@ -1390,6 +1457,7 @@
      "name": "muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Inter",
@@ -1436,6 +1504,9 @@
      "name": "muted"
     }
    ],
+   "semantic": {
+    "success": "#00b473"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Roobert PRO",
@@ -1482,6 +1553,7 @@
      "name": "muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Inter",
@@ -1528,6 +1600,7 @@
      "name": "muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Euclid Circular A",
@@ -1554,14 +1627,14 @@
      "name": "charcoal"
     },
     {
-     "hex": "#1151ff",
+     "hex": "#ed1aa0",
      "role": "primary",
-     "name": "info"
+     "name": "accent-pink"
     },
     {
-     "hex": "#ed1aa0",
+     "hex": "#4c012d",
      "role": "accent",
-     "name": "accent-pink"
+     "name": "accent-pink-deep"
     },
     {
      "hex": "#cacacb",
@@ -1574,6 +1647,10 @@
      "name": "mute"
     }
    ],
+   "semantic": {
+    "success": "#007d48",
+    "info": "#1151ff"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Helvetica Now Text",
@@ -1620,6 +1697,9 @@
      "name": "slate"
     }
    ],
+   "semantic": {
+    "info": "#0075de"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Notion Sans",
@@ -1666,6 +1746,12 @@
      "name": "hairline-strong"
     }
    ],
+   "semantic": {
+    "success": "#3f8500",
+    "warning": "#df6500",
+    "error": "#e52020",
+    "info": "#0046a4"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "NVIDIA-EMEA",
@@ -1712,6 +1798,7 @@
      "name": "charcoal"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "ui-sans-serif",
@@ -1738,14 +1825,14 @@
      "name": "ink-deep"
     },
     {
-     "hex": "#ff3b30",
+     "hex": "#007aff",
      "role": "primary",
-     "name": "danger"
+     "name": "accent"
     },
     {
-     "hex": "#007aff",
+     "hex": "#0056b3",
      "role": "accent",
-     "name": "accent"
+     "name": "accent-hover"
     },
     {
      "hex": "#cac9c9",
@@ -1758,6 +1845,11 @@
      "name": "mute"
     }
    ],
+   "semantic": {
+    "success": "#30d158",
+    "warning": "#ff9f0a",
+    "error": "#d70015"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Berkeley Mono",
@@ -1804,6 +1896,10 @@
      "name": "mute"
     }
    ],
+   "semantic": {
+    "success": "#103c25",
+    "error": "#9e0a0a"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Pin Sans",
@@ -1835,9 +1931,9 @@
      "name": "primary"
     },
     {
-     "hex": "#53b1ff",
+     "hex": "#d53b00",
      "role": "accent",
-     "name": "link-dark"
+     "name": "commerce"
     },
     {
      "hex": "#c2c4c7",
@@ -1850,6 +1946,10 @@
      "name": "mute-light"
     }
    ],
+   "semantic": {
+    "warning": "#c81b3a",
+    "info": "#53b1ff"
+   },
    "typography": {
     "base": 18,
     "fontFamily": "PlayStation SST",
@@ -1881,9 +1981,9 @@
      "name": "primary"
     },
     {
-     "hex": "#1d4ed8",
+     "hex": "#cd4239",
      "role": "accent",
-     "name": "link-blue"
+     "name": "accent-red"
     },
     {
      "hex": "#bfc1b7",
@@ -1896,6 +1996,9 @@
      "name": "mute"
     }
    ],
+   "semantic": {
+    "info": "#1d4ed8"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "IBM Plex Sans Variable",
@@ -1942,6 +2045,7 @@
      "name": "mute"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Inter",
@@ -1973,9 +2077,9 @@
      "name": "primary"
     },
     {
-     "hex": "#0000ee",
+     "hex": "#e6d200",
      "role": "accent",
-     "name": "link"
+     "name": "primary-deep"
     },
     {
      "hex": "#c4c4c4",
@@ -1988,6 +2092,12 @@
      "name": "mute"
     }
    ],
+   "semantic": {
+    "success": "#8dc572",
+    "warning": "#f0ad4e",
+    "error": "#be6464",
+    "info": "#337ab7"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "NouvelR",
@@ -2034,6 +2144,7 @@
      "name": "charcoal"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "basier-square",
@@ -2079,6 +2190,7 @@
      "name": "mute"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "ABC Favorit",
@@ -2125,6 +2237,7 @@
      "name": "mute"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Inter",
@@ -2165,6 +2278,7 @@
      "name": "muted-gray"
     }
    ],
+   "semantic": {},
    "typography": {},
    "spacing": {
     "base": 4
@@ -2206,6 +2320,10 @@
      "name": "medium-gray"
     }
    ],
+   "semantic": {
+    "success": "#19d600",
+    "error": "#dd0000"
+   },
    "typography": {},
    "spacing": {
     "base": 2
@@ -2247,6 +2365,7 @@
      "name": "auto-muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Rubik, -apple-system, system-ui, sans-serif",
@@ -2288,6 +2407,9 @@
      "name": "shade-40"
     }
    ],
+   "semantic": {
+    "info": "#9797a2"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Inter Variable, Inter, Helvetica, Arial, sans-serif",
@@ -2334,6 +2456,9 @@
      "name": "ink-mute"
     }
    ],
+   "semantic": {
+    "info": "#3860be"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Salesforce-Sans, system-ui, -apple-system, sans-serif",
@@ -2360,9 +2485,9 @@
      "name": "on-primary"
     },
     {
-     "hex": "#0000ee",
+     "hex": "#ffffff",
      "role": "primary",
-     "name": "link-blue-fallback"
+     "name": "auto-primary"
     },
     {
      "hex": "#3a3a3f",
@@ -2375,6 +2500,9 @@
      "name": "ink-mute"
     }
    ],
+   "semantic": {
+    "info": "#0000ee"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "D-DIN, Arial, Verdana, sans-serif",
@@ -2406,9 +2534,9 @@
      "name": "spotify-green"
     },
     {
-     "hex": "#ffa42b",
+     "hex": "#539df5",
      "role": "accent",
-     "name": "warning-orange"
+     "name": "announcement-blue"
     },
     {
      "hex": "#eeeeee",
@@ -2421,6 +2549,10 @@
      "name": "silver"
     }
    ],
+   "semantic": {
+    "warning": "#ffa42b",
+    "error": "#f3727f"
+   },
    "typography": {},
    "spacing": {
     "base": 2
@@ -2462,6 +2594,7 @@
      "name": "auto-muted"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 19
    },
@@ -2505,6 +2638,7 @@
      "name": "ink-mute"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 15,
     "fontFamily": "sohne-var, 'SF Pro Display', system-ui, -apple-system, sans-serif",
@@ -2551,6 +2685,7 @@
      "name": "ink-mute"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Circular, 'Helvetica Neue', Helvetica, Arial, sans-serif",
@@ -2597,6 +2732,7 @@
      "name": "ink-mute"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "'Super Sans VF', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif",
@@ -2638,6 +2774,7 @@
      "name": "pewter"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 14,
     "ratio": 1.23
@@ -2682,6 +2819,7 @@
      "name": "secondary-text"
     }
    ],
+   "semantic": {},
    "typography": {},
    "spacing": {
     "base": 8
@@ -2723,6 +2861,7 @@
      "name": "body"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "The Future, Inter, Helvetica Neue, Arial, sans-serif",
@@ -2749,9 +2888,9 @@
      "name": "primary"
     },
     {
-     "hex": "#0000ee",
+     "hex": "#000000",
      "role": "primary",
-     "name": "link"
+     "name": "auto-primary"
     },
     {
      "hex": "#c1c1c1",
@@ -2764,6 +2903,9 @@
      "name": "body"
     }
    ],
+   "semantic": {
+    "info": "#0000ee"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "UberMoveText, system-ui, Helvetica Neue, Arial, sans-serif",
@@ -2795,9 +2937,9 @@
      "name": "highlight-pink"
     },
     {
-     "hex": "#0761d1",
+     "hex": "#7928ca",
      "role": "accent",
-     "name": "link-deep"
+     "name": "violet"
     },
     {
      "hex": "#ebebeb",
@@ -2810,6 +2952,11 @@
      "name": "mute"
     }
    ],
+   "semantic": {
+    "warning": "#f5a623",
+    "error": "#ee0000",
+    "info": "#0070f3"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Geist, Inter, system-ui, -apple-system, sans-serif",
@@ -2851,6 +2998,7 @@
      "name": "body"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 18,
     "fontFamily": "Vodafone, Vodafone Rg, Helvetica Neue, Arial, sans-serif",
@@ -2897,6 +3045,7 @@
      "name": "mute"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
@@ -2938,6 +3087,7 @@
      "name": "body"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "Inter, system-ui, -apple-system, sans-serif",
@@ -2984,6 +3134,7 @@
      "name": "mute-soft"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "WF Visual Sans Variable, Inter, system-ui, sans-serif",
@@ -3010,9 +3161,9 @@
      "name": "ink-soft"
     },
     {
-     "hex": "#057dbc",
+     "hex": "#1a1a1a",
      "role": "primary",
-     "name": "link"
+     "name": "auto-primary"
     },
     {
      "hex": "#e0e0e0",
@@ -3025,6 +3176,9 @@
      "name": "body"
     }
    ],
+   "semantic": {
+    "info": "#057dbc"
+   },
    "typography": {
     "base": 17,
     "fontFamily": "Apercu, \"Helvetica Neue\", Helvetica, Arial, sans-serif",
@@ -3069,6 +3223,11 @@
      "name": "mute"
     }
    ],
+   "semantic": {
+    "success": "#2ead4b",
+    "warning": "#ffd11a",
+    "error": "#d03238"
+   },
    "typography": {
     "base": 16,
     "fontFamily": "Inter, system-ui, sans-serif",
@@ -3115,6 +3274,7 @@
      "name": "body-mid"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 16,
     "fontFamily": "universalSans, Inter, system-ui, sans-serif",
@@ -3156,6 +3316,7 @@
      "name": "body"
     }
    ],
+   "semantic": {},
    "typography": {
     "base": 18,
     "fontFamily": "Inter, system-ui, sans-serif",

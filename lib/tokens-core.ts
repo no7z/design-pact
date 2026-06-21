@@ -56,6 +56,14 @@ export type Motion = {
 export type Border = { base: number }; // px
 export type Opacity = { base: number }; // interactive state base opacity
 
+// Semantic / status colors. A complete design system needs these for forms,
+// alerts, toasts etc. — they're kept SEPARATE from the brand roles above so
+// they never get mistaken for a brand color (and so the brand palette UI can
+// show only brand colors). Derived for every palette; templates may override.
+export type SemanticKind = "success" | "warning" | "error" | "info";
+export type Semantic = Record<SemanticKind, string>;
+export const SEMANTIC_KINDS: SemanticKind[] = ["success", "warning", "error", "info"];
+
 export type Globals = { dL: number; dC: number; dH: number };
 
 /** A token's on-screen color after the global OKLCH adjustment is applied. */

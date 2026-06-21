@@ -23,11 +23,14 @@ import {
   type Border,
   type Opacity,
   type Globals,
+  type SemanticKind,
+  type Semantic,
+  SEMANTIC_KINDS,
 } from "./tokens-core";
 
 // Design-token shape + computedHex live in tokens-core (framework-free, shared
 // with the CLI). Re-export so existing `@/lib/store` imports keep working.
-export { computedHex };
+export { computedHex, SEMANTIC_KINDS };
 export type {
   SemanticRole,
   ColorToken,
@@ -40,6 +43,8 @@ export type {
   Border,
   Opacity,
   Globals,
+  SemanticKind,
+  Semantic,
 };
 
 export type DarkMode = {

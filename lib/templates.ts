@@ -1,6 +1,7 @@
 import {
   type ColorToken,
   type SemanticRole,
+  type Semantic,
   type Typography,
   type Spacing,
   type Radius,
@@ -38,6 +39,7 @@ export type SnapshotColor = { hex: string; role: SemanticRole; name?: string };
 
 export type TemplateEntry = {
   colors: SnapshotColor[];
+  semantic?: Partial<Semantic>;
   typography: Partial<Typography>;
   spacing: Partial<Spacing>;
   radius: Partial<Radius>;

@@ -34,10 +34,11 @@ async function buildEntry(brand: string): Promise<TemplateEntry> {
   const md = await fetchMd(brand);
   const pool = parseMdColorsAll(md).map(({ hex, role, name }) => ({ hex, role, name }));
   if (pool.length === 0) throw new Error("解析不出任何颜色");
-  const colors = normalizePalette(pool);
+  const { colors, semantic } = normalizePalette(pool);
   assertContract(brand, colors);
   return {
     colors,
+    semantic,
     typography: parseMdTypography(md),
     spacing: parseMdSpacing(md),
     radius: parseMdRadius(md),

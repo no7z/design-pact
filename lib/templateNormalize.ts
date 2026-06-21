@@ -16,12 +16,27 @@
 //   - accent      optional, only if distinct from primary/bg
 
 import { hexToOklch, oklchToHex, contrastRatio } from "./color";
-import type { SemanticRole } from "./store";
+import type { SemanticRole, SemanticKind, Semantic } from "./store";
 
 export type RawColor = { hex: string; role: SemanticRole; name?: string };
 export type NormalizedColor = { hex: string; role: SemanticRole; name?: string };
+export type NormalizedPalette = { colors: NormalizedColor[]; semantic: Partial<Semantic> };
 
 type Cand = RawColor & { l: number; c: number; h: number };
+
+// Classify a source token NAME (e.g. "warning", "success-border", "link-active")
+// into a status color. These are NOT brand colors — keep them out of
+// primary/accent selection and collect them separately. Anchored at the start
+// so "success-border" → success but "on-success" (a label) does not match.
+function classifySemantic(name?: string): SemanticKind | null {
+  if (!name) return null;
+  const n = name.toLowerCase();
+  if (/^(success|positive|valid|confirm|ok)\b/.test(n)) return "success";
+  if (/^(warning|warn|caution)\b/.test(n)) return "warning";
+  if (/^(error|danger|destructive|critical|fail|negative)\b/.test(n)) return "error";
+  if (/^(info|link)\b/.test(n)) return "info";
+  return null;
+}
 
 const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
@@ -50,7 +65,7 @@ function deriveInBand(bgHex: string, fgHex: string, startT: number, lo: number, 
   return mixTone(bgHex, fgHex, clamp(t, 0.02, 0.98));
 }
 
-export function normalizePalette(raw: RawColor[]): NormalizedColor[] {
+export function normalizePalette(raw: RawColor[]): NormalizedPalette {
   // Dedup by hex (keep first occurrence's role/name as hint).
   const seen = new Set<string>();
   const pool: Cand[] = [];
@@ -61,7 +76,7 @@ export function normalizePalette(raw: RawColor[]): NormalizedColor[] {
     const o = hexToOklch(hex);
     pool.push({ ...r, hex, l: o.l, c: o.c, h: o.h ?? 0 });
   }
-  if (pool.length === 0) return [];
+  if (pool.length === 0) return { colors: [], semantic: {} };
 
   const out: NormalizedColor[] = [];
   const used = new Set<string>();
@@ -101,9 +116,15 @@ export function normalizePalette(raw: RawColor[]): NormalizedColor[] {
   take(fg, "foreground");
 
   // ── primary: most chromatic brand color, kept on-brand, nudged if ≈ bg ──
-  const primaryParsed = pool.find((c) => c.role === "primary" && !used.has(c.hex) && c.c >= 0.03);
+  // Status colors (warning/success/error/link) are NOT brand colors — exclude
+  // them so a monochrome brand (Bugatti/Uber/SpaceX) doesn't get a gold/blue
+  // primary lifted from its semantic palette.
+  const isBrand = (c: Cand) => classifySemantic(c.name) === null;
+  const primaryParsed = pool.find(
+    (c) => c.role === "primary" && isBrand(c) && !used.has(c.hex) && c.c >= 0.03,
+  );
   const chromaticAny = pool
-    .filter((c) => !used.has(c.hex) && c.c >= 0.05)
+    .filter((c) => !used.has(c.hex) && isBrand(c) && c.c >= 0.05)
     .sort((a, b) => b.c - a.c)[0];
   let primary: { hex: string; name?: string } | undefined = primaryParsed ?? chromaticAny;
   if (!primary) {
@@ -122,9 +143,9 @@ export function normalizePalette(raw: RawColor[]): NormalizedColor[] {
   }
   take(primary, "primary");
 
-  // ── accent: optional, distinct chromatic color ──
+  // ── accent: optional, distinct chromatic BRAND color (no status colors) ──
   const accent = pool
-    .filter((c) => !used.has(c.hex) && c.c >= 0.05 && contrastRatio(c.hex, bg.hex) >= 1.2)
+    .filter((c) => !used.has(c.hex) && isBrand(c) && c.c >= 0.05 && contrastRatio(c.hex, bg.hex) >= 1.2)
     .sort((a, b) => (a.role === "accent" ? -1 : 1) - (b.role === "accent" ? -1 : 1) || b.c - a.c)[0];
   if (accent) take(accent, "accent");
 
@@ -148,5 +169,17 @@ export function normalizePalette(raw: RawColor[]): NormalizedColor[] {
   const muted = mutedParsed ?? mutedAny ?? { hex: deriveInBand(bg.hex, fg.hex, 0.55, 2.5, 6), name: "auto-muted" };
   take(muted, "muted");
 
-  return out;
+  // ── semantic / status colors: collected by name, kept out of the brand set ──
+  // Prefer the base token (name === kind) over variants like "success-border";
+  // otherwise the most status-like one (chromatic, mid lightness).
+  const semScore = (c: Cand) => c.c - Math.abs(c.l - 0.55);
+  const semantic: Partial<Semantic> = {};
+  for (const kind of ["success", "warning", "error", "info"] as const) {
+    const cands = pool.filter((c) => classifySemantic(c.name) === kind);
+    if (cands.length === 0) continue;
+    const exact = cands.find((c) => c.name?.toLowerCase() === kind);
+    semantic[kind] = (exact ?? [...cands].sort((a, b) => semScore(b) - semScore(a))[0]).hex;
+  }
+
+  return { colors: out, semantic };
 }

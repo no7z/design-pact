@@ -6,9 +6,9 @@ description: >-
   "set up our design system", "build this to our design system", or asks to
   build/restyle UI. The skill first looks for a design-system.md in the repo:
   if present it generates UI against it; if absent it clarifies the product
-  direction, YOU (the agent) propose a palette, and it opens the UI Generator
-  web app to turn that palette into a full design system the user tunes and
-  exports. All AI runs on the agent's own compute — the web app has no AI and
+  direction, YOU (the agent) propose 2–3 palettes, and it opens the UI
+  Generator web app where the user picks one visually and tunes it into a full
+  design system to export. All AI runs on the agent's own compute — the web app has no AI and
   no backend.
 ---
 
@@ -21,7 +21,7 @@ color / type / spacing / radius / shadow / motion tokens plus a copy-verbatim
 app or network access once it exists.
 
 **Always start with Step 0.** It decides whether to apply an existing system or
-help the user create one.
+help the user create one (you propose 2–3 palettes; they pick one visually).
 
 ## Step 0 — find or create the design system
 
@@ -42,11 +42,12 @@ Then branch:
 ## Create — no design-system.md yet
 
 There's no design system yet. The division of labor: **you (the agent) do the
-creative part — clarify direction and propose the palette; the web app does the
-deterministic part — derive the full token system (scales, shadows, dark
-pairs, the `:root` contract, contrast audit) from your palette and let the user
-tune it visually, then export `design-system.md`.** The web app has no AI; it
-only needs your palette as input.
+creative part — clarify direction and propose 2–3 palettes; the web app does
+the deterministic part — render each palette so the user picks one visually,
+then derive the full token system (scales, shadows, dark pairs, the `:root`
+contract, contrast audit) from it and let them tune it, then export
+`design-system.md`.** The web app has no AI; it only needs your palettes as
+input.
 
 ### 1. Clarify direction
 
@@ -56,25 +57,37 @@ e.g. light vs dark / mood (calm-professional, bold-energetic, warm-friendly),
 and the rough industry/vibe. Don't over-interview; the user tunes everything
 later in the web app.
 
-### 2. Propose a palette
+### 2. Propose 2–3 palettes
 
-Pick **6 colors** in this exact role order — background, foreground, primary,
-accent, muted, border — that fit the product. Ensure foreground reads on
-background (aim for ≥ 4.5:1) and primary stands out. If useful, offer the user
-1–3 directions in chat and let them pick one; you'll hand the chosen one to the
-web app via the URL in step 3. Don't hand-author a full `design-system.md` —
-let the web app derive the scales/shadows/dark/contract so they're correct.
+Design **2–3 distinct palettes** (not one) so the user can choose visually in
+the web app — hex codes in chat aren't something a person can judge at a
+glance. Make them genuinely different takes on the brief (e.g. a calm/neutral
+one, a bolder one, a warm or dark one), not minor variations.
 
-### 3. Open the web app with the palette baked into the URL
+Each palette is **6 colors** in this exact role order — background, foreground,
+primary, accent, muted, border. Ensure foreground reads on background (aim for
+≥ 4.5:1) and primary stands out. Don't hand-author a full `design-system.md` —
+let the web app derive the scales/shadows/dark/contract so they're correct; you
+only supply the 6 base colors per palette.
 
-The web app loads a palette straight from a `?p=` query, so the user lands in
-the color editor **with your colors already applied** — no manual import.
-Build the URL from the 6 chosen hex values (no `#`, in role order, `-`
-separated):
+You can briefly describe the directions in chat, but **don't ask the user to
+pick in chat** — the point is to let them see the palettes rendered on a real
+UI and pick there.
+
+### 3. Open the web app with the palettes baked into the URL
+
+The web app loads palettes straight from `?p=` query params. Pass **one `?p=`
+per palette**: with several, the user lands on a "选一套配色" screen showing each
+palette rendered on a mockup, and picks one into the editor. (A single `?p=`
+loads directly into the editor instead.) Each set is 6 hex values, no `#`, in
+role order, `-` separated; join multiple sets with `&`:
 
 ```
-http://localhost:3000/?p=<bg>-<fg>-<primary>-<accent>-<muted>-<border>
-# e.g. http://localhost:3000/?p=ffffff-1a1a1a-2f6df6-7c3aed-6b7280-e5e7eb
+# several palettes → visual picker
+http://localhost:3000/?p=<bg>-<fg>-<primary>-<accent>-<muted>-<border>&p=<…setB…>&p=<…setC…>
+
+# e.g.
+http://localhost:3000/?p=ffffff-1a1a1a-2f6df6-7c3aed-6b7280-e5e7eb&p=0f1115-e6e8ec-5b8cff-ff8a3d-8a90a0-23262e&p=fff8f0-3a2a1a-e0641a-1aa3a3-9a8a7a-e8dcc8
 ```
 
 `UI_GENERATOR_URL` defaults to `http://localhost:3000` (use a hosted URL if the
@@ -87,11 +100,11 @@ user has one, and skip the start step). Then:
   background there and poll the port:
   `npm --prefix "$UI_GENERATOR_DIR" run dev`. If you don't know the path, ask
   for it or tell the user to run `npm run dev` there — don't guess.
-- **Always print the full palette URL** (the fallback when no browser opens —
-  opening it manually loads the palette just the same), then also try to launch
-  a browser on that URL:
+- **Always print the full URL** (the fallback when no browser opens — opening
+  it manually loads the palettes just the same), then also try to launch a
+  browser on that URL:
 
-  > 打开（已带配色）: **http://localhost:3000/?p=…**
+  > 打开（已带 N 套配色）: **http://localhost:3000/?p=…&p=…**
 
   - macOS: `open "$URL"` · Linux: `xdg-open "$URL"` · Windows: `start "" "$URL"`
 
@@ -99,9 +112,9 @@ user has one, and skip the start step). Then:
 
 ### 4. Tell the user what to do there
 
-> 网页一进来就带着这套配色在「调色」区。用色轮 / 字体 / 间距 / 暗色微调（右侧
-> 实时预览 + 对比度审计）→ 在「导出」区点 **「下载 design-system.md」** → 把文件
-> 放到这个项目的根目录。
+> 网页第一屏「选一套配色」会把这几套方案分别渲染在真实 UI 上，点你喜欢的那套进入
+> 「调色」区。再用色轮 / 字体 / 间距 / 暗色微调（右侧实时预览 + 对比度审计）→ 在
+> 「导出」区点 **「下载 design-system.md」** → 把文件放到这个项目的根目录。
 
 (If they'd rather start from a different base, they can also pick a brand
 template or extract from an image on the first screen.)

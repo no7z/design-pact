@@ -53,7 +53,7 @@ export function TypographyStep() {
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
   const hasColors = colors.length > 0;
-  const [view, setView] = useState<"instance" | "basic">("basic");
+  const [view, setView] = useState<"instance" | "basic">("instance");
 
   const palette = useMemo(() => resolvePalette(colors, globals), [colors, globals]);
   const onPrimary = relativeLuminance(palette.primary) < 0.45 ? "#ffffff" : "#111111";

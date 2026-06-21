@@ -473,14 +473,14 @@ export function DarkPairingToggle() {
     <button
       onClick={() => setDarkEnabled(!enabled)}
       aria-pressed={enabled}
-      title="为每个颜色生成明暗配对，导出 @media (prefers-color-scheme)"
+      title="为每个颜色生成亮暗配对，导出 @media (prefers-color-scheme)"
       className={`shrink-0 rounded-full border px-3 py-1 text-xs transition ${
         enabled
           ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-black"
           : "border-neutral-300 text-neutral-600 hover:border-neutral-900 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-white dark:hover:text-white"
       }`}
     >
-      {enabled ? "✓ 明暗配对" : "明暗配对"}
+      {enabled ? "✓ 亮暗配对" : "亮暗配对"}
     </button>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useTokens } from "@/lib/store";
-import { applyShareFromUrl } from "@/lib/share";
 import { applyPaletteFromUrl } from "@/lib/urlPalette";
 
 export function StoreHydration({ children }: { children: React.ReactNode }) {
@@ -9,9 +8,8 @@ export function StoreHydration({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     const done = () => {
-      // A share link (#s=) or a ?p= palette in the URL overrides persisted
-      // state. Share carries the full system, so it wins if both are present.
-      if (!applyShareFromUrl()) applyPaletteFromUrl();
+      // A ?p= palette in the URL (agent handoff) overrides persisted state.
+      applyPaletteFromUrl();
       if (!cancelled) setHydrated(true);
     };
     try {
@@ -24,13 +22,8 @@ export function StoreHydration({ children }: { children: React.ReactNode }) {
     } catch {
       done();
     }
-    // Same-document hash navigation (share link clicked while the app is
-    // already open) doesn't remount — listen for it explicitly.
-    const onHashChange = () => applyShareFromUrl();
-    window.addEventListener("hashchange", onHashChange);
     return () => {
       cancelled = true;
-      window.removeEventListener("hashchange", onHashChange);
     };
   }, []);
   if (!hydrated) {

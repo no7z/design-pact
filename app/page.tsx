@@ -27,11 +27,20 @@ function Workflow() {
   const lenis = useLenis();
   const scrollToStep = useCallback(
     (id: string) => {
-      // Defer to next frame so newly-rendered sections (e.g. WorkArea after colors load)
-      // are mounted before we resolve the selector.
+      // Double-rAF so newly-rendered sections (e.g. WorkArea after colors load)
+      // are mounted AND laid out before we scroll. lenis caches scroll limits,
+      // so resize() first or it clamps to the stale (shorter) max scroll.
       requestAnimationFrame(() => {
-        if (lenis) lenis.scrollTo(`#${id}`, { duration: 1.2 });
-        else document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        requestAnimationFrame(() => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (lenis) {
+            lenis.resize();
+            lenis.scrollTo(el, { duration: 1.2 });
+          } else {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
       });
     },
     [lenis],

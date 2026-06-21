@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+# CLI package: nested install + build output
+packages/*/node_modules
+packages/*/dist
 /.pnp
 .pnp.*
 .yarn/*
@@ -40,3 +43,12 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+.gstack/
+.codegraph/
+.understand-anything/
+
+# eval harness generated pages
+test/out/
+
+# Claude Code local overrides (personal, not shared)
+.claude/settings.local.json

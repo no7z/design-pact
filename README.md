@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# UI Generator
 
-## Getting Started
+一个**纯前端、零后端**的设计系统编辑器，为「用 AI 生成页面的人」准备。它把一套配色派生成完整、协调的设计 tokens（色板 / 字体 / 间距 / 圆角 / 阴影 / 描边 / 透明度 / 动效），并导出成 **AI 能严格执行的 `design-system.md`**——丢进代码库，让你自己的 agent（Claude Code / Cursor）据此生成 UI。
 
-First, run the development server:
+**AI 全程跑在你自己的 agent 上**：配色由 agent 产出，UI 生成由 agent 完成。本工具不含任何在线 AI、不需要任何 API key——它只做确定性的 token 派生、可视化微调和导出。
+
+## 工作流
+
+1. **开始** — 配色由你的 agent 产出（装上 `skill/SKILL.md`，描述产品 → agent 给方案 → 用「导入 agent 配色」载入）。也可以直接选品牌模板、上传图片取色开局。
+2. **调色** — OKLCH 色轮整体协调 + 单色编辑 + 语义角色分配 + 明暗配对，右侧 6 种 mockup 实时预览，含对比度审计。
+3. **字体** — base + ratio 两个滑条驱动 8 级字号阶梯，字重/行高/字距可调。
+4. **细节** — 间距 / 圆角 / 阴影 / 描边 / 透明度，全部「单 base 滑条派生整套阶梯」。
+5. **动效** — 时长阶梯 + 缓动曲线。
+6. **导出** — **design-system.md**（推荐，见下）、W3C Design Tokens JSON、Tailwind 配置、CSS 变量、AI prompt、Figma（Tokens Studio）、视觉总览 PNG/SVG/HTML；以及**分享链接**（整套 tokens 序列化进 URL，打开即载入）。
+
+## 把设计系统接进你自己的 AI（design-system.md）
+
+导出区点「下载 **design-system.md**」，得到一个自包含的 markdown 文件，一份文件服务三类读者：
+
+- **人** — 散文 + 色板/字体/间距说明，在 GitHub 或编辑器里直接可读；
+- **AI agent** — 文件内嵌逐字 `:root` 契约（经内置 eval harness 验证：模型按此契约生成页面的样式保真度约 97/100），把文件丢进 repo，**你自己的 Claude Code / Cursor 读它就能按你的设计系统生成 UI**，用你自己的算力；
+- **工具** — 文件底部的 W3C Design Tokens JSON 块，给配套 CLI 精确转格式。
+
+两种用法：
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 1) 让 agent 直接用：把 design-system.md 放进项目，配上 skill（见 skill/SKILL.md）
+#    agent 读文件 → 按 :root 契约生成/对齐 UI
+
+# 2) 转成项目文件（可选）：
+npx design-system-md add design-system.md --format css|tailwind|w3c|all
+#    → tokens.css / tailwind.config.js / design-tokens.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Skill**：`skill/SKILL.md` 拷到 `~/.claude/skills/design-system/`（或项目 `.claude/skills/design-system/`）。它是项目起步时的决策入口——先搜 `design-system.md`：**有就按它生成 UI；没有就问清方向、由 agent 产出配色、打开 UI Generator 网页**（默认 `http://localhost:3000`，有线上部署可替换）把配色派生成完整系统、微调后导出，再回到项目继续。
+- **CLI**：见 [`packages/cli`](packages/cli/README.md)。纯本地、确定性、不联网、不调 AI；css/json 与网页导出逐字一致，tailwind 复用网页同一套 `tailwindConfig` 生成、零漂移。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 开发
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+无需任何 API key——直接跑：
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 脚本
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| 命令 | 作用 |
+|---|---|
+| `npm run dev` / `build` / `start` | Next.js 常规（纯静态，无服务端路由） |
+| `npm run eval:score [html] [fixture]` | 确定性打分（无需 key），守护 `:root` 契约不回归 |
+| `npm run eval [fixture]` | 闭环评测：模型按导出契约生成页面 → Playwright 打分。仅开发用，需在 `.env.local` 配 `AI_GATEWAY_API_KEY`（应用本身不需要） |
+| `npm run snapshot:templates` | 重新抓取并解析品牌模板 → `public/templates.json` |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 架构速览
 
-## Deploy on Vercel
+- `app/page.tsx` — 单页垂直工作流（Lenis 平滑滚动 + 左侧进度导航），无服务端路由
+- `lib/tokens-core.ts` — 框架无关的 token 类型 + `computedHex` + 默认值（web 与 CLI 共用）
+- `lib/store.ts` — zustand + localStorage，全部 token 状态（re-export tokens-core）
+- `lib/scales.ts` / `lib/typography.ts` — 「base → 整套阶梯」派生逻辑
+- `lib/export.ts` — 文本导出（含 `designSystemMarkdown`）；`lib/visualExport.ts` — 视觉导出
+- `lib/templates.ts` + `public/templates.json` — 品牌模板快照（构建时由 `scripts/snapshot-templates.ts` 生成，运行时不依赖 GitHub）
+- `packages/cli` — `design-system-md` CLI；`skill/SKILL.md` — 给 agent 的应用/创建说明
+- `test/harness/` — token→UI 保真度评测（开发工具，详见 `test/harness/run.ts` 头注释）
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+模板数据来源：[VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)。

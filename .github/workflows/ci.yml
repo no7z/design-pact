@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run lint
+      # Deterministic scorer regression: renders test/landing1.html with
+      # Playwright and scores it against the airbnb fixture. Exit code only
+      # guards "the scorer pipeline still runs" — known-bad page scores ~44
+      # by design. No AI key needed.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run eval:score

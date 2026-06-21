@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@source "../components/**/*.tsx";
+@source "../lib/**/*.ts";
 
 :root {
   --background: #ffffff;
@@ -23,4 +25,48 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Subtle scrollbar that blends with neutral panels.
+   Track is transparent, thumb is a soft neutral that brightens on hover.
+   Wrapped in @layer base so Tailwind v4 keeps the rules in the bundle. */
+@layer base {
+  .scrollbar-subtle {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(212 212 212 / 0.6) transparent;
+  }
+  .scrollbar-subtle::-webkit-scrollbar {
+    height: 8px;
+    width: 8px;
+  }
+  .scrollbar-subtle::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-subtle::-webkit-scrollbar-thumb {
+    background: rgb(212 212 212 / 0.7);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .scrollbar-subtle::-webkit-scrollbar-thumb:hover {
+    background: rgb(163 163 163 / 0.9);
+    background-clip: padding-box;
+  }
+  .scrollbar-subtle::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .scrollbar-subtle {
+      scrollbar-color: rgb(82 82 82 / 0.7) transparent;
+    }
+    .scrollbar-subtle::-webkit-scrollbar-thumb {
+      background: rgb(82 82 82 / 0.8);
+      background-clip: padding-box;
+    }
+    .scrollbar-subtle::-webkit-scrollbar-thumb:hover {
+      background: rgb(115 115 115 / 0.9);
+      background-clip: padding-box;
+    }
+  }
 }

@@ -2,10 +2,6 @@
 import { useMemo, useState } from "react";
 import { useTokens, computedHex } from "@/lib/store";
 import {
-  w3cTokens,
-  tailwindConfig,
-  cssVars,
-  tokensStudioJson,
   designSystemMarkdown,
   downloadFile,
   type ResolvedToken,
@@ -13,8 +9,6 @@ import {
 import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
 import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
 import { lightDarkFaces } from "@/lib/darkMode";
-
-type Tab = "json" | "tailwind" | "css";
 
 export function Export() {
   const colors = useTokens((s) => s.colors);
@@ -27,9 +21,6 @@ export function Export() {
   const border = useTokens((s) => s.border);
   const opacity = useTokens((s) => s.opacity);
   const dark = useTokens((s) => s.dark);
-  const [tab, setTab] = useState<Tab>("json");
-  const [copied, setCopied] = useState(false);
-  const [open, setOpen] = useState(false);
   const [visualOpen, setVisualOpen] = useState(true);
   const [vBusy, setVBusy] = useState(false);
 
@@ -54,25 +45,6 @@ export function Export() {
 
   if (resolved.length === 0) return null;
 
-  const content = (() => {
-    switch (tab) {
-      case "json":     return JSON.stringify(w3cTokens(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved), null, 2);
-      case "tailwind": return tailwindConfig(resolved, typography, spacing, radius, shadow, motion, border, opacity);
-      case "css":      return cssVars(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved);
-    }
-  })();
-
-  const filename =
-    tab === "json"      ? "design-tokens.json"
-    : tab === "tailwind" ? "tailwind.config.js"
-    :                      "tokens.css";
-
-  const onCopy = async () => {
-    await navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
-  };
-
   const boardSvg = () => document.getElementById(BOARD_SVG_ID) as SVGSVGElement | null;
 
   const exportSvg = () => {
@@ -91,12 +63,6 @@ export function Export() {
     window.open(url, "_blank", "noopener");
     setTimeout(() => URL.revokeObjectURL(url), 30000);
   };
-  const exportFigma = () =>
-    downloadFile(
-      "tokens-studio.json",
-      tokensStudioJson(resolved, typography, spacing, radius, shadow, motion, border, opacity),
-      "application/json",
-    );
   const exportMarkdown = () =>
     downloadFile(
       "design-system.md",
@@ -153,7 +119,6 @@ export function Export() {
               <button onClick={exportHtml} className={visualBtn}>HTML</button>
               <button onClick={exportPng} disabled={vBusy} className={visualBtn}>PNG</button>
               <button onClick={exportSvg} className={visualBtn}>SVG</button>
-              <button onClick={exportFigma} className={visualBtn}>Figma 令牌</button>
               {vBusy && <span className="text-xs text-neutral-400">导出中…</span>}
               <span className="ml-auto text-[10px] text-neutral-400">SVG 可直接拖进 Figma / Illustrator</span>
             </div>
@@ -163,59 +128,6 @@ export function Export() {
           </div>
         )}
       </section>
-
-    <section className="rounded-xl border border-neutral-200 dark:border-neutral-800">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center justify-between px-4 py-3 text-left"
-      >
-        <span className="text-xs font-semibold">导出 Tokens</span>
-        <span className="text-xs text-neutral-400">{open ? "收起 ↑" : "展开 ↓"}</span>
-      </button>
-
-      {open && (
-        <div className="border-t border-neutral-200 px-4 pb-4 pt-3 dark:border-neutral-800">
-          <div className="mb-2 flex flex-wrap gap-1 border-b border-neutral-200 dark:border-neutral-800">
-            {(
-              [
-                ["json", "W3C"],
-                ["tailwind", "Tailwind"],
-                ["css", "CSS"],
-              ] as const
-            ).map(([key, label]) => (
-              <button
-                key={key}
-                onClick={() => setTab(key)}
-                className={`-mb-px border-b-2 px-2.5 py-1 text-xs ${
-                  tab === key
-                    ? "border-neutral-900 font-medium dark:border-white"
-                    : "border-transparent text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-            <div className="ml-auto flex gap-1.5">
-              <button
-                onClick={onCopy}
-                className="rounded border border-neutral-300 px-2 py-0.5 text-xs hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
-              >
-                {copied ? "已复制" : "复制"}
-              </button>
-              <button
-                onClick={() => downloadFile(filename, content)}
-                className="rounded bg-neutral-900 px-2 py-0.5 text-xs text-white hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
-              >
-                下载
-              </button>
-            </div>
-          </div>
-          <pre className="max-h-72 overflow-auto rounded-lg bg-neutral-50 p-3 font-mono text-[10px] leading-relaxed dark:bg-neutral-900">
-            <code>{content}</code>
-          </pre>
-        </div>
-      )}
-    </section>
     </div>
   );
 }

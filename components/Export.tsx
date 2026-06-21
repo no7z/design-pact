@@ -13,7 +13,6 @@ import {
 } from "@/lib/export";
 import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
 import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
-import { ShareLink } from "./ShareLink";
 import { lightDarkFaces } from "@/lib/darkMode";
 
 type Tab = "json" | "tailwind" | "css" | "ai";
@@ -146,8 +145,6 @@ export function Export() {
           下载 design-system.md
         </button>
       </div>
-
-      <ShareLink />
 
       <section className="rounded-xl border border-neutral-200 dark:border-neutral-800">
         <button

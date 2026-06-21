@@ -141,7 +141,7 @@ export const useTokens = create<State>()(
       border: defaultBorder,
       opacity: defaultOpacity,
       setColors: (palette) =>
-        set((s) => ({
+        set(() => ({
           colors: palette.map((c, i) => ({
             id: `c${i}`,
             hex: c.hex,
@@ -154,18 +154,19 @@ export const useTokens = create<State>()(
           activeSchemeId: null,
           // 图片/网址来源的角色是按颜色顺序猜的，可能不准
           rolesUncertain: true,
-          // 新色板 → 旧的暗色微调不再适用
-          dark: { enabled: s.dark.enabled, overrides: {} },
+          // 换色板 → 亮暗配对重置为关闭（旧的亮暗微调不再适用）
+          dark: { enabled: false, overrides: {} },
         })),
       loadTokens: (tokens, brand = null) =>
-        set((s) => ({
+        set(() => ({
           colors: tokens.map((t, i) => ({ ...t, id: `c${i}` })),
           globals: { dL: 0, dC: 0, dH: 0 },
           activeBrand: brand,
           activeSchemeId: null,
           // 模板/AI/JSON 导入的角色来自标准化或显式声明，可靠
           rolesUncertain: false,
-          dark: { enabled: s.dark.enabled, overrides: {} },
+          // 换色板 → 亮暗配对重置为关闭（旧的亮暗微调不再适用）
+          dark: { enabled: false, overrides: {} },
         })),
       updateColor: (id, patch) =>
         set((s) => ({

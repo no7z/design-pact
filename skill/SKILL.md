@@ -70,24 +70,85 @@ primary, accent, muted, border. Ensure foreground reads on background (aim for
 let the web app derive the scales/shadows/dark/contract so they're correct; you
 only supply the 6 base colors per palette.
 
+Give each palette a short **name** and a one-line **description** (what it's for
+/ the mood), so the user can tell the options apart on the picker — they're
+shown on each card. e.g. name「海洋蓝」, description「冷静专业，适合 B2B SaaS」.
+
 You can briefly describe the directions in chat, but **don't ask the user to
 pick in chat** — the point is to let them see the palettes rendered on a real
 UI and pick there.
+
+### 2.5 Match same-category real products
+
+The web app ships a library of ~70 real brand design templates. List the ones in
+the **same product category** as what's being built, so the user can start from
+a proven real-world design. They appear as a "同类真实产品" row on the first
+screen and are passed via `?m=` in step 3.
+
+**Match by PRODUCT CATEGORY, not by color or vibe.** To keep this accurate
+(don't rely on recognizing every slug from memory — some are obscure), the
+brands are pre-grouped below. Steps:
+
+1. Classify the product being built into ONE of the categories below.
+2. Take the slugs from that category. If an adjacent category clearly also fits
+   the product (e.g. an "AI devtool" spans **AI** and **开发者工具**), you may
+   include those too.
+3. **宁缺毋滥** — if no category genuinely fits, send no `m=` at all (the row
+   just won't appear). Never pad with off-category brands.
+
+```
+AI（大模型 / 生成式 AI 产品）:   claude cohere mistral.ai minimax x.ai elevenlabs runwayml together.ai replicate ollama lovable
+开发者工具 / 基础设施 / 后端:     cursor warp vercel supabase mongodb clickhouse hashicorp sentry posthog mintlify sanity resend expo composio opencode.ai voltagent
+生产力 / 协作 / 工作流 SaaS:      notion airtable miro slack linear.app cal superhuman zapier raycast intercom clay
+设计 / 建站 / 无代码:            figma framer webflow
+金融科技 / 支付:                stripe mastercard revolut wise
+加密货币 / 交易所:               coinbase binance kraken
+汽车:                          tesla bmw bmw-m ferrari lamborghini bugatti renault
+消费电子 / 科技巨头 / 游戏主机:   apple nvidia meta ibm playstation
+电商 / 零售 / 消费品牌:          shopify nike starbucks
+出行 / 市场 / 流媒体（消费平台）: airbnb uber pinterest spotify
+媒体 / 出版:                    theverge wired
+电信:                          vodafone
+航天:                          spacex
+```
+
+e.g. a payments dashboard → category 金融科技 → `stripe,mastercard,revolut,wise`;
+an EV brand site → 汽车 → `tesla,bmw,lamborghini`; an AI chat product → AI →
+`claude,x.ai,mistral.ai,cohere`; a project-tracking SaaS → 生产力 →
+`linear.app,notion,airtable,slack`.
 
 ### 3. Open the web app with the palettes baked into the URL
 
 The web app loads palettes straight from `?p=` query params. Pass **one `?p=`
 per palette**: with several, the user lands on a "选一套配色" screen showing each
-palette rendered on a mockup, and picks one into the editor. (A single `?p=`
-loads directly into the editor instead.) Each set is 6 hex values, no `#`, in
-role order, `-` separated; join multiple sets with `&`:
+palette rendered on a mockup with its name + description, and picks one into the
+editor. (A single `?p=` loads directly into the editor instead.)
+
+Each set is the 6 hex values (no `#`, role order, `-` separated), optionally
+followed by the **name** and **description**, appended with `~` and
+**URL-encoded** (they usually contain CJK/spaces):
 
 ```
-# several palettes → visual picker
-http://localhost:3000/?p=<bg>-<fg>-<primary>-<accent>-<muted>-<border>&p=<…setB…>&p=<…setC…>
+p=<bg>-<fg>-<primary>-<accent>-<muted>-<border>~<name>~<description>
+```
 
-# e.g.
-http://localhost:3000/?p=ffffff-1a1a1a-2f6df6-7c3aed-6b7280-e5e7eb&p=0f1115-e6e8ec-5b8cff-ff8a3d-8a90a0-23262e&p=fff8f0-3a2a1a-e0641a-1aa3a3-9a8a7a-e8dcc8
+Join multiple sets with `&`:
+
+```
+# several palettes → visual picker (with names + descriptions)
+http://localhost:3000/?p=ffffff-1a1a1a-2f6df6-7c3aed-6b7280-e5e7eb~%E6%B5%B7%E6%B4%8B%E8%93%9D~%E5%86%B7%E9%9D%99%E4%B8%93%E4%B8%9A%EF%BC%8C%E9%80%82%E5%90%88%20B2B%20SaaS&p=0f1115-e6e8ec-5b8cff-ff8a3d-8a90a0-23262e~%E6%9A%97%E5%A4%9C~%E7%A7%91%E6%8A%80%E6%84%9F%E5%8D%81%E8%B6%B3
+```
+
+(Names/descriptions are optional — a bare `p=<hexes>` still works. Build the URL
+programmatically with `encodeURIComponent` for each name/description so the `~`
+delimiters stay intact.)
+
+Append the same-category brands from step 2.5 as a single comma-separated `m=`
+(slugs only, no encoding needed). Unknown slugs are dropped; omit `m=` entirely
+when nothing matched:
+
+```
+…&m=stripe,linear.app,vercel,supabase
 ```
 
 `UI_GENERATOR_URL` defaults to `http://localhost:3000` (use a hosted URL if the

@@ -1,4 +1,4 @@
-import { computedHex, type ColorToken, type SemanticRole } from "./store";
+import { computedHex, type ColorToken, type SemanticRole } from "./tokens-core";
 import { relativeLuminance, adjustHex } from "./color";
 
 type Globals = { dL: number; dC: number; dH: number };

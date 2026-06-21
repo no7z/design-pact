@@ -7,6 +7,7 @@ import { parseDesignSystemTokens } from "@/lib/importTokens";
 export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
+  const [dragging, setDragging] = useState(false);
 
   const applyText = (raw: string) => {
     setError("");
@@ -40,13 +41,31 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
     applyText(await file.text());
   };
 
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    void onFile(e.dataTransfer.files?.[0]);
+  };
+
   return (
     <div className="space-y-3">
       <p className="text-xs text-neutral-500 dark:text-neutral-400">
         导入之前下载的 design-system.md，恢复整套设计系统。
       </p>
-      <label className="block cursor-pointer rounded-lg border border-dashed border-neutral-300 px-4 py-6 text-center text-sm text-neutral-500 transition hover:border-neutral-500 dark:border-neutral-700 dark:text-neutral-400">
-        点击选择 design-system.md 文件
+      <label
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragging(true);
+        }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={onDrop}
+        className={`block cursor-pointer rounded-lg border border-dashed px-4 py-6 text-center text-sm transition ${
+          dragging
+            ? "border-neutral-900 bg-neutral-50 text-neutral-900 dark:border-white dark:bg-neutral-900 dark:text-white"
+            : "border-neutral-300 text-neutral-500 hover:border-neutral-500 dark:border-neutral-700 dark:text-neutral-400"
+        }`}
+      >
+        {dragging ? "松开导入 design-system.md" : "点击选择，或拖拽 design-system.md 到这里"}
         <input
           type="file"
           accept=".md,text/markdown"

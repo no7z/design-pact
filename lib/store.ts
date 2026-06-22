@@ -69,6 +69,7 @@ export type Scheme = {
   opacity: Opacity;
   dark: DarkMode;
   activeBrand: string | null;
+  semanticOverride?: Partial<Semantic>;
 };
 
 const MAX_SCHEMES = 8;
@@ -90,8 +91,12 @@ type State = {
   motion: Motion;
   border: Border;
   opacity: Opacity;
+  // Template-declared status colors, layered over the derived defaults at
+  // consumption time (resolveSemantic). Empty for agent / image palettes.
+  semanticOverride: Partial<Semantic>;
   setColors: (palette: ExtractedColor[]) => void;
-  loadTokens: (tokens: ColorToken[], brand?: string | null) => void;
+  loadTokens: (tokens: ColorToken[], brand?: string | null, semantic?: Partial<Semantic>) => void;
+  setSemanticOverride: (semantic: Partial<Semantic>) => void;
   updateColor: (id: string, patch: Partial<ColorToken>) => void;
   setRole: (id: string, role: SemanticRole) => void;
   setGlobal: (g: Partial<Globals>) => void;
@@ -145,6 +150,7 @@ export const useTokens = create<State>()(
       motion: defaultMotion,
       border: defaultBorder,
       opacity: defaultOpacity,
+      semanticOverride: {},
       setColors: (palette) =>
         set(() => ({
           colors: palette.map((c, i) => ({
@@ -161,8 +167,10 @@ export const useTokens = create<State>()(
           rolesUncertain: true,
           // 换色板 → 亮暗配对重置为关闭（旧的亮暗微调不再适用）
           dark: { enabled: false, overrides: {} },
+          // 新配色 → 语义色回到纯派生（无模板覆盖）
+          semanticOverride: {},
         })),
-      loadTokens: (tokens, brand = null) =>
+      loadTokens: (tokens, brand = null, semantic) =>
         set(() => ({
           colors: tokens.map((t, i) => ({ ...t, id: `c${i}` })),
           globals: { dL: 0, dC: 0, dH: 0 },
@@ -172,7 +180,10 @@ export const useTokens = create<State>()(
           rolesUncertain: false,
           // 换色板 → 亮暗配对重置为关闭（旧的亮暗微调不再适用）
           dark: { enabled: false, overrides: {} },
+          // 模板可声明自己的语义色，覆盖派生默认；agent/导入则为空 → 纯派生
+          semanticOverride: semantic ?? {},
         })),
+      setSemanticOverride: (semantic) => set(() => ({ semanticOverride: semantic })),
       updateColor: (id, patch) =>
         set((s) => ({
           colors: s.colors.map((c) =>
@@ -237,6 +248,7 @@ export const useTokens = create<State>()(
           opacity: { ...s.opacity },
           dark: { enabled: s.dark.enabled, overrides: { ...s.dark.overrides } },
           activeBrand: s.activeBrand,
+          semanticOverride: { ...s.semanticOverride },
         };
         set((cur) => ({
           schemes: [...cur.schemes, scheme].slice(-MAX_SCHEMES),
@@ -259,6 +271,7 @@ export const useTokens = create<State>()(
           opacity: { ...scheme.opacity },
           dark: { enabled: scheme.dark.enabled, overrides: { ...scheme.dark.overrides } },
           activeBrand: scheme.activeBrand,
+          semanticOverride: { ...(scheme.semanticOverride ?? {}) },
           activeSchemeId: id,
         }));
       },
@@ -283,6 +296,7 @@ export const useTokens = create<State>()(
           dark: defaultDark,
           activeBrand: null,
           activeSchemeId: null,
+          semanticOverride: {},
         })),
     }),
     { name: "ui-generator-tokens", skipHydration: true },

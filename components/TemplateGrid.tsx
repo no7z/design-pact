@@ -30,9 +30,9 @@ export function TemplateGrid({
     setLoading(brand);
     setError("");
     try {
-      const { colors, typography, spacing, radius } = await fetchTemplate(brand);
+      const { colors, semantic, typography, spacing, radius } = await fetchTemplate(brand);
       if (colors.length === 0) throw new Error("未提取到颜色");
-      loadTokens(colors, brand);
+      loadTokens(colors, brand, semantic);
       if (typography && Object.keys(typography).length > 0) setTypography(typography);
       if (spacing && Object.keys(spacing).length > 0) setSpacing(spacing);
       if (radius && Object.keys(radius).length > 0) setRadius(radius);

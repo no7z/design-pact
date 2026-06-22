@@ -74,6 +74,7 @@ export async function fetchTemplateColors(brand: string): Promise<ColorToken[]> 
 
 export async function fetchTemplate(brand: string): Promise<{
   colors: ColorToken[];
+  semantic?: Partial<Semantic>;
   typography: Partial<Typography>;
   spacing: Partial<Spacing>;
   radius: Partial<Radius>;
@@ -90,6 +91,7 @@ export async function fetchTemplate(brand: string): Promise<{
       role: c.role,
       name: c.name,
     })),
+    semantic: entry.semantic,
     typography: entry.typography,
     spacing: entry.spacing,
     radius: entry.radius,

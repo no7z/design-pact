@@ -9,7 +9,7 @@ import {
 import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
 import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
 import { lightDarkFaces } from "@/lib/darkMode";
-import { resolveSemantic } from "@/lib/semantic";
+import { deriveSemantic } from "@/lib/semantic";
 
 export function Export() {
   const colors = useTokens((s) => s.colors);
@@ -22,7 +22,6 @@ export function Export() {
   const border = useTokens((s) => s.border);
   const opacity = useTokens((s) => s.opacity);
   const dark = useTokens((s) => s.dark);
-  const semanticOverride = useTokens((s) => s.semanticOverride);
   const [visualOpen, setVisualOpen] = useState(true);
   const [vBusy, setVBusy] = useState(false);
 
@@ -45,10 +44,16 @@ export function Export() {
     [colors, globals, dark.enabled, dark.overrides],
   );
 
-  const semantic = useMemo(() => {
-    const bg = resolved.find((c) => c.role === "background")?.displayHex ?? resolved[0]?.displayHex ?? "#ffffff";
-    return resolveSemantic(bg, semanticOverride);
-  }, [resolved, semanticOverride]);
+  // Status colors are pure-derived from the background. With light/dark pairing
+  // on, each face has its own background, so each gets its own derived set —
+  // the light set goes in :root, the dark set in the @media dark block.
+  const bgOf = (cs: ResolvedToken[]) =>
+    cs.find((c) => c.role === "background")?.displayHex ?? cs[0]?.displayHex ?? "#ffffff";
+  const semantic = useMemo(() => deriveSemantic(bgOf(resolved)), [resolved]);
+  const darkSemantic = useMemo(
+    () => (darkResolved ? deriveSemantic(bgOf(darkResolved)) : null),
+    [darkResolved],
+  );
 
   if (resolved.length === 0) return null;
 
@@ -73,7 +78,7 @@ export function Export() {
   const exportMarkdown = () =>
     downloadFile(
       "design-system.md",
-      designSystemMarkdown(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved, semantic),
+      designSystemMarkdown(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved, semantic, darkSemantic),
       "text/markdown",
     );
   const exportPng = async () => {

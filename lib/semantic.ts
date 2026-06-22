@@ -1,7 +1,7 @@
 // Derive semantic / status colors (success / warning / error / info) for any
-// palette. The agent only hands off brand colors, so every design system gets a
-// consistent status-color set derived here; templates that declare their own
-// override these (see store loadTokens).
+// palette. Brand palettes carry no status colors, so every design system gets a
+// consistent set derived purely from its background — no template overrides.
+// With light/dark pairing, each face derives its own set from its background.
 //
 // Each color uses a fixed status hue (green / amber / red / blue) at a vivid but
 // not neon chroma, with lightness nudged so it stays legible on the background.
@@ -39,21 +39,6 @@ export function deriveSemantic(bgHex: string): Semantic {
       hex = oklchToHex({ mode: "oklch", l, c, h });
     }
     out[kind] = hex;
-  }
-  return out;
-}
-
-/** Derived defaults for a background, with any declared (template) colors layered on top. */
-export function resolveSemantic(bgHex: string, override?: Partial<Semantic>): Semantic {
-  return { ...deriveSemantic(bgHex), ...stripEmpty(override) };
-}
-
-function stripEmpty(o?: Partial<Semantic>): Partial<Semantic> {
-  if (!o) return {};
-  const out: Partial<Semantic> = {};
-  for (const k of SEMANTIC_KINDS) {
-    const v = o[k];
-    if (typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v)) out[k] = v;
   }
   return out;
 }

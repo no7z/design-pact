@@ -27,6 +27,7 @@ export function w3cTokens(
   opacity: Opacity,
   darkColors?: ResolvedToken[] | null,
   semantic?: Semantic | null,
+  darkSemantic?: Semantic | null,
 ) {
   const darkById = new Map((darkColors ?? []).map((c) => [c.id, c.displayHex]));
   const colorGroup: Record<string, unknown> = {};
@@ -80,7 +81,14 @@ export function w3cTokens(
   // restores them as overrides without polluting the brand palette.
   const semanticGroup: Record<string, unknown> | undefined = semantic
     ? Object.fromEntries(
-        SEMANTIC_KINDS.map((k) => [k, { $value: semantic[k], $type: "color" }]),
+        SEMANTIC_KINDS.map((k) => [
+          k,
+          {
+            $value: semantic[k],
+            $type: "color",
+            ...(darkSemantic ? { $extensions: { "ui-generator": { dark: darkSemantic[k] } } } : {}),
+          },
+        ]),
       )
     : undefined;
 
@@ -205,6 +213,7 @@ export function cssVars(
   opacity: Opacity,
   darkColors?: ResolvedToken[] | null,
   semantic?: Semantic | null,
+  darkSemantic?: Semantic | null,
 ): string {
   const colorLines = colors
     .map((c) => `  --color-${c.role === "unassigned" ? c.id : c.role}: ${c.displayHex};`)
@@ -234,11 +243,15 @@ export function cssVars(
   const opacityLines = buildOpacityScale(opacity.base)
     .map((o) => `  --opacity-${o.name}: ${o.value};`)
     .join("\n");
+  const darkSemanticLines =
+    darkColors && darkColors.length > 0 && darkSemantic
+      ? "\n" + SEMANTIC_KINDS.map((k) => `    --color-${k}: ${darkSemantic[k]};`).join("\n")
+      : "";
   const darkBlock =
     darkColors && darkColors.length > 0
       ? `\n@media (prefers-color-scheme: dark) {\n  :root {\n${darkColors
           .map((c) => `    --color-${c.role === "unassigned" ? c.id : c.role}: ${c.displayHex};`)
-          .join("\n")}\n  }\n}\n`
+          .join("\n")}${darkSemanticLines}\n  }\n}\n`
       : "";
   return `:root {
 ${colorLines}${semanticLines}
@@ -271,6 +284,7 @@ export function aiPrompt(
   opacity: Opacity,
   darkColors?: ResolvedToken[] | null,
   semantic?: Semantic | null,
+  darkSemantic?: Semantic | null,
 ): string {
   const sorted = [...colors].sort((a, b) => b.proportion - a.proportion);
   const palette = sorted
@@ -284,11 +298,11 @@ export function aiPrompt(
     .join("\n");
   const dominant = sorted[0];
   const accent = sorted.find((c) => c.role === "accent") ?? sorted[1];
-  const rootBlock = cssVars(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic);
+  const rootBlock = cssVars(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic, darkSemantic);
   const semanticSection = semantic
     ? `
 ## Status colors
-Use these for feedback only — never as brand/UI surface colors. \`--color-success\` ${semantic.success} (confirmations), \`--color-warning\` ${semantic.warning} (cautions), \`--color-error\` ${semantic.error} (errors/destructive), \`--color-info\` ${semantic.info} (informational). Reference via \`var(--color-…)\`.
+Use these for feedback only — never as brand/UI surface colors. \`--color-success\` ${semantic.success} (confirmations), \`--color-warning\` ${semantic.warning} (cautions), \`--color-error\` ${semantic.error} (errors/destructive), \`--color-info\` ${semantic.info} (informational). Reference via \`var(--color-…)\`.${darkSemantic ? " In dark mode the `@media` block above overrides these with the dark-background variants — same convention as the brand colors." : ""}
 `
     : "";
   const darkSection =
@@ -468,9 +482,10 @@ export function designSystemMarkdown(
   opacity: Opacity,
   darkColors?: ResolvedToken[] | null,
   semantic?: Semantic | null,
+  darkSemantic?: Semantic | null,
 ): string {
-  const prompt = aiPrompt(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic);
-  const tokens = w3cTokens(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic);
+  const prompt = aiPrompt(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic, darkSemantic);
+  const tokens = w3cTokens(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic, darkSemantic);
   const generated = new Date().toISOString().slice(0, 10);
   return `---
 ui-generator: 1

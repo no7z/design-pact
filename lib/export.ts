@@ -1,4 +1,5 @@
-import type { ColorToken, Typography, Spacing, Radius, Shadow, Motion, Border, Opacity } from "./tokens-core";
+import type { ColorToken, Typography, Spacing, Radius, Shadow, Motion, Border, Opacity, Semantic } from "./tokens-core";
+import { SEMANTIC_KINDS } from "./tokens-core";
 import { buildScale, SCALE_STEPS } from "./typography";
 import { buildSpacing, buildRadius, shadowToCss, buildDurations, EASING_PRESETS, buildBorderScale, buildOpacityScale, boldWeight } from "./scales";
 import { oklchString } from "./color";
@@ -25,6 +26,7 @@ export function w3cTokens(
   border: Border,
   opacity: Opacity,
   darkColors?: ResolvedToken[] | null,
+  semantic?: Semantic | null,
 ) {
   const darkById = new Map((darkColors ?? []).map((c) => [c.id, c.displayHex]));
   const colorGroup: Record<string, unknown> = {};
@@ -74,8 +76,17 @@ export function w3cTokens(
     opacityGroup[o.name] = { $value: o.value, $type: "number" };
   }
 
+  // Status colors as their own group, kept out of `color` (brand) so a re-import
+  // restores them as overrides without polluting the brand palette.
+  const semanticGroup: Record<string, unknown> | undefined = semantic
+    ? Object.fromEntries(
+        SEMANTIC_KINDS.map((k) => [k, { $value: semantic[k], $type: "color" }]),
+      )
+    : undefined;
+
   return {
     color: colorGroup,
+    ...(semanticGroup ? { semantic: semanticGroup } : {}),
     typography: {
       fontFamily: {
         body: { $value: typography.fontFamily, $type: "fontFamily" },
@@ -193,10 +204,15 @@ export function cssVars(
   border: Border,
   opacity: Opacity,
   darkColors?: ResolvedToken[] | null,
+  semantic?: Semantic | null,
 ): string {
   const colorLines = colors
     .map((c) => `  --color-${c.role === "unassigned" ? c.id : c.role}: ${c.displayHex};`)
     .join("\n");
+  const semanticLines = semantic
+    ? "\n" +
+      SEMANTIC_KINDS.map((k) => `  --color-${k}: ${semantic[k]};`).join("\n")
+    : "";
   const sizeLines = buildScale(typography)
     .map((s) => `  --font-size-${s.name}: ${s.rem}rem;`)
     .join("\n");
@@ -225,7 +241,7 @@ export function cssVars(
           .join("\n")}\n  }\n}\n`
       : "";
   return `:root {
-${colorLines}
+${colorLines}${semanticLines}
   --font-family-body: ${typography.fontFamily};
   --font-family-heading: ${typography.headingFamily};
   --font-weight: ${typography.fontWeight};
@@ -254,6 +270,7 @@ export function aiPrompt(
   border: Border,
   opacity: Opacity,
   darkColors?: ResolvedToken[] | null,
+  semantic?: Semantic | null,
 ): string {
   const sorted = [...colors].sort((a, b) => b.proportion - a.proportion);
   const palette = sorted
@@ -267,7 +284,13 @@ export function aiPrompt(
     .join("\n");
   const dominant = sorted[0];
   const accent = sorted.find((c) => c.role === "accent") ?? sorted[1];
-  const rootBlock = cssVars(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors);
+  const rootBlock = cssVars(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic);
+  const semanticSection = semantic
+    ? `
+## Status colors
+Use these for feedback only — never as brand/UI surface colors. \`--color-success\` ${semantic.success} (confirmations), \`--color-warning\` ${semantic.warning} (cautions), \`--color-error\` ${semantic.error} (errors/destructive), \`--color-info\` ${semantic.info} (informational). Reference via \`var(--color-…)\`.
+`
+    : "";
   const darkSection =
     darkColors && darkColors.length > 0
       ? `
@@ -342,7 +365,7 @@ Base duration ${motion.base}ms, easing: ${motion.easing} (${EASING_PRESETS[motio
 ${buildDurations(motion.base).map((d) => `- ${d.name}: ${d.ms}ms`).join("\n")}
 
 Use \`--duration-normal\` as the default transition. Prefer \`--duration-fast\` for hover states and micro-interactions. Reserve \`--duration-page\` for route/page-level transitions.
-${darkSection}
+${darkSection}${semanticSection}
 ## Output guidance
 - Maintain the proportional relationships above when laying out a page.
 - Do not introduce new hues. If you need additional shades, derive them by adjusting OKLCH lightness only, keeping hue and chroma fixed.
@@ -444,9 +467,10 @@ export function designSystemMarkdown(
   border: Border,
   opacity: Opacity,
   darkColors?: ResolvedToken[] | null,
+  semantic?: Semantic | null,
 ): string {
-  const prompt = aiPrompt(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors);
-  const tokens = w3cTokens(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors);
+  const prompt = aiPrompt(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic);
+  const tokens = w3cTokens(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic);
   const generated = new Date().toISOString().slice(0, 10);
   return `---
 ui-generator: 1

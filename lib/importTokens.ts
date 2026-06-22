@@ -15,6 +15,7 @@ import type {
   Border,
   Opacity,
   SemanticRole,
+  Semantic,
 } from "./tokens-core";
 import { EASING_PRESETS, type EasingPreset } from "./scales";
 
@@ -29,6 +30,8 @@ export type ImportedTokens = {
   opacity?: Partial<Opacity>;
   /** Dark hex per colors[] index, when the export carried dark pairs. */
   darkHexes?: (string | undefined)[];
+  /** Status colors from the `semantic` group, restored as overrides. */
+  semantic?: Partial<Semantic>;
 };
 
 const ROLES = new Set<SemanticRole>([
@@ -171,6 +174,17 @@ export function parseW3CTokens(jsonText: string): ImportedTokens {
       if (preset) m.easing = preset;
     }
     if (Object.keys(m).length > 0) out.motion = m;
+  }
+
+  // ── semantic / status colors ──
+  const semGroup = asObj(root.semantic);
+  if (semGroup) {
+    const sem: Partial<Semantic> = {};
+    for (const k of ["success", "warning", "error", "info"] as const) {
+      const hex = value(semGroup[k]);
+      if (typeof hex === "string" && HEX_RE.test(hex)) sem[k] = hex;
+    }
+    if (Object.keys(sem).length > 0) out.semantic = sem;
   }
 
   return out;

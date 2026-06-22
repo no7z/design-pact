@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { useTokens, computedHex } from "@/lib/store";
+import { useTokens, computedHex, SEMANTIC_KINDS, type SemanticKind } from "@/lib/store";
 import {
   designSystemMarkdown,
   downloadFile,
@@ -9,6 +9,14 @@ import {
 import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
 import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
 import { lightDarkFaces } from "@/lib/darkMode";
+import { resolveSemantic } from "@/lib/semantic";
+
+const SEMANTIC_LABELS: Record<SemanticKind, string> = {
+  success: "成功",
+  warning: "警告",
+  error: "错误",
+  info: "信息",
+};
 
 export function Export() {
   const colors = useTokens((s) => s.colors);
@@ -21,6 +29,7 @@ export function Export() {
   const border = useTokens((s) => s.border);
   const opacity = useTokens((s) => s.opacity);
   const dark = useTokens((s) => s.dark);
+  const semanticOverride = useTokens((s) => s.semanticOverride);
   const [visualOpen, setVisualOpen] = useState(true);
   const [vBusy, setVBusy] = useState(false);
 
@@ -42,6 +51,11 @@ export function Export() {
         : null,
     [colors, globals, dark.enabled, dark.overrides],
   );
+
+  const semantic = useMemo(() => {
+    const bg = resolved.find((c) => c.role === "background")?.displayHex ?? resolved[0]?.displayHex ?? "#ffffff";
+    return resolveSemantic(bg, semanticOverride);
+  }, [resolved, semanticOverride]);
 
   if (resolved.length === 0) return null;
 
@@ -66,7 +80,7 @@ export function Export() {
   const exportMarkdown = () =>
     downloadFile(
       "design-system.md",
-      designSystemMarkdown(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved),
+      designSystemMarkdown(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved, semantic),
       "text/markdown",
     );
   const exportPng = async () => {
@@ -99,6 +113,21 @@ export function Export() {
         >
           下载 design-system.md
         </button>
+        <div className="flex w-full items-center gap-2 border-t border-neutral-100 pt-2.5 dark:border-neutral-800">
+          <span className="text-[10px] uppercase tracking-wider text-neutral-400">状态色</span>
+          <div className="flex items-center gap-3">
+            {SEMANTIC_KINDS.map((k) => (
+              <span key={k} className="flex items-center gap-1.5" title={`--color-${k}: ${semantic[k]}`}>
+                <span
+                  className="h-3.5 w-3.5 rounded-full border border-black/10 dark:border-white/15"
+                  style={{ background: semantic[k] }}
+                />
+                <span className="text-[10px] text-neutral-500 dark:text-neutral-400">{SEMANTIC_LABELS[k]}</span>
+              </span>
+            ))}
+          </div>
+          <span className="ml-auto text-[10px] text-neutral-400">随 design-system.md 一起导出，调色区只管品牌色</span>
+        </div>
       </div>
 
       <section className="rounded-xl border border-neutral-200 dark:border-neutral-800">

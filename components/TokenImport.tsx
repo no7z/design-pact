@@ -22,7 +22,6 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
       if (parsed.border) s.setBorder(parsed.border);
       if (parsed.opacity) s.setOpacity(parsed.opacity);
       if (parsed.shadow) useTokens.setState({ shadow: parsed.shadow });
-      s.setSemanticOverride(parsed.semantic ?? {});
       if (parsed.darkHexes) {
         // loadTokens re-ids colors to c0..cN in array order — key overrides accordingly.
         const overrides: Record<string, string> = {};

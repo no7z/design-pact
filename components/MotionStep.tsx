@@ -432,25 +432,20 @@ export function MotionStep() {
                 />
               ))}
             </div>
-            <div
-              className="flex flex-wrap items-center gap-3 rounded-xl p-3"
-              style={{ background: palette.surface, border: `1px solid ${palette.border}` }}
-            >
-              <button
-                onClick={() => setModalOpen(true)}
-                className="rounded-lg px-4 py-2 text-xs font-medium"
-                style={{ background: palette.primary, color: onPrimary(palette.primary) }}
-              >
-                打开弹窗
-              </button>
-              <span className="text-[10px]" style={{ color: palette.muted }}>
-                弹到整个预览窗口 · 入场用当前时长 + 缓动，遮罩 = overlay 不透明度 {overlayValue}
-              </span>
-            </div>
             <div>
-              <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>
-                可交互 · 移上去 / 按住 / 点输入框试试
-              </p>
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <p className="text-[10px]" style={{ color: palette.muted }}>
+                  可交互 · 移上去 / 按住 / 点输入框 / 开弹窗试试
+                </p>
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium"
+                  style={{ background: palette.primary, color: onPrimary(palette.primary) }}
+                  title={`弹到整个预览窗口 · 入场用当前时长 + 缓动，遮罩 = overlay 不透明度 ${overlayValue}`}
+                >
+                  打开弹窗
+                </button>
+              </div>
               <StatePreview />
             </div>
           </div>

@@ -129,6 +129,8 @@ export function buildOpacityScale(base: number): OpacityEntry[] {
     { name: "pressed",  value: r(base * 1.5) },
     { name: "focus",    value: r(base * 2) },
     { name: "disabled", value: 0.38 },
-    { name: "overlay",  value: r(base * 0.5) },
+    // Modal/drawer backdrop scrim — a fixed, perceptible dim (not tied to the
+    // tiny interactive base, which made it ~0.04 = invisible).
+    { name: "overlay",  value: 0.5 },
   ];
 }

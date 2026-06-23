@@ -22,7 +22,6 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
   const candidates = useCandidates((s) => s.palettes);
   const matches = useCandidates((s) => s.matches);
   const loadTokens = useTokens((s) => s.loadTokens);
-  const setDescription = useTokens((s) => s.setDescription);
   const hasCandidates = candidates.length > 0;
 
   const [selected, setSelected] = useState<number | null>(null);
@@ -32,10 +31,8 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
 
   const pick = (i: number, cand: Candidate) => {
     // Load as the active palette (activeBrand=null → any picked template
-    // de-highlights automatically), carry its description, mark this card,
-    // and scroll to 调色.
+    // de-highlights automatically), mark this card, and scroll to 调色.
     loadTokens(cand.palette, null);
-    setDescription(cand.description ?? "");
     setSelected(i);
     onLoaded();
   };

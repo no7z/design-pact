@@ -81,7 +81,6 @@ type State = {
   schemes: Scheme[];
   activeSchemeId: string | null;
   rolesUncertain: boolean;
-  description: string;
   recommendations: string[];
   activeBrand: string | null;
   spacing: Spacing;
@@ -97,7 +96,6 @@ type State = {
   setGlobal: (g: Partial<Globals>) => void;
   resetGlobals: () => void;
   setTypography: (t: Partial<Typography>) => void;
-  setDescription: (s: string) => void;
   setRecommendations: (r: string[]) => void;
   setSpacing: (s: Partial<Spacing>) => void;
   setRadius: (r: Partial<Radius>) => void;
@@ -136,7 +134,6 @@ export const useTokens = create<State>()(
       schemes: [],
       activeSchemeId: null,
       rolesUncertain: false,
-      description: "",
       recommendations: [],
       activeBrand: null,
       spacing: defaultSpacing,
@@ -193,7 +190,6 @@ export const useTokens = create<State>()(
       setGlobal: (g) => set((s) => ({ globals: { ...s.globals, ...g } })),
       resetGlobals: () => set(() => ({ globals: { dL: 0, dC: 0, dH: 0 } })),
       setTypography: (t) => set((s) => ({ typography: { ...s.typography, ...t } })),
-      setDescription: (s) => set(() => ({ description: s })),
       setRecommendations: (r) => set(() => ({ recommendations: r })),
       setSpacing: (s) => set((cur) => ({ spacing: { ...cur.spacing, ...s } })),
       setRadius: (r) => set((cur) => ({ radius: { ...cur.radius, ...r } })),

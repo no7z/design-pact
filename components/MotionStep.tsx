@@ -3,6 +3,7 @@ import { useEffect, useRef, useMemo, useState } from "react";
 import { useTokens } from "@/lib/store";
 import {
   buildDurations,
+  buildOpacityScale,
   EASING_PRESETS,
   type DurationEntry,
   type EasingPreset,
@@ -341,12 +342,18 @@ function DemoCard({
 export function MotionStep() {
   const motion = useTokens((s) => s.motion);
   const setMotion = useTokens((s) => s.setMotion);
+  const opacity = useTokens((s) => s.opacity);
   const hasColors = useTokens((s) => s.colors.length > 0);
   const palette = usePalette();
   const primaryHex = palette.primary; // basic-view charts only need the brand color
   const [view, setView] = useState<"instance" | "basic">("instance");
+  const [modalOpen, setModalOpen] = useState(false);
 
   const durations = useMemo(() => buildDurations(motion.base), [motion.base]);
+  const overlayValue = useMemo(
+    () => buildOpacityScale(opacity.base).find((o) => o.name === "overlay")?.value ?? 0.5,
+    [opacity.base],
+  );
 
   if (!hasColors) return null;
 
@@ -404,7 +411,7 @@ export function MotionStep() {
       </div>
 
       {/* Preview */}
-      <div className="flex flex-col rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="relative flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-2.5 dark:border-neutral-800">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
             动效演示
@@ -424,6 +431,21 @@ export function MotionStep() {
                   index={i}
                 />
               ))}
+            </div>
+            <div
+              className="flex flex-wrap items-center gap-3 rounded-xl p-3"
+              style={{ background: palette.surface, border: `1px solid ${palette.border}` }}
+            >
+              <button
+                onClick={() => setModalOpen(true)}
+                className="rounded-lg px-4 py-2 text-xs font-medium"
+                style={{ background: palette.primary, color: onPrimary(palette.primary) }}
+              >
+                打开弹窗
+              </button>
+              <span className="text-[10px]" style={{ color: palette.muted }}>
+                弹到整个预览窗口 · 入场用当前时长 + 缓动，遮罩 = overlay 不透明度 {overlayValue}
+              </span>
             </div>
             <div>
               <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>
@@ -466,6 +488,65 @@ export function MotionStep() {
             </section>
           </div>
         )}
+
+        {/* Modal — pops over the whole preview window. The scrim fades and the
+            dialog scales/lifts in on the current duration + easing, demonstrating
+            both the motion tokens and the overlay opacity in one go. */}
+        <div
+          aria-hidden={!modalOpen}
+          onClick={() => setModalOpen(false)}
+          className="absolute inset-0 z-30 grid place-items-center p-6"
+          style={{ pointerEvents: modalOpen ? "auto" : "none" }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: hexA("#000000", overlayValue),
+              opacity: modalOpen ? 1 : 0,
+              transition: `opacity ${motion.base}ms ${EASING_PRESETS[motion.easing]}`,
+            }}
+          />
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: "relative",
+              width: "min(340px, 88%)",
+              background: palette.surface,
+              color: palette.fg,
+              borderRadius: 14,
+              border: `1px solid ${palette.border}`,
+              boxShadow: "0 24px 60px rgba(0,0,0,0.35)",
+              padding: 20,
+              opacity: modalOpen ? 1 : 0,
+              transform: modalOpen ? "scale(1) translateY(0)" : "scale(0.92) translateY(12px)",
+              transition: `opacity ${motion.base}ms ${EASING_PRESETS[motion.easing]}, transform ${motion.base}ms ${EASING_PRESETS[motion.easing]}`,
+            }}
+          >
+            <p className="text-sm font-semibold" style={{ color: palette.fg }}>
+              删除这套配色？
+            </p>
+            <p className="mt-1.5 text-xs leading-relaxed" style={{ color: palette.muted }}>
+              此操作无法撤销。删除后，关联的导出文件需要重新生成。
+            </p>
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setModalOpen(false)}
+                className="rounded-lg px-3 py-1.5 text-xs"
+                style={{ border: `1px solid ${palette.border}`, color: palette.fg }}
+              >
+                取消
+              </button>
+              <button
+                onClick={() => setModalOpen(false)}
+                className="rounded-lg px-3 py-1.5 text-xs font-medium"
+                style={{ background: palette.primary, color: onPrimary(palette.primary) }}
+              >
+                删除
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

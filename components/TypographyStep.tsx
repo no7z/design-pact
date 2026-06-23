@@ -315,6 +315,53 @@ export function TypographyStep() {
                 让模型理解风格的唯一入口。一份好的 token 集既能产出干净的 CSS，也能让 prompt 在
                 上下文里精确表达视觉语言。
               </p>
+              <h3
+                style={{
+                  color: palette.fg,
+                  fontFamily: typography.headingFamily,
+                  fontSize: `${size("h3", 24)}px`,
+                  fontWeight: Math.min(900, typography.fontWeight + 200),
+                  lineHeight: LINE_HEIGHT.h3,
+                  letterSpacing: `${typography.letterSpacing}em`,
+                  marginTop: "0.5em",
+                }}
+              >
+                共享词汇的三个支点
+              </h3>
+              <ul className="list-disc space-y-1.5 pl-5" style={{ color: palette.fg }}>
+                {[
+                  "颜色、间距、字号有统一命名，不再靠口头约定",
+                  "亮暗主题自动配对，一处定义、两处生效",
+                  "AI 读同一份契约，生成的 UI 不会跑偏",
+                ].map((t) => (
+                  <li
+                    key={t}
+                    style={{
+                      fontFamily: typography.fontFamily,
+                      fontSize: `${size("body", 16)}px`,
+                      fontWeight: typography.fontWeight,
+                      lineHeight: typography.lineHeight,
+                      letterSpacing: `${typography.letterSpacing}em`,
+                    }}
+                  >
+                    {t}
+                  </li>
+                ))}
+              </ul>
+              <blockquote
+                style={{
+                  color: palette.muted,
+                  fontFamily: typography.fontFamily,
+                  fontSize: `${size("body", 16)}px`,
+                  fontWeight: typography.fontWeight,
+                  lineHeight: typography.lineHeight,
+                  letterSpacing: `${typography.letterSpacing}em`,
+                  borderLeft: `3px solid ${palette.primary}`,
+                  paddingLeft: "0.75em",
+                }}
+              >
+                “好的排版是隐形的——读者只感到顺畅，不会注意到字体本身。”
+              </blockquote>
               <p
                 style={{
                   color: palette.muted,

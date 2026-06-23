@@ -5,7 +5,6 @@ import { StoreHydration } from "@/components/StoreHydration";
 import { DescribeStep } from "@/components/DescribeStep";
 import { WorkflowNav } from "@/components/WorkflowNav";
 import { Editor, DarkPairingToggle } from "@/components/Editor";
-import { SchemePanel } from "@/components/SchemePanel";
 import { SchemeBar } from "@/components/SchemeBar";
 import { Preview } from "@/components/Preview";
 import { TypographyStep } from "@/components/TypographyStep";
@@ -72,7 +71,6 @@ function WorkArea() {
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-neutral-400">
             Step 2 / 5
           </p>
-          <SchemePanel />
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <div className="space-y-4">
               <header className="space-y-1">

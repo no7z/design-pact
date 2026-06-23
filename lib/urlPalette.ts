@@ -96,9 +96,8 @@ export function applyPaletteFromUrl(): boolean {
   if (matches.length > 0) useCandidates.getState().setMatches(matches);
 
   if (candidates.length === 1) {
-    const { palette, description } = candidates[0];
+    const { palette } = candidates[0];
     useTokens.getState().loadTokens(palette, null);
-    if (description) useTokens.getState().setDescription(description);
     // Only auto-scroll to the editor when nothing else (matches) is worth
     // showing on the first screen.
     if (matches.length === 0) {

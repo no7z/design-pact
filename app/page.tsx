@@ -6,6 +6,7 @@ import { DescribeStep } from "@/components/DescribeStep";
 import { WorkflowNav } from "@/components/WorkflowNav";
 import { Editor, DarkPairingToggle } from "@/components/Editor";
 import { SchemePanel } from "@/components/SchemePanel";
+import { SchemeBar } from "@/components/SchemeBar";
 import { Preview } from "@/components/Preview";
 import { TypographyStep } from "@/components/TypographyStep";
 import { StyleStep } from "@/components/StyleStep";
@@ -50,6 +51,7 @@ function Workflow() {
   return (
     <main className="min-h-screen bg-neutral-50 font-sans text-neutral-900 dark:bg-black dark:text-neutral-100">
       <WorkflowNav />
+      <SchemeBar />
       <DescribeStep onLoaded={goToEditor} />
       <WorkArea />
     </main>

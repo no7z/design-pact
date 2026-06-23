@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "build:installer": "next build && node packages/installer/scripts/bundle.mjs",
     "eval": "tsx test/harness/run.ts",
     "eval:score": "tsx test/harness/score.ts",
     "snapshot:templates": "tsx scripts/snapshot-templates.ts"

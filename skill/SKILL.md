@@ -134,14 +134,9 @@ p=<bg>-<fg>-<primary>-<accent>-<muted>-<border>~<name>~<description>
 
 Join multiple sets with `&`:
 
-```
-# several palettes → visual picker (with names + descriptions)
-http://localhost:3000/?p=ffffff-1a1a1a-2f6df6-7c3aed-6b7280-e5e7eb~%E6%B5%B7%E6%B4%8B%E8%93%9D~%E5%86%B7%E9%9D%99%E4%B8%93%E4%B8%9A%EF%BC%8C%E9%80%82%E5%90%88%20B2B%20SaaS&p=0f1115-e6e8ec-5b8cff-ff8a3d-8a90a0-23262e~%E6%9A%97%E5%A4%9C~%E7%A7%91%E6%8A%80%E6%84%9F%E5%8D%81%E8%B6%B3
-```
-
-(Names/descriptions are optional — a bare `p=<hexes>` still works. Build the URL
+Names/descriptions are optional — a bare `p=<hexes>` still works. Build the query
 programmatically with `encodeURIComponent` for each name/description so the `~`
-delimiters stay intact.)
+delimiters stay intact.
 
 Append the same-category brands from step 2.5 as a single comma-separated `m=`
 (slugs only, no encoding needed). Unknown slugs are dropped; omit `m=` entirely
@@ -151,25 +146,23 @@ when nothing matched:
 …&m=stripe,linear.app,vercel,supabase
 ```
 
-`UI_GENERATOR_URL` defaults to `http://localhost:3000` (use a hosted URL if the
-user has one, and skip the start step). Then:
+**Open it with the bundled CLI** — pass the query string (everything that would
+follow `?`). It serves the local studio (no clone, no dev server, no account)
+and opens the browser:
 
-- **Check if running:** `curl -sf http://localhost:3000 >/dev/null`. If not,
-  **start it** — it lives in the UI Generator repo, NOT the user's current
-  project, so never run `npm run dev` in the working directory. If you know the
-  repo path (`$UI_GENERATOR_DIR` or the user tells you), start it in the
-  background there and poll the port:
-  `npm --prefix "$UI_GENERATOR_DIR" run dev`. If you don't know the path, ask
-  for it or tell the user to run `npm run dev` there — don't guess.
-- **Always print the full URL** (the fallback when no browser opens — opening
-  it manually loads the palettes just the same), then also try to launch a
-  browser on that URL:
+```bash
+npx ui-generator open "p=<setA>&p=<setB>&m=stripe,linear.app,vercel"
+```
 
-  > 打开（已带 N 套配色）: **http://localhost:3000/?p=…&p=…**
-
-  - macOS: `open "$URL"` · Linux: `xdg-open "$URL"` · Windows: `start "" "$URL"`
-
-  Headless / no browser is fine — the printed URL is the instruction.
+- The command returns immediately (the studio runs in the background on
+  `http://localhost:3000`) and **prints the full URL** — relay that URL to the
+  user, it's the fallback if no browser opens. Headless is fine.
+- Repeated calls reuse the running instance, so it's safe to call again.
+- If the user has a hosted instance (`UI_GENERATOR_URL`), just open
+  `"$UI_GENERATOR_URL/?<query>"` directly and skip the CLI.
+- `npx` needs the package once: if `ui-generator` isn't installed it's fetched
+  automatically; if even that's unavailable, tell the user to run
+  `npx ui-generator open "<query>"` themselves and paste back the URL.
 
 ### 4. Tell the user what to do there
 

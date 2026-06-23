@@ -1,0 +1,28 @@
+{
+  "name": "ui-generator",
+  "version": "0.1.0",
+  "description": "Local design-system studio + Claude Code / Cursor skill, set up with one command. Zero backend, zero account.",
+  "type": "module",
+  "bin": {
+    "ui-generator": "bin/cli.mjs"
+  },
+  "files": [
+    "bin",
+    "web",
+    "SKILL.md"
+  ],
+  "scripts": {
+    "bundle": "node scripts/bundle.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "design-system",
+    "design-tokens",
+    "claude-code",
+    "skill",
+    "cursor"
+  ],
+  "license": "MIT"
+}

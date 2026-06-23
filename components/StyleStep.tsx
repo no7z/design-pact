@@ -483,66 +483,9 @@ export function StyleStep() {
               </div>
               <div className="flex flex-wrap items-start" style={{ gap: sp("sm", 12) }}>
                 {opacityScale.map((o) => {
-                  // overlay = modal/drawer scrim — show it over a thumbnail, not as a button tint.
-                  if (o.name === "overlay") {
-                    return (
-                      <div key={o.name} className="flex flex-col items-center gap-1">
-                        <div
-                          className="relative overflow-hidden"
-                          style={{
-                            width: 132,
-                            height: 84,
-                            borderRadius: rd("md", 8),
-                            background: palette.bg,
-                            border: `1px solid ${palette.border}`,
-                          }}
-                        >
-                          {/* faux page content, dimmed by the scrim */}
-                          <div style={{ position: "absolute", inset: 0, padding: 10, display: "flex", flexDirection: "column", gap: 6 }}>
-                            <div style={{ height: 7, width: "55%", borderRadius: 3, background: palette.fg, opacity: 0.7 }} />
-                            <div style={{ height: 6, width: "90%", borderRadius: 3, background: palette.muted, opacity: 0.5 }} />
-                            <div style={{ height: 6, width: "80%", borderRadius: 3, background: palette.muted, opacity: 0.5 }} />
-                            <div style={{ height: 6, width: "65%", borderRadius: 3, background: palette.muted, opacity: 0.5 }} />
-                          </div>
-                          {/* scrim at the overlay opacity */}
-                          <span style={{ position: "absolute", inset: 0, background: hexA("#000000", o.value) }} />
-                          {/* dialog popping out above the scrim */}
-                          <div
-                            className="absolute left-1/2 top-1/2"
-                            style={{
-                              transform: "translate(-50%, -50%)",
-                              width: "72%",
-                              background: palette.surface,
-                              borderRadius: rd("sm", 4),
-                              border: `1px solid ${palette.border}`,
-                              padding: "7px 9px",
-                              boxShadow: shadowToCss(shadow.lg),
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: 5,
-                            }}
-                          >
-                            <span style={{ fontSize: 10, fontWeight: 600, color: palette.fg }}>弹窗标题</span>
-                            <span
-                              className="self-end"
-                              style={{
-                                background: palette.primary,
-                                color: onPrimary,
-                                borderRadius: rd("sm", 4),
-                                padding: "1px 7px",
-                                fontSize: 9,
-                              }}
-                            >
-                              确定
-                            </span>
-                          </div>
-                        </div>
-                        <span className="font-mono text-[10px]" style={{ color: palette.muted }}>
-                          {o.name} · {o.value}
-                        </span>
-                      </div>
-                    );
-                  }
+                  // overlay (modal scrim) is demonstrated full-size in the 动效 step,
+                  // not here — skip it among the interactive-state swatches.
+                  if (o.name === "overlay") return null;
                   const isFocus = o.name === "focus";
                   const isDisabled = o.name === "disabled";
                   return (

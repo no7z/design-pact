@@ -10,7 +10,7 @@ export function InputSource({ onSuccess }: { onSuccess?: () => void } = {}) {
   const [tab, setTab] = useState<Tab>("template");
 
   return (
-    <section className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
+    <div>
       <div className="mb-3 flex gap-1 border-b border-neutral-200 dark:border-neutral-800">
         {(
           [
@@ -39,6 +39,6 @@ export function InputSource({ onSuccess }: { onSuccess?: () => void } = {}) {
       ) : (
         <TokenImport onSuccess={() => onSuccess?.()} />
       )}
-    </section>
+    </div>
   );
 }

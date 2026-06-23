@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useTokens, computedHex, type Scheme } from "@/lib/store";
+import { useTokens, computedHex } from "@/lib/store";
 import { resolvePalette, type MockupPalette } from "@/lib/mockup";
 import { MockupView, type MockupKind } from "@/components/MockupViews";
 
@@ -26,9 +26,9 @@ type SideData = {
 };
 
 /**
- * Scheme A/B comparison: snapshot the whole token state as a named scheme,
- * then compare any two schemes (or the live state) on the same mockup and
- * apply either side.
+ * Scheme A/B comparison: compare any two saved schemes (or the live state) on
+ * the same mockup and apply either side. Saving / switching schemes lives in the
+ * floating SchemeBar — this panel is just the side-by-side compare.
  */
 export function SchemePanel() {
   const colors = useTokens((s) => s.colors);
@@ -37,12 +37,8 @@ export function SchemePanel() {
   const radius = useTokens((s) => s.radius);
   const motion = useTokens((s) => s.motion);
   const schemes = useTokens((s) => s.schemes);
-  const activeSchemeId = useTokens((s) => s.activeSchemeId);
-  const saveScheme = useTokens((s) => s.saveScheme);
   const loadScheme = useTokens((s) => s.loadScheme);
-  const deleteScheme = useTokens((s) => s.deleteScheme);
 
-  const [name, setName] = useState("");
   const [compareOpen, setCompareOpen] = useState(false);
   const [sideA, setSideA] = useState<SideSel>("current");
   const [sideB, setSideB] = useState<SideSel>("");
@@ -75,13 +71,6 @@ export function SchemePanel() {
 
   if (colors.length === 0) return null;
 
-  const handleSave = () => {
-    const id = saveScheme(name);
-    setName("");
-    // First save: point side B at the new scheme so 对比 is one click away.
-    if (!sideB) setSideB(id);
-  };
-
   const sideOptions = (
     <>
       <option value="current">当前状态</option>
@@ -98,37 +87,9 @@ export function SchemePanel() {
 
   return (
     <section className="mb-6 rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
-      {/* Save + chips row */}
-      <div className="flex flex-wrap items-center gap-2">
-        <h3 className="text-xs font-semibold">方案</h3>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder={`方案 ${schemes.length + 1}`}
-          className="w-28 rounded border border-neutral-300 bg-white px-2 py-1 text-xs outline-none focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-900"
-        />
-        <button
-          onClick={handleSave}
-          className="rounded bg-neutral-900 px-2.5 py-1 text-xs text-white hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
-        >
-          保存当前为方案
-        </button>
-
-        {schemes.map((s) => (
-          <SchemeChip
-            key={s.id}
-            scheme={s}
-            active={activeSchemeId === s.id}
-            onLoad={() => loadScheme(s.id)}
-            onDelete={() => {
-              deleteScheme(s.id);
-              if (sideA === s.id) setSideA("current");
-              if (sideB === s.id) setSideB("");
-            }}
-          />
-        ))}
-
-        {schemes.length > 0 && (
+      <div className="flex items-center gap-2">
+        <h3 className="text-xs font-semibold">A/B 对比</h3>
+        {schemes.length > 0 ? (
           <button
             onClick={() => setCompareOpen((o) => !o)}
             aria-pressed={compareOpen}
@@ -138,16 +99,14 @@ export function SchemePanel() {
                 : "border-neutral-300 hover:border-neutral-900 dark:border-neutral-700 dark:hover:border-white"
             }`}
           >
-            A/B 对比
+            {compareOpen ? "收起对比" : "并排对比"}
           </button>
+        ) : (
+          <span className="ml-auto text-[10px] text-neutral-400">
+            在顶部「方案」条保存两套后，可在此并排对比
+          </span>
         )}
       </div>
-
-      {schemes.length === 0 && (
-        <p className="mt-1.5 text-[10px] text-neutral-400">
-          先把当前状态存成方案，再调整方向（或换模板），即可 A/B 并排对比两套设计。
-        </p>
-      )}
 
       {/* Compare area */}
       {compareOpen && schemes.length > 0 && (
@@ -186,61 +145,6 @@ export function SchemePanel() {
         </div>
       )}
     </section>
-  );
-}
-
-function SchemeChip({
-  scheme,
-  active,
-  onLoad,
-  onDelete,
-}: {
-  scheme: Scheme;
-  active: boolean;
-  onLoad: () => void;
-  onDelete: () => void;
-}) {
-  const swatches = [...scheme.colors]
-    .sort((x, y) => SWATCH_ORDER.indexOf(x.role) - SWATCH_ORDER.indexOf(y.role))
-    .slice(0, 4);
-  return (
-    <span
-      role="button"
-      tabIndex={0}
-      aria-pressed={active}
-      onClick={onLoad}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onLoad();
-        }
-      }}
-      title={active ? "当前已载入" : "点击载入此方案"}
-      className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border py-0.5 pl-1.5 pr-1 text-xs transition ${
-        active
-          ? "border-neutral-900 dark:border-white"
-          : "border-neutral-200 hover:border-neutral-900 dark:border-neutral-700 dark:hover:border-white"
-      }`}
-    >
-      <span className="flex h-3.5 w-9 shrink-0 overflow-hidden rounded-sm">
-        {swatches.map((c) => (
-          <span key={c.id} className="flex-1" style={{ background: computedHex(c, scheme.globals) }} />
-        ))}
-      </span>
-      <span className="max-w-24 truncate">{scheme.name}</span>
-      {active && <span className="text-[10px]" aria-hidden>✓</span>}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-        title="删除此方案"
-        aria-label={`删除方案 ${scheme.name}`}
-        className="rounded px-1 text-[10px] text-neutral-400 transition hover:text-red-600"
-      >
-        ×
-      </button>
-    </span>
   );
 }
 

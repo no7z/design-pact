@@ -18,7 +18,7 @@ import { relativeLuminance } from "@/lib/color";
  * on the palette's own background. The "try it" counterpart to the static
  * opacity ladder above it.
  */
-export function StatePreview() {
+export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {}) {
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
   const radius = useTokens((s) => s.radius);
@@ -187,6 +187,30 @@ export function StatePreview() {
             {cardHover ? "elevation md" : "elevation sm"}
           </span>
         </div>
+
+        {/* Modal trigger: pops a dialog over the whole preview (overlay + 动效) */}
+        {onOpenModal && (
+          <div className="flex flex-col items-start gap-1.5">
+            <button
+              onClick={onOpenModal}
+              className="text-xs font-medium"
+              style={{
+                background: palette.primary,
+                color: primaryIsDark ? "#ffffff" : "#111111",
+                borderRadius: rd.md,
+                padding: "7px 18px",
+                border: "none",
+                cursor: "pointer",
+                transition,
+              }}
+            >
+              打开弹窗
+            </button>
+            <span className="font-mono text-[10px]" style={{ color: palette.muted }}>
+              overlay + 动效
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );

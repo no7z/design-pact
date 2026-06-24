@@ -24,22 +24,44 @@ export function WorkflowNav() {
 
   const steps = hasColors ? ALL_STEPS : ALL_STEPS.slice(0, 1);
 
+  // Position-based active tracking: the active step is the LAST section whose
+  // top has scrolled above the line just under the fixed nav. This is monotonic
+  // with scroll position, so it never flickers between two sections (the
+  // intersection-ratio approach did, since competing ratios flip frame to frame).
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActive(visible.target.id);
-      },
-      { threshold: [0.3, 0.5, 0.7] },
-    );
-    steps.forEach((s) => {
-      const el = document.getElementById(s.id);
-      if (el) obs.observe(el);
-    });
-    return () => obs.disconnect();
+    const LINE = 96; // px from the viewport top (a bit below the 64px nav)
+    let raf = 0;
+
+    const compute = () => {
+      raf = 0;
+      let current = steps[0].id;
+      for (const s of steps) {
+        const el = document.getElementById(s.id);
+        if (!el) continue;
+        if (el.getBoundingClientRect().top - LINE <= 0) current = s.id;
+        else break; // sections are in document order — stop at the first below the line
+      }
+      // At the very bottom, force the last step active (a short last section may
+      // never reach the line).
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+        current = steps[steps.length - 1].id;
+      }
+      setActive(current);
+    };
+
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(compute);
+    };
+
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, [steps]);
 
   const handleClick = (id: string) => {

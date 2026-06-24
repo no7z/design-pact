@@ -4,10 +4,10 @@ import { useTokens, computedHex, type Scheme } from "@/lib/store";
 
 const SWATCH_ORDER = ["background", "primary", "accent", "foreground", "muted", "border"];
 
-// A floating top bar for saving / switching schemes. A scheme is a snapshot of
-// the WHOLE token set (colors, type, spacing, motion, …), so this lives globally
-// rather than inside 调色 — it slides in once you scroll into the editor so you
-// can save or switch from any section.
+// A floating bottom bar for saving / switching schemes. A scheme is a snapshot
+// of the WHOLE token set (colors, type, spacing, motion, …), so this lives
+// globally rather than inside 调色 — it slides up from the bottom once you
+// scroll into the editor so you can save or switch from any section.
 export function SchemeBar() {
   const colors = useTokens((s) => s.colors);
   const schemes = useTokens((s) => s.schemes);
@@ -36,11 +36,11 @@ export function SchemeBar() {
   return (
     <div
       aria-hidden={!show}
-      className={`fixed inset-x-0 top-0 z-40 border-b border-neutral-200 bg-white/85 backdrop-blur transition-transform duration-300 dark:border-neutral-800 dark:bg-black/80 ${
-        show ? "translate-y-0" : "-translate-y-full"
+      className={`fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/85 backdrop-blur transition-transform duration-300 dark:border-neutral-800 dark:bg-black/80 ${
+        show ? "translate-y-0" : "translate-y-full"
       }`}
     >
-      <div className="mx-auto flex max-w-[1440px] items-center gap-2 px-6 py-2 lg:pl-28">
+      <div className="mx-auto flex max-w-[1440px] items-center gap-2 px-6 py-2">
         <span className="shrink-0 text-xs font-semibold">方案</span>
         <input
           value={name}
@@ -57,7 +57,7 @@ export function SchemeBar() {
         </button>
         <div className="scrollbar-subtle flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
           {schemes.length === 0 ? (
-            <span className="text-[10px] text-neutral-400">存几套，任意板块一键切换 / 对比</span>
+            <span className="text-[10px] text-neutral-400">存几套，任意板块一键切换</span>
           ) : (
             schemes.map((s) => (
               <SchemeChip

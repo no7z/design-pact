@@ -49,7 +49,7 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
       id="step-describe"
       className="flex min-h-screen snap-start flex-col justify-center px-6 py-16"
     >
-      <div className="mx-auto w-full max-w-[1440px] space-y-6 lg:pl-28">
+      <div className="mx-auto w-full max-w-[1440px] space-y-6">
         <header className="max-w-2xl space-y-2">
           <p className="text-xs font-medium uppercase tracking-wider text-neutral-400">
             Step 1 / 5

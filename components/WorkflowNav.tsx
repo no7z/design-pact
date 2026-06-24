@@ -80,12 +80,13 @@ export function WorkflowNav() {
 
   return (
     <>
-      {/* Mobile (< md): a thin bottom progress bar — segments fill as you go,
-          the current step name fades in on change. Bottom so it clears the top
-          scheme bar and stays in the thumb zone. */}
+      {/* Narrower than the right rail's threshold (< 1600, i.e. whenever the
+          rail would overlap the 1440-max content): a thin bottom progress bar —
+          segments fill as you go, the current step name fades in on change.
+          Bottom so it clears the top scheme bar and stays in the thumb zone. */}
       <nav
         aria-label="工作流导航"
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/90 backdrop-blur md:hidden dark:border-neutral-800 dark:bg-black/85"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/90 backdrop-blur min-[1600px]:hidden dark:border-neutral-800 dark:bg-black/85"
       >
         <div className="flex items-center gap-3 px-4 py-2.5">
           <div className="flex flex-1 items-center gap-1.5">
@@ -125,15 +126,17 @@ export function WorkflowNav() {
         </div>
       </nav>
 
-      {/* Desktop (md+): minimal vertical tick rail on the right edge. */}
+      {/* Wide screens only (≥1600 so the rail sits in the margin, never over the
+          1440-max content). Minimal vertical rail on the right: the ACTIVE step
+          shows its label (replacing the dash); the rest are short dashes that
+          lengthen + reveal their label on hover. */}
       <nav
         aria-label="工作流导航"
         onMouseLeave={() => setHovered(null)}
-        className="fixed right-6 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-end gap-3 md:flex"
+        className="fixed right-6 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-end gap-3 min-[1600px]:flex"
       >
       {steps.map((step) => {
         const isActive = active === step.id;
-        const reveal = isActive || hovered === step.id;
         return (
           <button
             key={step.id}
@@ -143,25 +146,26 @@ export function WorkflowNav() {
             aria-label={step.label}
             className="group relative flex h-4 cursor-pointer items-center justify-end"
           >
-            {/* label floats to the LEFT of the dash, only when active or hovered */}
-            <span
-              className={`absolute right-full mr-2.5 whitespace-nowrap text-xs leading-none transition-all duration-200 ${
-                reveal ? "translate-x-0 opacity-100" : "pointer-events-none translate-x-1 opacity-0"
-              } ${
-                isActive
-                  ? "font-semibold text-neutral-900 dark:text-white"
-                  : "text-neutral-500 dark:text-neutral-400"
-              }`}
-            >
-              {step.label}
-            </span>
-            <span
-              className={`h-0.5 rounded-full transition-all duration-200 ${
-                isActive
-                  ? "w-7 bg-neutral-900 dark:bg-white"
-                  : "w-3.5 bg-neutral-300 group-hover:w-5 group-hover:bg-neutral-500 dark:bg-neutral-600 dark:group-hover:bg-neutral-400"
-              }`}
-            />
+            {isActive ? (
+              // active: text replaces the dash
+              <span className="whitespace-nowrap text-xs font-semibold leading-none text-neutral-900 dark:text-white">
+                {step.label}
+              </span>
+            ) : (
+              <>
+                {/* label floats to the LEFT of the dash, only on hover */}
+                <span
+                  className={`absolute right-full mr-2.5 whitespace-nowrap text-xs leading-none text-neutral-500 transition-all duration-200 dark:text-neutral-400 ${
+                    hovered === step.id
+                      ? "translate-x-0 opacity-100"
+                      : "pointer-events-none translate-x-1 opacity-0"
+                  }`}
+                >
+                  {step.label}
+                </span>
+                <span className="h-0.5 w-3.5 rounded-full bg-neutral-300 transition-all duration-200 group-hover:w-5 group-hover:bg-neutral-500 dark:bg-neutral-600 dark:group-hover:bg-neutral-400" />
+              </>
+            )}
           </button>
         );
       })}

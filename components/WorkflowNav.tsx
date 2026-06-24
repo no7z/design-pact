@@ -14,6 +14,9 @@ const ALL_STEPS: Step[] = [
   { id: "step-export", label: "导出" },
 ];
 
+// Offset so a clicked section lands below the fixed top bar, not under it.
+const NAV_OFFSET = -64;
+
 export function WorkflowNav() {
   const hasColors = useTokens((s) => s.colors.length > 0);
   const lenis = useLenis();
@@ -40,50 +43,51 @@ export function WorkflowNav() {
   }, [steps]);
 
   const handleClick = (id: string) => {
-    if (lenis) lenis.scrollTo(`#${id}`, { duration: 1.2 });
-    else document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (lenis) {
+      lenis.scrollTo(`#${id}`, { duration: 1.2, offset: NAV_OFFSET });
+    } else {
+      const el = document.getElementById(id);
+      if (el) window.scrollTo({ top: el.offsetTop + NAV_OFFSET, behavior: "smooth" });
+    }
   };
 
   return (
     <nav
       aria-label="工作流导航"
-      className="fixed left-6 top-1/2 z-40 hidden -translate-y-1/2 lg:block"
+      className="fixed inset-x-0 top-0 z-40 border-b border-neutral-200 bg-white/85 backdrop-blur dark:border-neutral-800 dark:bg-black/80"
     >
-      <ul className="flex flex-col">
+      <ol className="scrollbar-subtle mx-auto flex max-w-[1440px] items-center gap-1 overflow-x-auto px-6 py-2.5">
         {steps.map((step, i) => {
           const isActive = active === step.id;
           const isLast = i === steps.length - 1;
           return (
             <Fragment key={step.id}>
-              <li className="flex items-center gap-3">
+              <li>
                 <button
                   onClick={() => handleClick(step.id)}
                   aria-current={isActive ? "step" : undefined}
-                  aria-label={step.label}
-                  className={`h-3 w-3 shrink-0 rounded-full border transition ${
+                  className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs leading-none transition ${
                     isActive
-                      ? "border-neutral-900 bg-neutral-900 dark:border-white dark:bg-white"
-                      : "border-neutral-400 bg-white hover:border-neutral-700 dark:border-neutral-600 dark:bg-neutral-900 dark:hover:border-neutral-300"
-                  }`}
-                />
-                <button
-                  onClick={() => handleClick(step.id)}
-                  className={`text-xs leading-none transition ${
-                    isActive
-                      ? "font-semibold text-neutral-900 dark:text-white"
+                      ? "bg-neutral-900 font-semibold text-white dark:bg-white dark:text-black"
                       : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
                   }`}
                 >
+                  <span
+                    aria-hidden
+                    className={`h-1.5 w-1.5 shrink-0 rounded-full transition ${
+                      isActive ? "bg-white dark:bg-black" : "bg-neutral-400 dark:bg-neutral-600"
+                    }`}
+                  />
                   {step.label}
                 </button>
               </li>
               {!isLast && (
-                <li aria-hidden className="ml-1.5 h-10 w-px bg-neutral-300 dark:bg-neutral-700" />
+                <li aria-hidden className="h-px w-4 shrink-0 bg-neutral-300 dark:bg-neutral-700" />
               )}
             </Fragment>
           );
         })}
-      </ul>
+      </ol>
     </nav>
   );
 }

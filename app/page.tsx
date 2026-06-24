@@ -36,7 +36,8 @@ function Workflow() {
           if (!el) return;
           if (lenis) {
             lenis.resize();
-            lenis.scrollTo(el, { duration: 1.2 });
+            // Offset for the fixed top nav so the section isn't tucked under it.
+            lenis.scrollTo(el, { duration: 1.2, offset: -64 });
           } else {
             el.scrollIntoView({ behavior: "smooth", block: "start" });
           }
@@ -67,7 +68,7 @@ function WorkArea() {
         id="step-edit"
         className="border-t border-neutral-200 px-6 py-16 dark:border-neutral-800"
       >
-        <div className="mx-auto w-full max-w-[1440px] lg:pl-28">
+        <div className="mx-auto w-full max-w-[1440px]">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-neutral-400">
             Step 2 / 5
           </p>
@@ -101,7 +102,7 @@ function WorkArea() {
         id="step-typography"
         className="border-t border-neutral-200 px-6 py-16 dark:border-neutral-800"
       >
-        <div className="mx-auto w-full max-w-[1440px] lg:pl-28">
+        <div className="mx-auto w-full max-w-[1440px]">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-neutral-400">
             Step 3 / 5
           </p>
@@ -119,7 +120,7 @@ function WorkArea() {
         id="step-tokens"
         className="border-t border-neutral-200 px-6 py-16 dark:border-neutral-800"
       >
-        <div className="mx-auto w-full max-w-[1440px] lg:pl-28">
+        <div className="mx-auto w-full max-w-[1440px]">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-neutral-400">
             Step 4 / 5
           </p>
@@ -137,7 +138,7 @@ function WorkArea() {
         id="step-motion"
         className="border-t border-neutral-200 px-6 py-16 dark:border-neutral-800"
       >
-        <div className="mx-auto w-full max-w-[1440px] lg:pl-28">
+        <div className="mx-auto w-full max-w-[1440px]">
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-neutral-400">
             Step 5 / 5
           </p>
@@ -155,7 +156,7 @@ function WorkArea() {
         id="step-export"
         className="border-t border-neutral-200 px-6 py-16 dark:border-neutral-800"
       >
-        <div className="mx-auto w-full max-w-[1440px] space-y-6 lg:pl-28">
+        <div className="mx-auto w-full max-w-[1440px] space-y-6">
           <header className="space-y-2">
             <h2 className="text-2xl font-semibold tracking-tight">导出</h2>
             <p className="text-sm text-neutral-500 dark:text-neutral-400">

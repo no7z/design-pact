@@ -88,10 +88,10 @@ export function WorkflowNav() {
                 <button
                   onClick={() => handleClick(step.id)}
                   aria-current={isActive ? "step" : undefined}
-                  className={`flex items-center gap-2 rounded-full px-3 py-1 text-xs leading-none transition ${
+                  className={`flex cursor-pointer items-center gap-2 rounded-full px-3 py-1 text-xs leading-none transition ${
                     isActive
                       ? "bg-neutral-900 font-semibold text-white dark:bg-white dark:text-black"
-                      : "text-neutral-500 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
+                      : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
                   }`}
                 >
                   <span

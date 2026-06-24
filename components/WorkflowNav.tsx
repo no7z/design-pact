@@ -72,12 +72,65 @@ export function WorkflowNav() {
     }
   };
 
+  const activeIndex = Math.max(
+    0,
+    steps.findIndex((s) => s.id === active),
+  );
+  const activeLabel = steps[activeIndex]?.label ?? "";
+
   return (
-    <nav
-      aria-label="工作流导航"
-      onMouseLeave={() => setHovered(null)}
-      className="fixed right-6 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-end gap-3 md:flex"
-    >
+    <>
+      {/* Mobile (< md): a thin bottom progress bar — segments fill as you go,
+          the current step name fades in on change. Bottom so it clears the top
+          scheme bar and stays in the thumb zone. */}
+      <nav
+        aria-label="工作流导航"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/90 backdrop-blur md:hidden dark:border-neutral-800 dark:bg-black/85"
+      >
+        <div className="flex items-center gap-3 px-4 py-2.5">
+          <div className="flex flex-1 items-center gap-1.5">
+            {steps.map((step, i) => {
+              const isActive = active === step.id;
+              const isPast = i < activeIndex;
+              return (
+                <button
+                  key={step.id}
+                  onClick={() => handleClick(step.id)}
+                  aria-label={step.label}
+                  aria-current={isActive ? "step" : undefined}
+                  className="flex-1 cursor-pointer py-1.5"
+                >
+                  <span
+                    className={`block h-1 rounded-full transition-all duration-300 ease-out ${
+                      isActive
+                        ? "bg-neutral-900 dark:bg-white"
+                        : isPast
+                          ? "bg-neutral-400 dark:bg-neutral-500"
+                          : "bg-neutral-200 dark:bg-neutral-700"
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </div>
+          <span
+            key={active}
+            className="animate-nav-label shrink-0 text-xs font-medium text-neutral-900 tabular-nums dark:text-white"
+          >
+            {activeLabel}
+            <span className="ml-1 text-neutral-400">
+              {activeIndex + 1}/{steps.length}
+            </span>
+          </span>
+        </div>
+      </nav>
+
+      {/* Desktop (md+): minimal vertical tick rail on the right edge. */}
+      <nav
+        aria-label="工作流导航"
+        onMouseLeave={() => setHovered(null)}
+        className="fixed right-6 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-end gap-3 md:flex"
+      >
       {steps.map((step) => {
         const isActive = active === step.id;
         const reveal = isActive || hovered === step.id;
@@ -112,6 +165,7 @@ export function WorkflowNav() {
           </button>
         );
       })}
-    </nav>
+      </nav>
+    </>
   );
 }

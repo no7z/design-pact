@@ -133,7 +133,7 @@ export function WorkflowNav() {
       <nav
         aria-label="工作流导航"
         onMouseLeave={() => setHovered(null)}
-        className="fixed right-6 top-1/2 z-40 hidden -translate-y-1/2 flex-col items-end gap-3 min-[1600px]:flex"
+        className="fixed right-6 top-24 z-40 hidden flex-col items-end gap-3 min-[1600px]:flex"
       >
       {steps.map((step) => {
         const isActive = active === step.id;

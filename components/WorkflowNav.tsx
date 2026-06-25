@@ -146,25 +146,19 @@ export function WorkflowNav() {
             aria-label={step.label}
             className="group relative flex h-4 cursor-pointer items-center justify-end"
           >
-            {isActive ? (
-              // active: text replaces the dash
-              <span className="whitespace-nowrap text-xs font-semibold leading-none text-neutral-900 dark:text-white">
+            {isActive || hovered === step.id ? (
+              // active or hovered: the label replaces the dash
+              <span
+                className={`whitespace-nowrap text-xs leading-none ${
+                  isActive
+                    ? "font-semibold text-neutral-900 dark:text-white"
+                    : "text-neutral-700 dark:text-neutral-200"
+                }`}
+              >
                 {step.label}
               </span>
             ) : (
-              <>
-                {/* label floats to the LEFT of the dash, only on hover */}
-                <span
-                  className={`absolute right-full mr-2.5 whitespace-nowrap text-xs leading-none text-neutral-500 transition-all duration-200 dark:text-neutral-400 ${
-                    hovered === step.id
-                      ? "translate-x-0 opacity-100"
-                      : "pointer-events-none translate-x-1 opacity-0"
-                  }`}
-                >
-                  {step.label}
-                </span>
-                <span className="h-0.5 w-3.5 rounded-full bg-neutral-300 transition-all duration-200 group-hover:w-5 group-hover:bg-neutral-500 dark:bg-neutral-600 dark:group-hover:bg-neutral-400" />
-              </>
+              <span className="h-0.5 w-3.5 rounded-full bg-neutral-300 dark:bg-neutral-600" />
             )}
           </button>
         );

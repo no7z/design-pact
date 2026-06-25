@@ -137,6 +137,7 @@ export function WorkflowNav() {
       >
       {steps.map((step) => {
         const isActive = active === step.id;
+        const showLabel = isActive || hovered === step.id;
         return (
           <button
             key={step.id}
@@ -146,20 +147,27 @@ export function WorkflowNav() {
             aria-label={step.label}
             className="group relative flex h-4 cursor-pointer items-center justify-end"
           >
-            {isActive || hovered === step.id ? (
-              // active or hovered: the label replaces the dash
-              <span
-                className={`whitespace-nowrap text-xs leading-none ${
-                  isActive
-                    ? "font-semibold text-neutral-900 dark:text-white"
-                    : "text-neutral-700 dark:text-neutral-200"
-                }`}
-              >
-                {step.label}
-              </span>
-            ) : (
-              <span className="h-0.5 w-3.5 rounded-full bg-neutral-300 dark:bg-neutral-600" />
-            )}
+            {/* Both rendered and cross-faded by opacity so the dash↔label swap
+                (on hover or when the active step changes) is a smooth fade. The
+                label is in flow (defines the row width, no layout shift); the
+                dash is absolute at the right edge. */}
+            <span
+              className={`whitespace-nowrap text-xs leading-none transition-opacity duration-200 ${
+                showLabel ? "opacity-100" : "opacity-0"
+              } ${
+                isActive
+                  ? "font-semibold text-neutral-900 dark:text-white"
+                  : "text-neutral-700 dark:text-neutral-200"
+              }`}
+            >
+              {step.label}
+            </span>
+            <span
+              aria-hidden
+              className={`pointer-events-none absolute right-0 top-1/2 h-0.5 w-3.5 -translate-y-1/2 rounded-full bg-neutral-300 transition-opacity duration-200 dark:bg-neutral-600 ${
+                showLabel ? "opacity-0" : "opacity-100"
+              }`}
+            />
           </button>
         );
       })}

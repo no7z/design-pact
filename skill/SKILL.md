@@ -151,25 +151,27 @@ when nothing matched:
 …&m=stripe,linear.app,vercel,supabase
 ```
 
-`UI_GENERATOR_URL` defaults to `http://localhost:3000` (use a hosted URL if the
-user has one, and skip the start step). Then:
+Full URL: `http://localhost:3000/?<query>` (`UI_GENERATOR_URL` defaults to
+`http://localhost:3000`; use a hosted URL if the user has one).
 
-- **Check if running:** `curl -sf http://localhost:3000 >/dev/null`. If not,
-  **start it** — it lives in the UI Generator repo, NOT the user's current
-  project, so never run `npm run dev` in the working directory. If you know the
-  repo path (`$UI_GENERATOR_DIR` or the user tells you), start it in the
-  background there and poll the port:
-  `npm --prefix "$UI_GENERATOR_DIR" run dev`. If you don't know the path, ask
-  for it or tell the user to run `npm run dev` there — don't guess.
-- **Always print the full URL** (the fallback when no browser opens — opening
-  it manually loads the palettes just the same), then also try to launch a
-  browser on that URL:
+**Do these IN ORDER. Step 1 always happens — even if 2 and 3 fail, the printed
+URL is all the user needs.**
 
-  > 打开（已带 N 套配色）: **http://localhost:3000/?p=…&p=…**
+1. **Print the full URL on its own line and tell the user to open it.** Do this
+   first, unconditionally. Opening it manually loads the palettes just the same.
 
-  - macOS: `open "$URL"` · Linux: `xdg-open "$URL"` · Windows: `start "" "$URL"`
+   > 打开（已带 N 套配色）: http://localhost:3000/?p=…&p=…
 
-  Headless / no browser is fine — the printed URL is the instruction.
+2. **Make sure the studio is serving:** `curl -sf http://localhost:3000 >/dev/null`.
+   If it returns nothing, start it in the **background** — it lives in the UI
+   Generator repo, NOT the user's current project (never `npm run dev` in the
+   working directory). The repo path is `$UI_GENERATOR_DIR`; if that's empty, ask
+   the user for it. Then `npm --prefix "<dir>" run dev &` and poll `curl` until
+   the port answers. (If you can't start it, that's fine — the user can run it
+   themselves; you've already given them the URL in step 1.)
+
+3. **Try to open a browser** on the URL: macOS `open "$URL"` · Linux
+   `xdg-open "$URL"` · Windows `start "" "$URL"`. Headless / no browser is fine.
 
 ### 4. Tell the user what to do there
 

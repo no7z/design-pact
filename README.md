@@ -1,4 +1,4 @@
-# UI Generator
+# design-system
 
 一个**纯前端、零后端**的设计系统编辑器，为「用 AI 生成页面的人」准备。它把一套配色派生成完整、协调的设计 tokens（色板 / 字体 / 间距 / 圆角 / 阴影 / 描边 / 透明度 / 动效），并导出成 **AI 能严格执行的 `design-system.md`**——丢进代码库，让你自己的 agent（Claude Code / Cursor）据此生成 UI。
 
@@ -32,7 +32,7 @@ npx design-system-md add design-system.md --format css|tailwind|w3c|all
 #    → tokens.css / tailwind.config.js / design-tokens.json
 ```
 
-- **Skill**：`skill/SKILL.md` 拷到 `~/.claude/skills/design-system/`（或项目 `.claude/skills/design-system/`）。它是项目起步时的决策入口——先搜 `design-system.md`：**有就按它生成 UI；没有就问清方向、由 agent 产出配色、打开 UI Generator 网页**（默认 `http://localhost:3000`，有线上部署可替换）把配色派生成完整系统、微调后导出，再回到项目继续。
+- **Skill**：`skill/SKILL.md` 拷到 `~/.claude/skills/design-system/`（或项目 `.claude/skills/design-system/`）。它是项目起步时的决策入口——先搜 `design-system.md`：**有就按它生成 UI；没有就问清方向、由 agent 产出配色、打开 design-system 网页**（默认 `http://localhost:3000`，有线上部署可替换）把配色派生成完整系统、微调后导出，再回到项目继续。
 - **CLI**：见 [`packages/cli`](packages/cli/README.md)。纯本地、确定性、不联网、不调 AI；css/json 与网页导出逐字一致，tailwind 复用网页同一套 `tailwindConfig` 生成、零漂移。
 
 ## 开发

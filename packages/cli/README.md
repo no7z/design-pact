@@ -1,6 +1,6 @@
 # design-system-md
 
-Turn a `design-system.md` — exported from the [UI Generator](../../README.md)
+Turn a `design-system.md` — exported from the [design-system](../../README.md)
 web app — into project token files. **No AI, no network, fully deterministic.**
 
 The `design-system.md` file is self-contained: it holds the verbatim `:root`
@@ -35,5 +35,5 @@ using the same code path the web app uses — it can't drift from the source.
 
 ## How to get a `design-system.md`
 
-Open the UI Generator web app, build your design system, and click
+Open the design-system web app, build your design system, and click
 **下载 design-system.md** in the export step.

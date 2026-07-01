@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// design-system CLI — turn a design-system.md (exported from the UI Generator
+// design-system CLI — turn a design-system.md (exported from the design-system
 // web app) into project token files. Pure/deterministic: no AI, no network.
 //
 //   npx <pkg> add design-system.md [--format css|tailwind|w3c|all] [--out .]
@@ -42,7 +42,7 @@ function cmdInspect(file: string | undefined) {
   const { w3c } = parseDesignSystem(readMd(file));
   const color = (w3c.color ?? {}) as Record<string, { $value?: string }>;
   const typo = (w3c.typography ?? {}) as Record<string, unknown>;
-  const ext = ((typo.$extensions as Record<string, Record<string, unknown>>)?.["ui-generator"]) ?? {};
+  const ext = ((typo.$extensions as Record<string, Record<string, unknown>>)?.["design-system"]) ?? {};
   console.log("设计系统摘要");
   console.log("  颜色：");
   for (const [role, v] of Object.entries(color)) console.log(`    ${role.padEnd(12)} ${v.$value}`);
@@ -93,7 +93,7 @@ function main() {
           "  add <file> [--format css|tailwind|w3c|all] [--out .]   生成 token 文件",
           "  inspect <file>                                         打印设计系统摘要",
           "",
-          "design-system.md 由 UI Generator 网页「下载 design-system.md」导出。",
+          "design-system.md 由 design-system 网页「下载 design-system.md」导出。",
         ].join("\n"),
       );
       return;

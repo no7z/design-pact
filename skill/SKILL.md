@@ -4,17 +4,17 @@ description: >-
   Establish and apply the project's design system. Invoke at the start of UI
   work, or whenever the user says "use my design system", "apply my tokens",
   "set up our design system", "build this to our design system", or asks to
-  build/restyle UI. The skill first looks for a design-system.md in the repo:
+  build/restyle UI. The skill first looks for a design.md in the repo:
   if present it generates UI against it; if absent it clarifies the product
-  direction, YOU (the agent) propose 2–3 palettes, and it opens the UI
-  Generator web app where the user picks one visually and tunes it into a full
+  direction, YOU (the agent) propose 2–3 palettes, and it opens the
+  design-system web app where the user picks one visually and tunes it into a full
   design system to export. All AI runs on the agent's own compute — the web app has no AI and
   no backend.
 ---
 
 # Design system
 
-The project's design system lives in a single file — `design-system.md` at the
+The project's design system lives in a single file — `design.md` at the
 repo root — exported from the design-system web app. It carries the canonical
 color / type / spacing / radius / shadow / motion tokens plus a copy-verbatim
 `:root` contract. That one file is the source of truth; you do not need the web
@@ -25,10 +25,10 @@ help the user create one (you propose 2–3 palettes; they pick one visually).
 
 ## Step 0 — find or create the design system
 
-Look for `design-system.md`, in order:
+Look for `design.md`, in order:
 
 1. A path the user gave you.
-2. `design-system.md` at the repo root.
+2. `design.md` at the repo root.
 3. Search the repo for the file's frontmatter marker:
    `rg -l "^design-system:" --type md`.
 
@@ -37,16 +37,16 @@ Then branch:
 - **Found** → go to **Apply** below. (If you found more than one, ask the user
   which to use.)
 - **Not found** → go to **Create** below. Do **not** invent tokens or guess a
-  palette — get a real `design-system.md` first.
+  palette — get a real `design.md` first.
 
-## Create — no design-system.md yet
+## Create — no design.md yet
 
 There's no design system yet. The division of labor: **you (the agent) do the
 creative part — clarify direction and propose 2–3 palettes; the web app does
 the deterministic part — render each palette so the user picks one visually,
 then derive the full token system (scales, shadows, dark pairs, the `:root`
 contract, contrast audit) from it and let them tune it, then export
-`design-system.md`.** The web app has no AI; it only needs your palettes as
+`design.md`.** The web app has no AI; it only needs your palettes as
 input.
 
 ### 1. Clarify direction
@@ -66,7 +66,7 @@ one, a bolder one, a warm or dark one), not minor variations.
 
 Each palette is **6 colors** in this exact role order — background, foreground,
 primary, accent, muted, border. Ensure foreground reads on background (aim for
-≥ 4.5:1) and primary stands out. Don't hand-author a full `design-system.md` —
+≥ 4.5:1) and primary stands out. Don't hand-author a full `design.md` —
 let the web app derive the scales/shadows/dark/contract so they're correct; you
 only supply the 6 base colors per palette.
 
@@ -183,17 +183,17 @@ all the user needs.**
 
 > 网页第一屏「选一套配色」会把这几套方案分别渲染在真实 UI 上，点你喜欢的那套进入
 > 「调色」区。再用色轮 / 字体 / 间距 / 暗色微调（右侧实时预览 + 对比度审计）→ 在
-> 「导出」区点 **「下载 design-system.md」** → 把文件放到这个项目的根目录。
+> 「导出」区点 **「下载 design.md」** → 把文件放到这个项目的根目录。
 
 (If they'd rather start from a different base, they can also pick a brand
 template or extract from an image on the first screen.)
 
 ### 5. Resume
 
-Wait for the user to confirm `design-system.md` is in the repo, then re-run the
+Wait for the user to confirm `design.md` is in the repo, then re-run the
 Step 0 search and continue to **Apply**.
 
-## Apply — design-system.md is present
+## Apply — design.md is present
 
 `read` the whole file. It has two parts:
 
@@ -230,7 +230,7 @@ generated UI, the companion CLI converts the file's `json` block into
 `tokens.css` / `tailwind.config.js` / `design-tokens.json`:
 
 ```bash
-npx @no7z/design-system add design-system.md --format css|tailwind|w3c|all --out ./design
+npx @no7z/design-system add design.md --format css|tailwind|w3c|all --out ./design
 ```
 
 If the CLI isn't installed you can produce the same output by reading the

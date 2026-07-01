@@ -1,6 +1,5 @@
 "use client";
 import { useMemo, useState } from "react";
-import { BRANDS } from "@/lib/templates";
 import { useTokens } from "@/lib/store";
 import { useCandidates, type Candidate } from "@/lib/candidates";
 import { resolvePalette } from "@/lib/mockup";
@@ -59,17 +58,9 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
           </h1>
           <p className="text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
             {hasCandidates ? (
-              <>
-                你的 agent 给了 {candidates.length} 套方案。点一套即载入并进入「调色」继续微调，
-                可随时回到这里换选。也可展开下方从品牌模板开始。
-              </>
+              <>点一套即载入、进入「调色」微调，可随时回来换选。</>
             ) : (
-              <>
-                配色由
-                <strong className="font-medium text-neutral-700 dark:text-neutral-200">你自己的 AI agent</strong>
-                产出——在 Claude Code / Cursor 里装上 design-system skill，描述产品、由 agent 给方案，再回到这里可视化选择与微调。
-                也可以展开下方，从品牌模板、上传图片取色，或导入 agent 产出的配色开始。全程不依赖任何在线 AI。
-              </>
+              <>选个起点：品牌模板、上传图片取色，或导入 agent 给的配色。</>
             )}
           </p>
         </header>
@@ -122,7 +113,7 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
         </details>
 
         <p className="max-w-2xl text-xs text-neutral-400">
-          共 {BRANDS.length} 个品牌模板可选。调好后在「导出」区下载 design-system.md，丢回项目让你的 agent 据此生成 UI。
+          调好后在「导出」区下载 design.md，丢回项目让 agent 据此生成 UI。
         </p>
       </div>
     </section>

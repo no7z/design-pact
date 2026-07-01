@@ -1,4 +1,4 @@
-// Extract the canonical blocks from a design-system.md file.
+// Extract the canonical blocks from a design.md file.
 //
 // The file (produced by the web app's designSystemMarkdown) carries:
 //  - one fenced ```css block whose body is the verbatim `:root { … }` contract
@@ -25,7 +25,7 @@ function fence(md: string, lang: string): string | null {
 export function parseDesignSystem(md: string): ParsedDesignSystem {
   if (!/^---\s*\ndesign-system:/m.test(md) && !md.includes("# Design system")) {
     throw new Error(
-      "这看起来不是 design-system.md（缺少 design-system frontmatter / Design system 标题）。",
+      "这看起来不是 design.md（缺少 design-system frontmatter / Design system 标题）。",
     );
   }
 

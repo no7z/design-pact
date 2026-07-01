@@ -3,8 +3,8 @@
 //
 //   npx @no7z/design-system init [--global]                install the skill
 //   npx @no7z/design-system open ["p=…&p=…"]               open the local studio
-//   npx @no7z/design-system add design-system.md [--format css|tailwind|w3c|all] [--out .]
-//   npx @no7z/design-system inspect design-system.md
+//   npx @no7z/design-system add design.md [--format css|tailwind|w3c|all] [--out .]
+//   npx @no7z/design-system inspect design.md
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -32,7 +32,7 @@ function parseArgs(argv: string[]) {
 }
 
 function readMd(file: string | undefined): string {
-  if (!file) fail("用法：design-system <add|inspect> <design-system.md> [选项]");
+  if (!file) fail("用法：design-system <add|inspect> <design.md> [选项]");
   try {
     return readFileSync(resolve(file), "utf8");
   } catch {
@@ -100,10 +100,10 @@ async function main() {
           "",
           "  init [--global]                                        把 skill 装进 .claude/skills",
           '  open ["p=…&p=…"]                                       本地起配色工具并打开浏览器',
-          "  add <file> [--format css|tailwind|w3c|all] [--out .]   把 design-system.md 转成 token 文件",
+          "  add <file> [--format css|tailwind|w3c|all] [--out .]   把 design.md 转成 token 文件",
           "  inspect <file>                                         打印设计系统摘要",
           "",
-          "design-system.md 由本工具网页「下载 design-system.md」导出。",
+          "design.md 由本工具网页「下载 design.md」导出。",
         ].join("\n"),
       );
       return;

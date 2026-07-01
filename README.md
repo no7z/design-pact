@@ -9,9 +9,7 @@
 你的 agent 定方向、出配色 · 工具确定性派生整套设计 tokens · 导出 AI 能逐字执行的 `design.md`,
 丢进代码库让 Claude Code / Cursor 照它生成 UI。
 
-<!-- 演示 GIF:各步骤真实截图轮播(选配色 → 调色 → 字体 → 细节 → 动效 → 导出)。
-     想换成真人操作录屏:Cmd+Shift+5 录 mov,再 ffmpeg 转 gif 覆盖 docs/demo.gif。 -->
-<img src="docs/demo.gif" alt="design-system 演示" width="860">
+<!-- 演示图待补:录一段操作 → docs/demo.gif,再在这里加 <img src="docs/demo.gif" width="860">。 -->
 
 </div>
 

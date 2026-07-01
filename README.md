@@ -1,10 +1,21 @@
+<div align="center">
+
 # design-system
 
 [![skills.sh](https://skills.sh/b/no7z/design-system)](https://skills.sh/no7z/design-system)
 
-**给「用 AI 生成页面的人」的设计系统工具。** 一个 skill + 一个纯前端工具:你的 agent(Claude Code / Cursor)先陪你定方向、产出配色,工具把配色确定性地派生成一整套协调的设计 tokens(色板 / 字体 / 间距 / 圆角 / 阴影 / 描边 / 透明度 / 动效),导出成一份 **AI 能逐字执行的 `design.md`**。把它丢进代码库,agent 就照着你的设计系统生成 UI。
+**给「用 AI 生成页面的人」的设计系统工具**
 
-**AI 全程跑在你自己的 agent 上** —— 配色由 agent 产出、UI 由 agent 生成。本工具不含任何在线 AI、不需要 API key,只做确定性的 token 派生、可视化微调和导出。零后端、零账户。
+你的 agent 定方向、出配色 · 工具确定性派生整套设计 tokens · 导出 AI 能逐字执行的 `design.md`,
+丢进代码库让 Claude Code / Cursor 照它生成 UI。
+
+<!-- 占位图:录一段 ~30s 演示(装 skill → 出配色 → 微调 → 导出 → 生成 UI),
+     存成 docs/demo.gif,再把下面这行的 src 改成 docs/demo.gif 即可。 -->
+<img src="docs/demo.svg" alt="design-system 演示" width="860">
+
+</div>
+
+**AI 全程跑在你自己的 agent 上** —— 配色由 agent 产出、UI 由 agent 生成。工具本身把一套配色确定性地派生成整套协调的 tokens(色板 / 字体 / 间距 / 圆角 / 阴影 / 描边 / 透明度 / 动效),不含任何在线 AI、不需要 API key。**零后端、零账户。**
 
 ---
 

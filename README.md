@@ -28,7 +28,7 @@
 #    agent 读文件 → 按 :root 契约生成/对齐 UI
 
 # 2) 转成项目文件（可选）：
-npx design-system-md add design-system.md --format css|tailwind|w3c|all
+npx @no7z/design-system add design-system.md --format css|tailwind|w3c|all
 #    → tokens.css / tailwind.config.js / design-tokens.json
 ```
 
@@ -61,7 +61,7 @@ npm run dev
 - `lib/scales.ts` / `lib/typography.ts` — 「base → 整套阶梯」派生逻辑
 - `lib/export.ts` — 文本导出（含 `designSystemMarkdown`）；`lib/visualExport.ts` — 视觉导出
 - `lib/templates.ts` + `public/templates.json` — 品牌模板快照（构建时由 `scripts/snapshot-templates.ts` 生成，运行时不依赖 GitHub）
-- `packages/cli` — `design-system-md` CLI；`skill/SKILL.md` — 给 agent 的应用/创建说明
+- `packages/cli` — `@no7z/design-system` CLI；`skill/SKILL.md` — 给 agent 的应用/创建说明
 - `test/harness/` — token→UI 保真度评测（开发工具，详见 `test/harness/run.ts` 头注释）
 
 模板数据来源：[VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)。

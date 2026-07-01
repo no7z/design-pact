@@ -224,7 +224,7 @@ generated UI, the companion CLI converts the file's `json` block into
 `tokens.css` / `tailwind.config.js` / `design-tokens.json`:
 
 ```bash
-npx design-system-md add design-system.md --format css|tailwind|w3c|all --out ./design
+npx @no7z/design-system add design-system.md --format css|tailwind|w3c|all --out ./design
 ```
 
 If the CLI isn't installed you can produce the same output by reading the

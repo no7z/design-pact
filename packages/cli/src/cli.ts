@@ -1,14 +1,16 @@
 #!/usr/bin/env node
-// design-system CLI — turn a design-system.md (exported from the design-system
-// web app) into project token files. Pure/deterministic: no AI, no network.
+// design-system — one command to set up + use the design system.
 //
-//   npx <pkg> add design-system.md [--format css|tailwind|w3c|all] [--out .]
-//   npx <pkg> inspect design-system.md
+//   npx @no7z/design-system init [--global]                install the skill
+//   npx @no7z/design-system open ["p=…&p=…"]               open the local studio
+//   npx @no7z/design-system add design-system.md [--format css|tailwind|w3c|all] [--out .]
+//   npx @no7z/design-system inspect design-system.md
 
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parseDesignSystem } from "./parse";
 import { tailwindFromW3C } from "./tailwind";
+import { cmdInit, cmdOpen, serveStatic } from "./studio";
 
 type Format = "css" | "tailwind" | "w3c" | "all";
 const FORMATS: Format[] = ["css", "tailwind", "w3c"];
@@ -75,10 +77,16 @@ function cmdAdd(file: string | undefined, opts: Record<string, string>) {
   console.log(`✓ 写入 ${outDir}：${written.join(", ")}`);
 }
 
-function main() {
+async function main() {
   const [cmd, ...rest] = process.argv.slice(2);
   const { positional, opts } = parseArgs(rest);
   switch (cmd) {
+    case "init":
+      return cmdInit(rest);
+    case "open":
+      return cmdOpen(rest);
+    case "__serve": // internal: the detached background static server
+      return serveStatic(Number(positional[0]) || 3000);
     case "add":
       return cmdAdd(positional[0], opts);
     case "inspect":
@@ -88,22 +96,20 @@ function main() {
     case "--help":
       console.log(
         [
-          "design-system — 把 design-system.md 转成项目 token 文件",
+          "design-system — 设置并使用你的设计系统（零后端、零账户）",
           "",
-          "  add <file> [--format css|tailwind|w3c|all] [--out .]   生成 token 文件",
+          "  init [--global]                                        把 skill 装进 .claude/skills",
+          '  open ["p=…&p=…"]                                       本地起配色工具并打开浏览器',
+          "  add <file> [--format css|tailwind|w3c|all] [--out .]   把 design-system.md 转成 token 文件",
           "  inspect <file>                                         打印设计系统摘要",
           "",
-          "design-system.md 由 design-system 网页「下载 design-system.md」导出。",
+          "design-system.md 由本工具网页「下载 design-system.md」导出。",
         ].join("\n"),
       );
       return;
     default:
-      fail(`未知命令：${cmd}（add|inspect）`);
+      fail(`未知命令：${cmd}（init|open|add|inspect）`);
   }
 }
 
-try {
-  main();
-} catch (e) {
-  fail(e instanceof Error ? e.message : String(e));
-}
+main().catch((e) => fail(e instanceof Error ? e.message : String(e)));

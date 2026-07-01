@@ -1,0 +1,6 @@
+dist/
+node_modules/
+# Bundled artifacts populated by scripts/bundle.mjs (from the repo's static export)
+web/
+SKILL.md
+*.tgz

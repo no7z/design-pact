@@ -1,16 +1,19 @@
 {
   "name": "@no7z/design-system",
   "version": "0.1.0",
-  "description": "Turn a design-system.md (exported from the UI Generator web app) into project token files — tokens.css / tailwind.config.js / design-tokens.json. No AI, no network.",
+  "description": "Set up and use your design system: install the Claude Code / Cursor skill, open the local studio, and turn design-system.md into token files. Zero backend, zero account.",
   "type": "module",
   "bin": {
     "design-system": "dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "web",
+    "SKILL.md"
   ],
   "scripts": {
     "build": "tsup src/cli.ts --format esm --target node18 --clean",
+    "bundle": "node scripts/bundle.mjs",
     "dev": "tsx src/cli.ts"
   },
   "keywords": [

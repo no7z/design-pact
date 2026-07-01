@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Pure client-side SPA (no API / server features) → static export so the whole
+  // app bundles into the @no7z/design-system package and serves locally.
+  output: "export",
   allowedDevOrigins: ["192.168.1.197"],
 };
 

@@ -1,9 +1,9 @@
 # @no7z/design-system
 
-Turn a `design-system.md` — exported from the [design-system](../../README.md)
+Turn a `design.md` — exported from the [design-system](../../README.md)
 web app — into project token files. **No AI, no network, fully deterministic.**
 
-The `design-system.md` file is self-contained: it holds the verbatim `:root`
+The `design.md` file is self-contained: it holds the verbatim `:root`
 CSS contract (what humans and AI agents read) plus a W3C Design Tokens JSON
 block (what this CLI parses). An agent can use the file directly; this CLI is
 for when you want the tokens as committed project files.
@@ -12,13 +12,13 @@ for when you want the tokens as committed project files.
 
 ```bash
 # Generate token files in the current directory
-npx @no7z/design-system add design-system.md
+npx @no7z/design-system add design.md
 
 # Pick formats and an output directory
-npx @no7z/design-system add design-system.md --format css|tailwind|w3c|all --out ./design
+npx @no7z/design-system add design.md --format css|tailwind|w3c|all --out ./design
 
 # Print a summary without writing anything
-npx @no7z/design-system inspect design-system.md
+npx @no7z/design-system inspect design.md
 ```
 
 Outputs:
@@ -33,7 +33,7 @@ Outputs:
 format not embedded in the markdown, so it's regenerated from the JSON block
 using the same code path the web app uses — it can't drift from the source.
 
-## How to get a `design-system.md`
+## How to get a `design.md`
 
 Open the design-system web app, build your design system, and click
-**下载 design-system.md** in the export step.
+**下载 design.md** in the export step.

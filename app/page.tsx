@@ -160,7 +160,7 @@ function WorkArea() {
           <header className="space-y-2">
             <h2 className="text-2xl font-semibold tracking-tight">导出</h2>
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              下载 design-system.md 交给你的 agent；或导出视觉总览发给团队。
+              下载 design.md 交给你的 agent；或导出视觉总览发给团队。
             </p>
           </header>
           <Export />

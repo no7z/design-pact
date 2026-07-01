@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useTokens } from "@/lib/store";
 import { parseDesignSystemTokens } from "@/lib/importTokens";
 
-/** Import a previously exported design-system.md back into the store. */
+/** Import a previously exported design.md back into the store. */
 export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
   const [text, setText] = useState("");
   const [error, setError] = useState("");
@@ -50,7 +50,7 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
   return (
     <div className="space-y-3">
       <p className="text-xs text-neutral-500 dark:text-neutral-400">
-        导入之前下载的 design-system.md，恢复整套设计系统。
+        导入之前下载的 design.md，恢复整套设计系统。
       </p>
       <label
         onDragOver={(e) => {
@@ -65,7 +65,7 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
             : "border-neutral-300 text-neutral-500 hover:border-neutral-500 dark:border-neutral-700 dark:text-neutral-400"
         }`}
       >
-        {dragging ? "松开导入 design-system.md" : "点击选择，或拖拽 design-system.md 到这里"}
+        {dragging ? "松开导入 design.md" : "点击选择，或拖拽 design.md 到这里"}
         <input
           type="file"
           accept=".md,text/markdown"
@@ -77,7 +77,7 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="或直接粘贴 design-system.md 内容…"
+          placeholder="或直接粘贴 design.md 内容…"
           rows={4}
           className="w-full resize-none rounded-lg border border-neutral-300 bg-white p-3 font-mono text-xs outline-none transition focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-900"
         />

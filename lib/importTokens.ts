@@ -1,4 +1,4 @@
-// Re-import of a design-system.md this app exports — the W3C tokens live in its
+// Re-import of a design.md this app exports — the W3C tokens live in its
 // ```json block (lib/export.ts designSystemMarkdown → w3cTokens). Lets a user
 // resume work from a downloaded file on another device. A bare W3C JSON string
 // still parses too (backward compatibility). Parsing is intentionally lenient:
@@ -58,14 +58,14 @@ const num = (x: unknown): number | undefined => {
   return undefined;
 };
 
-/** Pull the W3C ```json block out of a design-system.md; null if there isn't one. */
+/** Pull the W3C ```json block out of a design.md; null if there isn't one. */
 function extractW3CJson(text: string): string | null {
   const m = text.match(/```json\s*\n([\s\S]*?)\n```/i);
   return m ? m[1] : null;
 }
 
 /**
- * Import from a design-system.md (extract its ```json W3C block) or, for
+ * Import from a design.md (extract its ```json W3C block) or, for
  * backward compatibility, a raw W3C design-tokens.json string.
  */
 export function parseDesignSystemTokens(text: string): ImportedTokens {
@@ -83,7 +83,7 @@ export function parseW3CTokens(jsonText: string): ImportedTokens {
 
   // ── colors ──
   const colorGroup = asObj(root.color);
-  if (!colorGroup) throw new Error("缺少 color 分组——这不是本工具导出的 design-system.md？");
+  if (!colorGroup) throw new Error("缺少 color 分组——这不是本工具导出的 design.md？");
   const colors: ColorToken[] = [];
   const darkHexes: (string | undefined)[] = [];
   for (const [key, node] of Object.entries(colorGroup)) {

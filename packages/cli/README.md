@@ -1,4 +1,4 @@
-# design-system-md
+# @no7z/design-system
 
 Turn a `design-system.md` — exported from the [design-system](../../README.md)
 web app — into project token files. **No AI, no network, fully deterministic.**
@@ -12,13 +12,13 @@ for when you want the tokens as committed project files.
 
 ```bash
 # Generate token files in the current directory
-npx design-system-md add design-system.md
+npx @no7z/design-system add design-system.md
 
 # Pick formats and an output directory
-npx design-system-md add design-system.md --format css|tailwind|w3c|all --out ./design
+npx @no7z/design-system add design-system.md --format css|tailwind|w3c|all --out ./design
 
 # Print a summary without writing anything
-npx design-system-md inspect design-system.md
+npx @no7z/design-system inspect design-system.md
 ```
 
 Outputs:

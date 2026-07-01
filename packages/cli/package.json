@@ -1,17 +1,26 @@
 {
-  "name": "design-system-md",
+  "name": "@no7z/design-system",
   "version": "0.1.0",
   "description": "Turn a design-system.md (exported from the UI Generator web app) into project token files — tokens.css / tailwind.config.js / design-tokens.json. No AI, no network.",
   "type": "module",
   "bin": {
     "design-system": "dist/cli.js"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/cli.ts --format esm --target node18 --clean",
     "dev": "tsx src/cli.ts"
   },
-  "keywords": ["design-tokens", "design-system", "tailwind", "css-variables", "ai", "cli"],
+  "keywords": [
+    "design-tokens",
+    "design-system",
+    "tailwind",
+    "css-variables",
+    "ai",
+    "cli"
+  ],
   "license": "MIT",
   "dependencies": {
     "culori": "^4.0.2"
@@ -20,5 +29,8 @@
     "tsup": "^8.5.0",
     "tsx": "^4.22.4",
     "typescript": "^5"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

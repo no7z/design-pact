@@ -21,7 +21,7 @@
 
 ## 快速开始
 
-**1. 装 skill**(一条命令,跨 agent,自动装到 `.claude/skills/`)
+**1. 装 skill**(一条命令,支持 Claude Code / Cursor / Codex 等;在 Claude Code 项目里自动装到 `.claude/skills/`)
 
 ```bash
 npx skills add no7z/design-system -g     # 全局:装一次,所有项目可用
@@ -46,7 +46,7 @@ npx skills add no7z/design-system -g     # 全局:装一次,所有项目可用
 3. **字体** — base + ratio 两个滑条驱动 8 级字号阶梯,字重 / 行高 / 字距可调。
 4. **细节** — 间距 / 圆角 / 阴影 / 描边 / 透明度,全部「单 base 滑条派生整套阶梯」。
 5. **动效** — 时长阶梯 + 缓动曲线。
-6. **导出** — **design.md**(推荐)、W3C Design Tokens JSON、Tailwind 配置、CSS 变量、Figma(Tokens Studio)、视觉总览 PNG/SVG/HTML,以及**分享链接**(整套 tokens 序列化进 URL,打开即载入)。
+6. **导出** — **design.md**(推荐,见下),外加**设计系统总览**的视觉导出(HTML / PNG / SVG,SVG 可直接拖进 Figma / Illustrator)。需要 `tokens.css` / `tailwind.config.js` / `design-tokens.json` 时,用配套 CLI 从 design.md 转(见 CLI 一节)。
 
 ## design.md —— 一份文件服务三类读者
 

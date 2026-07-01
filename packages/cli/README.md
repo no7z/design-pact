@@ -8,6 +8,22 @@ CSS contract (what humans and AI agents read) plus a W3C Design Tokens JSON
 block (what this CLI parses). An agent can use the file directly; this CLI is
 for when you want the tokens as committed project files.
 
+## Install the skill (recommended)
+
+Get the `design-system` skill into your agent with the open
+[`skills`](https://github.com/vercel-labs/skills) CLI — one command, works
+across Claude Code / Cursor / Codex:
+
+```bash
+npx skills add no7z/design-system -g   # global: install once, available in every project
+npx skills add no7z/design-system      # or: current project only (.claude/skills/)
+```
+
+The skill then opens the studio on demand via `npx @no7z/design-system open`,
+so you never install the studio separately. (This package also ships its own
+installer if you prefer a single, offline, version-locked bundle:
+`npx @no7z/design-system init [--global]`.)
+
 ## Usage
 
 ```bash

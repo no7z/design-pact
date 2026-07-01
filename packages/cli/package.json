@@ -1,6 +1,6 @@
 {
   "name": "@no7z/design-system",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Set up and use your design system: install the Claude Code / Cursor skill, open the local studio, and turn design-system.md into token files. Zero backend, zero account.",
   "type": "module",
   "bin": {

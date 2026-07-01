@@ -4,6 +4,7 @@ import { useTokens } from "@/lib/store";
 import { resolvePalette, hexA } from "@/lib/mockup";
 import {
   buildRadius,
+  buildSpacing,
   buildDurations,
   buildOpacityScale,
   buildBorderScale,
@@ -26,6 +27,7 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
   const border = useTokens((s) => s.border);
   const opacity = useTokens((s) => s.opacity);
   const motion = useTokens((s) => s.motion);
+  const spacing = useTokens((s) => s.spacing);
 
   const palette = useMemo(() => resolvePalette(colors, globals), [colors, globals]);
   const ops = useMemo(() => {
@@ -50,6 +52,14 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
     const get = (name: string, fb: number) => scale.find((r) => r.name === name)?.px ?? fb;
     return { sm: get("sm", 4), md: get("md", 8), lg: get("lg", 12) };
   }, [radius.base]);
+  // Padding follows the spacing scale, same bindings as the 间距 instance:
+  // buttons/inputs = xxs × sm, cards = md. Keeps this demo in step with the
+  // spacing step and the exported contract instead of hardcoding px.
+  const sp = useMemo(() => {
+    const scale = buildSpacing(spacing.base);
+    const get = (name: string, fb: number) => scale.find((s) => s.name === name)?.px ?? fb;
+    return { xxs: get("xxs", 4), sm: get("sm", 12), md: get("md", 16) };
+  }, [spacing.base]);
   const bw = useMemo(() => {
     const scale = buildBorderScale(border.base);
     const get = (name: string, fb: number) => scale.find((b) => b.name === name)?.px ?? fb;
@@ -86,7 +96,7 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
               background: palette.primary,
               color: primaryIsDark ? "#ffffff" : "#111111",
               borderRadius: rd.md,
-              padding: "7px 18px",
+              padding: `${sp.xxs}px ${sp.sm}px`,
               border: "none",
               cursor: "pointer",
               transition,
@@ -125,7 +135,7 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
               background: palette.primary,
               color: primaryIsDark ? "#ffffff" : "#111111",
               borderRadius: rd.md,
-              padding: "7px 18px",
+              padding: `${sp.xxs}px ${sp.sm}px`,
               border: "none",
               opacity: ops.disabled,
               cursor: "not-allowed",
@@ -150,7 +160,7 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
               color: palette.fg,
               border: `${focused ? bw.strong : bw.default}px solid ${focused ? palette.primary : palette.border}`,
               borderRadius: rd.sm,
-              padding: "7px 12px",
+              padding: `${sp.xxs}px ${sp.sm}px`,
               transition,
               boxShadow: focused ? `0 0 0 3px ${hexA(palette.primary, ops.focus)}` : "none",
             }}
@@ -169,7 +179,7 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
               background: palette.surface,
               border: `${bw.default}px solid ${palette.border}`,
               borderRadius: rd.lg,
-              padding: "12px 14px",
+              padding: `${sp.md}px`,
               transition,
               cursor: "pointer",
               boxShadow: shadowToCss(cardHover ? shadow.md : shadow.sm),
@@ -198,7 +208,7 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
                 background: palette.primary,
                 color: primaryIsDark ? "#ffffff" : "#111111",
                 borderRadius: rd.md,
-                padding: "7px 18px",
+                padding: `${sp.xxs}px ${sp.sm}px`,
                 border: "none",
                 cursor: "pointer",
                 transition,

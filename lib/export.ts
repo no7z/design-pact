@@ -298,6 +298,7 @@ export function aiPrompt(
     .join("\n");
   const dominant = sorted[0];
   const accent = sorted.find((c) => c.role === "accent") ?? sorted[1];
+  const primary = sorted.find((c) => c.role === "primary") ?? sorted[1];
   const rootBlock = cssVars(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic, darkSemantic);
   const semanticSection = semantic
     ? `
@@ -336,7 +337,13 @@ When generating UI from this token set, respect the following proportions and ro
 ## Color palette
 ${palette}
 
-The dominant background should occupy roughly ${(dominant.proportion * 100).toFixed(0)}% of the layout. The accent color (${accent.displayHex}) should be reserved for emphasis — buttons, links, key highlights — typically ${Math.min(15, Math.round(accent.proportion * 100))}% or less of any given screen.
+The dominant background should occupy roughly ${(dominant.proportion * 100).toFixed(0)}% of the layout.
+
+Bind colors to roles exactly as the design tool renders them — do NOT swap primary and accent:
+
+- **primary (${primary.displayHex})** is the main interactive fill: primary buttons / CTAs, active nav item, key links, the logo mark. This is the button color.
+- **accent (${accent.displayHex})** is for SECONDARY emphasis only: badges/chips, chart & graphic accents, small highlights — typically ${Math.min(15, Math.round(accent.proportion * 100))}% or less of any screen. Do not use accent as the primary button fill.
+- **muted** for secondary/placeholder text, **border** for hairlines and dividers.
 
 ## Typography
 Base size ${typography.base}px, modular scale ratio ${typography.ratio}.
@@ -352,6 +359,10 @@ Use \`--font-weight\` for body text AND headings — this design keeps one weigh
 Base unit ${spacing.base}px. Use this 8-step scale for padding/margin/gap:
 
 ${buildSpacing(spacing.base).map((s) => `- ${s.name}: ${s.px}px`).join("\n")}
+
+Typical usage (guidance, pick sensibly from the scale — not a strict binding):
+component padding & gaps from \`xs\`–\`lg\`, spacing between sections from \`xl\`–\`section\`.
+Only use listed values; never improvise an intermediate gap.
 
 ## Border radius
 Base ${radius.base}px. Use:
@@ -374,8 +385,22 @@ ${shadow.advanced ? "Per-level custom values" : `Intensity ${shadow.intensity.to
 
 ${(["sm", "md", "lg"] as const).map((level) => `- ${level}: ${shadowToCss(shadow[level])}`).join("\n")}
 
+Bind each level to an elevation exactly as the design tool renders them — do NOT
+pick a level freely:
+
+- **sm** → resting surfaces: cards, panels, subtle raise (the default for a raised element).
+- **md** → hovered / lifted state: a card or button on hover, raised popovers.
+- **lg** → floating overlays: modals, drawers, dropdowns, menus above the page.
+
+Flat elements (nav bar, page background, inline controls) get NO shadow. On hover, step a card up one level (sm → md), don't jump straight to lg.
+
 ## Border width
 ${buildBorderScale(border.base).map((b) => `- ${b.name}: ${b.px}px`).join("\n")}
+
+Bind each width as the design tool renders them:
+
+- **default** → all resting borders: card outlines, input borders, dividers.
+- **strong** → focused / active / selected emphasis (e.g. an input grows from \`default\` to \`strong\` on focus). Do not use \`strong\` for ordinary resting borders.
 
 ## Opacity / transparency
 These drive interactive states — wire them up, don't leave them unused. Apply each via \`var(--opacity-…)\` (or an rgba/overlay at that alpha):

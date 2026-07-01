@@ -47,8 +47,5 @@ next-env.d.ts
 .codegraph/
 .understand-anything/
 
-# eval harness generated pages
-test/out/
-
 # Claude Code local overrides (personal, not shared)
 .claude/settings.local.json

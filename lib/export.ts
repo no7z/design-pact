@@ -514,9 +514,8 @@ export function tokensStudioJson(
 //
 // One markdown document that serves three readers at once:
 //  - humans: the prose sections render on GitHub / in any editor
-//  - AI agents: the verbatim `:root` contract in the prose is the same one the
-//    eval harness scored ~98/100 — an agent reads the file and generates UI
-//    against it, using ITS OWN compute (no server round-trip)
+//  - AI agents: the verbatim `:root` contract in the prose — an agent reads the
+//    file and generates UI against it, using ITS OWN compute (no server round-trip)
 //  - tools (the companion CLI): the fenced ```json block at the bottom is the
 //    W3C token set for exact, deterministic conversion to css/tailwind
 //

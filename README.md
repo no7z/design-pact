@@ -28,7 +28,7 @@ npx skills add no7z/design-system -g     # 全局:装一次,所有项目可用
 # 或 npx skills add no7z/design-system   # 只装当前项目
 ```
 
-**2. 在 Claude Code / Cursor 里说**「用 design-system skill 帮我建一套设计系统」
+**2. 触发 skill** —— 在 Claude Code 里直接输入斜杠命令 `/design-system`;或用自然语言说「用 design-system skill 帮我建一套设计系统」(Cursor 等其它 agent 用自然语言即可,skill 会按描述自动触发)。
 
 - 项目里**有** `design.md` → agent 直接照它生成 UI。
 - **没有** → agent 问清方向、给你 2–3 套配色,并用 `npx @no7z/design-system open` 在本地打开配色工具。

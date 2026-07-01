@@ -1,5 +1,9 @@
 # design-system
 
+[![skills.sh](https://skills.sh/b/no7z/design-system)](https://skills.sh/no7z/design-system)
+
+> 一条命令装 skill：`npx skills add no7z/design-system -g`
+
 一个**纯前端、零后端**的设计系统编辑器，为「用 AI 生成页面的人」准备。它把一套配色派生成完整、协调的设计 tokens（色板 / 字体 / 间距 / 圆角 / 阴影 / 描边 / 透明度 / 动效），并导出成 **AI 能严格执行的 `design.md`**——丢进代码库，让你自己的 agent（Claude Code / Cursor）据此生成 UI。
 
 **AI 全程跑在你自己的 agent 上**：配色由 agent 产出，UI 生成由 agent 完成。本工具不含任何在线 AI、不需要任何 API key——它只做确定性的 token 派生、可视化微调和导出。
@@ -70,7 +74,7 @@ npm run dev
 - `lib/scales.ts` / `lib/typography.ts` — 「base → 整套阶梯」派生逻辑
 - `lib/export.ts` — 文本导出（含 `designSystemMarkdown`）；`lib/visualExport.ts` — 视觉导出
 - `lib/templates.ts` + `public/templates.json` — 品牌模板快照（构建时由 `scripts/snapshot-templates.ts` 生成，运行时不依赖 GitHub）
-- `packages/cli` — `@no7z/design-system` CLI；`skill/SKILL.md` — 给 agent 的应用/创建说明
+- `packages/cli` — `@no7z/design-system` CLI；`skills/design-system/SKILL.md` — 给 agent 的应用/创建说明
 - `test/harness/` — token→UI 保真度评测（开发工具，详见 `test/harness/run.ts` 头注释）
 
 模板数据来源：[VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)。

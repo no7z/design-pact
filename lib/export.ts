@@ -369,7 +369,8 @@ ${buildSpacing(spacing.base).map((s) => `- ${s.name}: ${s.px}px`).join("\n")}
 Bind padding & gaps to these steps exactly as the design tool renders them —
 padding is written as \`vertical horizontal\`:
 
-- **Buttons / inputs / chips** → \`--spacing-xxs\` \`--spacing-sm\` (e.g. \`padding: var(--spacing-xxs) var(--spacing-sm)\`). A prominent CTA may widen the horizontal padding to \`--spacing-md\` or \`--spacing-lg\`, but keep the vertical at \`--spacing-xxs\`.
+- **Primary / prominent CTA button** → \`--spacing-sm\` \`--spacing-lg\` (e.g. \`padding: var(--spacing-sm) var(--spacing-lg)\`) — a taller, comfortable target.
+- **Compact buttons / inputs / chips** → \`--spacing-xxs\` \`--spacing-sm\`.
 - **List rows / nav items / card header & footer** → \`--spacing-xs\` \`--spacing-md\`.
 - **Card / panel / modal body** → \`--spacing-md\` on all sides.
 - **Gap between sibling controls, grid/flex gaps** → \`--spacing-sm\`.

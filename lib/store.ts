@@ -281,6 +281,6 @@ export const useTokens = create<State>()(
           activeSchemeId: null,
         })),
     }),
-    { name: "ui-generator-tokens", skipHydration: true },
+    { name: "design-system-tokens", skipHydration: true },
   ),
 );

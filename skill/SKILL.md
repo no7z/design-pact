@@ -15,7 +15,7 @@ description: >-
 # Design system
 
 The project's design system lives in a single file — `design-system.md` at the
-repo root — exported from the UI Generator web app. It carries the canonical
+repo root — exported from the design-system web app. It carries the canonical
 color / type / spacing / radius / shadow / motion tokens plus a copy-verbatim
 `:root` contract. That one file is the source of truth; you do not need the web
 app or network access once it exists.
@@ -30,7 +30,7 @@ Look for `design-system.md`, in order:
 1. A path the user gave you.
 2. `design-system.md` at the repo root.
 3. Search the repo for the file's frontmatter marker:
-   `rg -l "^ui-generator:" --type md`.
+   `rg -l "^design-system:" --type md`.
 
 Then branch:
 
@@ -151,7 +151,7 @@ when nothing matched:
 …&m=stripe,linear.app,vercel,supabase
 ```
 
-Full URL: `http://localhost:3000/?<query>` (`UI_GENERATOR_URL` defaults to
+Full URL: `http://localhost:3000/?<query>` (`DESIGN_SYSTEM_URL` defaults to
 `http://localhost:3000`; use a hosted URL if the user has one).
 
 **Do these IN ORDER. Step 1 always happens — even if 2 and 3 fail, the printed
@@ -165,7 +165,7 @@ URL is all the user needs.**
 2. **Make sure the studio is serving:** `curl -sf http://localhost:3000 >/dev/null`.
    If it returns nothing, start it in the **background** — it lives in the UI
    Generator repo, NOT the user's current project (never `npm run dev` in the
-   working directory). The repo path is `$UI_GENERATOR_DIR`; if that's empty, ask
+   working directory). The repo path is `$DESIGN_SYSTEM_DIR`; if that's empty, ask
    the user for it. Then `npm --prefix "<dir>" run dev &` and poll `curl` until
    the port answers. (If you can't start it, that's fine — the user can run it
    themselves; you've already given them the URL in step 1.)

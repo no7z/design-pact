@@ -23,9 +23,9 @@ function fence(md: string, lang: string): string | null {
 }
 
 export function parseDesignSystem(md: string): ParsedDesignSystem {
-  if (!/^---\s*\nui-generator:/m.test(md) && !md.includes("# Design system")) {
+  if (!/^---\s*\ndesign-system:/m.test(md) && !md.includes("# Design system")) {
     throw new Error(
-      "这看起来不是 design-system.md（缺少 ui-generator frontmatter / Design system 标题）。",
+      "这看起来不是 design-system.md（缺少 design-system frontmatter / Design system 标题）。",
     );
   }
 

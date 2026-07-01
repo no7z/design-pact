@@ -152,26 +152,32 @@ when nothing matched:
 ```
 
 Full URL: `http://localhost:3000/?<query>` (`DESIGN_SYSTEM_URL` defaults to
-`http://localhost:3000`; use a hosted URL if the user has one).
+`http://localhost:3000`; use a hosted URL if the user has one and skip the CLI).
 
-**Do these IN ORDER. Step 1 always happens — even if 2 and 3 fail, the printed
-URL is all the user needs.**
+**Do these IN ORDER. Step 1 always happens — even if 2 fails, the printed URL is
+all the user needs.**
 
 1. **Print the full URL on its own line and tell the user to open it.** Do this
    first, unconditionally. Opening it manually loads the palettes just the same.
 
    > 打开（已带 N 套配色）: http://localhost:3000/?p=…&p=…
 
-2. **Make sure the studio is serving:** `curl -sf http://localhost:3000 >/dev/null`.
-   If it returns nothing, start it in the **background** — it lives in the UI
-   Generator repo, NOT the user's current project (never `npm run dev` in the
-   working directory). The repo path is `$DESIGN_SYSTEM_DIR`; if that's empty, ask
-   the user for it. Then `npm --prefix "<dir>" run dev &` and poll `curl` until
-   the port answers. (If you can't start it, that's fine — the user can run it
-   themselves; you've already given them the URL in step 1.)
+2. **Open the studio with the CLI** — it serves the bundled app locally (no
+   clone, no dev server, no account) and opens the browser:
 
-3. **Try to open a browser** on the URL: macOS `open "$URL"` · Linux
-   `xdg-open "$URL"` · Windows `start "" "$URL"`. Headless / no browser is fine.
+   ```bash
+   npx @no7z/design-system open "<query>"
+   ```
+
+   `<query>` is everything after `?` (the `p=…&p=…&m=…` you assembled). It
+   returns immediately (studio runs in the background on `http://localhost:3000`),
+   reuses a running instance on repeat calls, and prints the URL too. Headless
+   is fine.
+
+   Fallbacks if `npx` can't fetch the package (offline / not yet published): if
+   `curl -sf http://localhost:3000` already answers, just open the step-1 URL; or
+   from a local clone `npm --prefix "$DESIGN_SYSTEM_DIR" run dev &`. Either way
+   the step-1 URL is the instruction.
 
 ### 4. Tell the user what to do there
 

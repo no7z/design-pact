@@ -10,6 +10,7 @@ import {
 } from "@/lib/store";
 import { hexToOklch, oklchToHex } from "@/lib/color";
 import { resolveOppositeHex, isDarkPalette } from "@/lib/darkMode";
+import { useTr } from "@/lib/i18n";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -46,6 +47,7 @@ function ColorWheel({
   onChange: (patch: Partial<Globals>) => void;
   onReset: () => void;
 }) {
+  const tr = useTr();
   const svgRef = useRef<SVGSVGElement>(null);
   const dragging = useRef(false);
   const prevPos = useRef<{ x: number; y: number } | null>(null);
@@ -202,13 +204,13 @@ function ColorWheel({
   return (
     <section className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-xs font-semibold">全局协调调节 (OKLCH)</h3>
+        <h3 className="text-xs font-semibold">{tr("Global harmony (OKLCH)", "全局协调调节 (OKLCH)")}</h3>
         <div className="flex gap-2">
           <button
             onClick={onReset}
             className="rounded border border-neutral-300 px-2 py-0.5 text-xs hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
           >
-            重置
+            {tr("Reset", "重置")}
           </button>
         </div>
       </div>
@@ -269,7 +271,7 @@ function ColorWheel({
         <div className="flex flex-1 flex-col gap-3">
           <label className="flex flex-col gap-1 text-xs">
             <span className="flex items-center justify-between font-medium">
-              <span>亮度 ΔL</span>
+              <span>{tr("Lightness ΔL", "亮度 ΔL")}</span>
               <span className="font-mono text-neutral-500">{globals.dL.toFixed(3)}</span>
             </span>
             <input
@@ -288,7 +290,10 @@ function ColorWheel({
           </dl>
 
           <p className="text-[10px] leading-snug text-neutral-400">
-            向外拖动增加饱和度偏移（平方渐进），方向旋转色相（完整 360°）。圆环上的小点为各颜色当前色相位置。
+            {tr(
+              "Drag outward to add chroma (quadratic); the angle rotates hue (full 360°). Dots on the ring are each color's current hue.",
+              "向外拖动增加饱和度偏移（平方渐进），方向旋转色相（完整 360°）。圆环上的小点为各颜色当前色相位置。",
+            )}
           </p>
         </div>
       </div>
@@ -316,6 +321,7 @@ function ColorCard({
   token: ColorToken; globals: Globals; isSelected: boolean; onToggle: () => void; hero: boolean;
   oppositeHex: string | null;
 }) {
+  const tr = useTr();
   const display = computedHex(token, globals);
   return (
     <button
@@ -335,7 +341,7 @@ function ColorCard({
           <span
             className={`absolute bottom-0 right-0 ${hero ? "h-9 w-9" : "h-7 w-7"}`}
             style={{ background: oppositeHex, clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
-            title={`另一面 ${oppositeHex}`}
+            title={tr(`Other face ${oppositeHex}`, `另一面 ${oppositeHex}`)}
           />
         )}
       </div>
@@ -366,6 +372,7 @@ function ColorDetail({
   onOppositeChange: (hex: string) => void;
   onOppositeReset: () => void;
 }) {
+  const tr = useTr();
   const display = computedHex(token, globals);
   const [pickerColor, setPickerColor] = useState(token.baseHex);
   const [showRoles, setShowRoles] = useState(false);
@@ -387,7 +394,7 @@ function ColorDetail({
           onClick={onClose}
           className="rounded px-1.5 py-0.5 text-xs text-neutral-400 hover:bg-neutral-100 hover:text-neutral-900 dark:hover:bg-neutral-800 dark:hover:text-white"
         >
-          收起
+          {tr("Collapse", "收起")}
         </button>
       </div>
 
@@ -396,7 +403,7 @@ function ColorDetail({
       <div>
         <button
           onClick={() => setShowRoles((v) => !v)}
-          title="点击调整用途"
+          title={tr("Click to change the role", "点击调整用途")}
           className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-medium ${ROLE_BADGE[token.role]}`}
         >
           {token.role}
@@ -427,17 +434,20 @@ function ColorDetail({
           onChange={(hex) => { setPickerColor(hex); onUpdate(hex); }}
         />
         <p className="text-xs text-neutral-500">
-          编辑此颜色会重置其基线 — 全局调节将以新值为起点。
+          {tr(
+            "Editing this color resets its baseline — global adjustments start from the new value.",
+            "编辑此颜色会重置其基线 — 全局调节将以新值为起点。",
+          )}
         </p>
       </div>
 
       {paired && (
         <div className="flex items-center gap-2 border-t border-neutral-100 pt-3 dark:border-neutral-800">
-          <span className="text-[10px] text-neutral-500 dark:text-neutral-400">{oppositeLabel}对应</span>
+          <span className="text-[10px] text-neutral-500 dark:text-neutral-400">{tr(`${oppositeLabel} pair`, `${oppositeLabel}对应`)}</span>
           <label
             className="relative h-6 w-9 cursor-pointer overflow-hidden rounded border border-neutral-200 dark:border-neutral-700"
             style={{ background: oppositeHex }}
-            title={`点击微调${oppositeLabel}`}
+            title={tr(`Click to tweak the ${oppositeLabel}`, `点击微调${oppositeLabel}`)}
           >
             <input
               type="color"
@@ -447,13 +457,13 @@ function ColorDetail({
             />
           </label>
           <span className="font-mono text-[10px] text-neutral-600 dark:text-neutral-300">{oppositeHex}</span>
-          <span className="text-[10px] text-neutral-400">{oppositeOverridden ? "已覆盖" : "自动"}</span>
+          <span className="text-[10px] text-neutral-400">{oppositeOverridden ? tr("overridden", "已覆盖") : tr("auto", "自动")}</span>
           {oppositeOverridden && (
             <button
               onClick={onOppositeReset}
               className="text-[10px] text-neutral-400 underline-offset-2 hover:underline"
             >
-              重置
+              {tr("Reset", "重置")}
             </button>
           )}
         </div>
@@ -468,19 +478,20 @@ export function DarkPairingToggle() {
   const enabled = useTokens((s) => s.dark.enabled);
   const setDarkEnabled = useTokens((s) => s.setDarkEnabled);
   const hasColors = useTokens((s) => s.colors.length > 0);
+  const tr = useTr();
   if (!hasColors) return null;
   return (
     <button
       onClick={() => setDarkEnabled(!enabled)}
       aria-pressed={enabled}
-      title="为每个颜色生成亮暗配对，导出 @media (prefers-color-scheme)"
+      title={tr("Generate a light/dark pair for every color, exported as @media (prefers-color-scheme)", "为每个颜色生成亮暗配对，导出 @media (prefers-color-scheme)")}
       className={`shrink-0 rounded-full border px-3 py-1 text-xs transition ${
         enabled
           ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-black"
           : "border-neutral-300 text-neutral-600 hover:border-neutral-900 hover:text-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-white dark:hover:text-white"
       }`}
     >
-      {enabled ? "✓ 亮暗配对" : "亮暗配对"}
+      {enabled ? tr("✓ Light/dark pair", "✓ 亮暗配对") : tr("Light/dark pair", "亮暗配对")}
     </button>
   );
 }
@@ -497,12 +508,13 @@ export function Editor() {
   const updateColor     = useTokens((s) => s.updateColor);
   const setRole         = useTokens((s) => s.setRole);
   const setDarkOverride = useTokens((s) => s.setDarkOverride);
+  const tr = useTr();
 
   const [openId, setOpenId] = useState<string | null>(null);
   const openToken = colors.find((c) => c.id === openId) ?? null;
 
   // The opposite face is the light one when the base palette is itself dark.
-  const oppositeLabel = isDarkPalette(colors, globals) ? "亮色" : "暗色";
+  const oppositeLabel = isDarkPalette(colors, globals) ? tr("light", "亮色") : tr("dark", "暗色");
 
   if (colors.length === 0) return null;
 
@@ -516,10 +528,13 @@ export function Editor() {
       />
 
       <section className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
-        <h3 className="text-xs font-semibold">颜色 ({colors.length})</h3>
+        <h3 className="text-xs font-semibold">{tr("Colors", "颜色")} ({colors.length})</h3>
         {rolesUncertain && (
           <p className="mb-2.5 mt-1 text-[10px] leading-relaxed text-amber-600 dark:text-amber-500">
-            颜色用途是从图片/网址按比例自动推测的，可能不准 — 点色块后点用途标签可校正。
+            {tr(
+              "Color roles were guessed by proportion from the image/URL and may be off — click a swatch, then its role badge to correct it.",
+              "颜色用途是从图片/网址按比例自动推测的，可能不准 — 点色块后点用途标签可校正。",
+            )}
           </p>
         )}
         <div className={`grid grid-cols-2 gap-2 sm:grid-cols-4 ${rolesUncertain ? "" : "mt-2.5"}`}>

@@ -6,6 +6,7 @@ import { resolvePalette } from "@/lib/mockup";
 import { MockupView } from "@/components/MockupViews";
 import { InputSource } from "./InputSource";
 import { TemplateGrid } from "./TemplateGrid";
+import { useTr } from "@/lib/i18n";
 
 const ZERO_GLOBALS = { dL: 0, dC: 0, dH: 0 };
 const SWATCH_ORDER = ["background", "primary", "accent", "foreground", "muted", "border"];
@@ -22,6 +23,7 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
   const matches = useCandidates((s) => s.matches);
   const loadTokens = useTokens((s) => s.loadTokens);
   const hasCandidates = candidates.length > 0;
+  const tr = useTr();
 
   const [selected, setSelected] = useState<number | null>(null);
   // Templates: collapsed by default when candidates are the focus; open when
@@ -54,13 +56,13 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
             Step 1 / 5
           </p>
           <h1 className="text-3xl font-semibold tracking-tight">
-            {hasCandidates ? "选一套配色" : "开始一套设计系统"}
+            {hasCandidates ? tr("Pick a palette", "选一套配色") : tr("Start a design system", "开始一套设计系统")}
           </h1>
           <p className="text-sm leading-relaxed text-neutral-500 dark:text-neutral-400">
             {hasCandidates ? (
-              <>点一套即载入、进入「调色」微调，可随时回来换选。</>
+              <>{tr("Click one to load it and fine-tune in Colors — you can come back and switch anytime.", "点一套即载入、进入「调色」微调，可随时回来换选。")}</>
             ) : (
-              <>选个起点：品牌模板、上传图片取色，或导入 agent 给的配色。</>
+              <>{tr("Pick a starting point: a brand template, extract from an image, or import a palette from your agent.", "选个起点：品牌模板、上传图片取色，或导入 agent 给的配色。")}</>
             )}
           </p>
         </header>
@@ -84,9 +86,12 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
         {matches.length > 0 && (
           <section className="space-y-3 rounded-xl border border-neutral-200 p-4 dark:border-neutral-800">
             <header className="space-y-1">
-              <h2 className="text-sm font-semibold">同类真实产品</h2>
+              <h2 className="text-sm font-semibold">{tr("Same-category real products", "同类真实产品")}</h2>
               <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                和你的产品同类型的真实品牌设计（共 {matches.length} 个）。可点任意一个直接套用它的配色与字体，或继续用上面的方案。
+                {tr(
+                  `Real brand designs in the same category as your product (${matches.length} total). Click any to apply its colors and fonts, or keep using the palettes above.`,
+                  `和你的产品同类型的真实品牌设计（共 ${matches.length} 个）。可点任意一个直接套用它的配色与字体，或继续用上面的方案。`,
+                )}
               </p>
             </header>
             <TemplateGrid
@@ -104,8 +109,10 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
           className="rounded-xl border border-neutral-200 dark:border-neutral-800"
         >
           <summary className="cursor-pointer select-none list-none px-4 py-3 text-sm font-medium text-neutral-600 transition hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white">
-            {matches.length > 0 ? "全部品牌模板 / 图片 / 导入配色" : "或：从品牌模板 / 图片 / 导入配色开始"}
-            <span className="ml-1 text-neutral-400">（{tplOpen ? "收起" : "展开"}）</span>
+            {matches.length > 0
+              ? tr("All brand templates / image / import palette", "全部品牌模板 / 图片 / 导入配色")
+              : tr("Or: start from a brand template / image / imported palette", "或：从品牌模板 / 图片 / 导入配色开始")}
+            <span className="ml-1 text-neutral-400">（{tplOpen ? tr("collapse", "收起") : tr("expand", "展开")}）</span>
           </summary>
           <div className="border-t border-neutral-200 p-3 dark:border-neutral-800">
             <InputSource onSuccess={onTemplate} />
@@ -113,7 +120,10 @@ export function DescribeStep({ onLoaded }: { onLoaded: () => void }) {
         </details>
 
         <p className="max-w-2xl text-xs text-neutral-400">
-          调好后在「导出」区下载 design.md，丢回项目让 agent 据此生成 UI。
+          {tr(
+            "When it's dialed in, download design.md from Export and drop it back in your project for the agent to build UI from.",
+            "调好后在「导出」区下载 design.md，丢回项目让 agent 据此生成 UI。",
+          )}
         </p>
       </div>
     </section>
@@ -132,6 +142,7 @@ function CandidateCard({
   onPick: () => void;
 }) {
   const { palette, name, description } = candidate;
+  const tr = useTr();
   const resolved = useMemo(() => resolvePalette(palette, ZERO_GLOBALS), [palette]);
   const swatches = useMemo(
     () =>
@@ -153,7 +164,7 @@ function CandidateCard({
     >
       {selected && (
         <span className="absolute right-2 top-2 z-10 rounded-full bg-neutral-900 px-2 py-0.5 text-[10px] font-medium text-white dark:bg-white dark:text-black">
-          ✓ 已选
+          ✓ {tr("Selected", "已选")}
         </span>
       )}
       <div className="aspect-[800/520] overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-800">
@@ -162,7 +173,7 @@ function CandidateCard({
       <div className="space-y-1.5 px-1 pb-0.5 pt-2">
         <div className="flex items-center justify-between gap-2">
           <span className="truncate text-sm font-medium text-neutral-900 dark:text-white">
-            {name ?? `方案 ${index + 1}`}
+            {name ?? tr(`Palette ${index + 1}`, `方案 ${index + 1}`)}
           </span>
           <span
             className={`shrink-0 text-xs ${
@@ -171,7 +182,7 @@ function CandidateCard({
                 : "text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white"
             }`}
           >
-            {selected ? "已选" : "选这套 →"}
+            {selected ? tr("Selected", "已选") : tr("Pick this →", "选这套 →")}
           </span>
         </div>
         {description && (

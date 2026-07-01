@@ -4,6 +4,7 @@ import { useTokens } from "@/lib/store";
 import { buildScale, SCALE_STEPS } from "@/lib/typography";
 import { resolvePalette } from "@/lib/mockup";
 import { relativeLuminance } from "@/lib/color";
+import { headingWeight } from "@/lib/scales";
 
 const FONT_PRESETS = [
   {
@@ -243,7 +244,7 @@ export function TypographyStep() {
                 if (!sizeRow) return null;
                 const isHeading = name.startsWith("h");
                 const family = isHeading ? typography.headingFamily : typography.fontFamily;
-                const weight = isHeading ? Math.min(900, typography.fontWeight + 200) : typography.fontWeight;
+                const weight = isHeading ? headingWeight(typography.fontWeight) : typography.fontWeight;
                 return (
                   <div
                     key={name}
@@ -283,7 +284,7 @@ export function TypographyStep() {
                   color: palette.fg,
                   fontFamily: typography.headingFamily,
                   fontSize: `${size("h2", 32)}px`,
-                  fontWeight: Math.min(900, typography.fontWeight + 200),
+                  fontWeight: headingWeight(typography.fontWeight),
                   lineHeight: LINE_HEIGHT.h2,
                   letterSpacing: `${typography.letterSpacing}em`,
                 }}

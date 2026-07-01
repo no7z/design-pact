@@ -118,6 +118,14 @@ export function boldWeight(base: number): number {
   return Math.min(900, Math.max(base + 300, 600));
 }
 
+// Heading weight — one notch heavier than body so headings read bolder without
+// jumping all the way to the emphasis `boldWeight`. Body 400 → headings 600
+// (semibold). Clamp at 900. The whole app (specimen, board, export) derives the
+// heading weight through this one helper so they never drift apart.
+export function headingWeight(base: number): number {
+  return Math.min(900, base + 200);
+}
+
 // ── Opacity ─────────────────────────────────────────────────────────────────
 
 export type OpacityEntry = { name: string; value: number };

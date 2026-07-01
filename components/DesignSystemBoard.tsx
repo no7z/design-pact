@@ -11,7 +11,7 @@ import {
   EASING_PRESETS,
 } from "@/lib/scales";
 import { oklchString } from "@/lib/color";
-import { boldWeight } from "@/lib/scales";
+import { headingWeight } from "@/lib/scales";
 
 // Hand-authored SVG so the export is clean, editable vector (Figma/Illustrator
 // import it natively) and can be rasterized to PNG with zero dependencies.
@@ -139,7 +139,7 @@ export function DesignSystemBoard() {
         <g key={key()}>
           <text x={PAD} y={y + s.px} fontFamily={isHeading ? typography.headingFamily : typography.fontFamily}
             fontSize={s.px}
-            fontWeight={isHeading ? boldWeight(typography.fontWeight) : typography.fontWeight}
+            fontWeight={isHeading ? headingWeight(typography.fontWeight) : typography.fontWeight}
             fill={COL}>
             Ag 设计 Design 123
           </text>

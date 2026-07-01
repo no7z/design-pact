@@ -1,7 +1,7 @@
 import type { ColorToken, Typography, Spacing, Radius, Shadow, Motion, Border, Opacity, Semantic } from "./tokens-core";
 import { SEMANTIC_KINDS } from "./tokens-core";
 import { buildScale, SCALE_STEPS } from "./typography";
-import { buildSpacing, buildRadius, shadowToCss, buildDurations, EASING_PRESETS, buildBorderScale, buildOpacityScale, boldWeight } from "./scales";
+import { buildSpacing, buildRadius, shadowToCss, buildDurations, EASING_PRESETS, buildBorderScale, buildOpacityScale, boldWeight, headingWeight } from "./scales";
 import { oklchString } from "./color";
 
 export type ResolvedToken = ColorToken & { displayHex: string };
@@ -102,6 +102,7 @@ export function w3cTokens(
       },
       fontSize: fontSizes,
       fontWeight: { $value: typography.fontWeight, $type: "fontWeight" },
+      fontWeightHeading: { $value: headingWeight(typography.fontWeight), $type: "fontWeight" },
       fontWeightBold: { $value: boldWeight(typography.fontWeight), $type: "fontWeight" },
       lineHeight: { $value: typography.lineHeight, $type: "number" },
       letterSpacing: { $value: `${typography.letterSpacing}em`, $type: "dimension" },
@@ -167,6 +168,7 @@ ${sizeEntries}
       },
       fontWeight: {
         body: "${typography.fontWeight}",
+        heading: "${headingWeight(typography.fontWeight)}",
         bold: "${boldWeight(typography.fontWeight)}",
       },
       lineHeight: {
@@ -258,6 +260,7 @@ ${colorLines}${semanticLines}
   --font-family-body: ${typography.fontFamily};
   --font-family-heading: ${typography.headingFamily};
   --font-weight: ${typography.fontWeight};
+  --font-weight-heading: ${headingWeight(typography.fontWeight)};
   --font-weight-bold: ${boldWeight(typography.fontWeight)};
   --line-height: ${typography.lineHeight};
   --letter-spacing: ${typography.letterSpacing}em;
@@ -352,8 +355,11 @@ ${scale}
 
 Body family: ${typography.fontFamily}
 Heading family: ${typography.headingFamily}
-Font weight: ${typography.fontWeight} (\`--font-weight\`), line-height: ${typography.lineHeight}, letter-spacing: ${typography.letterSpacing}em.
-Use \`--font-weight\` for body text AND headings — this design keeps one weight throughout. Use \`--font-weight-bold\` (${boldWeight(typography.fontWeight)}) ONLY for emphasis: primary CTA labels, \`<strong>\`, badges. Never let the browser default headings or \`<strong>\` to bold — set the weight explicitly so nothing falls outside these two values.
+Line-height: ${typography.lineHeight}, letter-spacing: ${typography.letterSpacing}em. There are three explicit font weights — bind them by role, and never let the browser default an element's weight:
+
+- **\`--font-weight\` (${typography.fontWeight})** → body text, labels, and any non-heading copy.
+- **\`--font-weight-heading\` (${headingWeight(typography.fontWeight)})** → all headings h1–h5. Set this on every heading; do NOT leave headings at the body weight.
+- **\`--font-weight-bold\` (${boldWeight(typography.fontWeight)})** → emphasis only: primary CTA labels, \`<strong>\`, badges.
 
 ## Spacing
 Base unit ${spacing.base}px. Use this 8-step scale for padding/margin/gap:
@@ -475,6 +481,7 @@ export function tokensStudioJson(
         },
         fontWeights: {
           body: tok(`${typography.fontWeight}`, "fontWeights"),
+          heading: tok(`${headingWeight(typography.fontWeight)}`, "fontWeights"),
           bold: tok(`${boldWeight(typography.fontWeight)}`, "fontWeights"),
         },
         fontSizes,

@@ -426,6 +426,44 @@ export function StyleStep() {
           </div>
         </div>
 
+        {/* Buttons — padding tracks spacing: prominent CTA sm×lg vs compact xxs×sm */}
+        <div>
+          <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>间距 · 按钮 padding</p>
+          <div className="flex flex-wrap items-center" style={{ gap: sp("sm", 12) }}>
+            <button
+              style={{
+                background: palette.primary,
+                color: onPrimary,
+                border: "none",
+                borderRadius: rd("md", 8),
+                padding: `${sp("sm", 12)}px ${sp("lg", 24)}px`,
+                fontSize: 12,
+                fontWeight: 600,
+                boxShadow: shadowToCss(shadow.sm),
+                cursor: "pointer",
+              }}
+            >
+              主要操作
+            </button>
+            <button
+              style={{
+                background: "transparent",
+                color: palette.fg,
+                border: `${bw("default", border.base)}px solid ${palette.border}`,
+                borderRadius: rd("md", 8),
+                padding: `${sp("xxs", 4)}px ${sp("sm", 12)}px`,
+                fontSize: 11,
+                cursor: "pointer",
+              }}
+            >
+              紧凑
+            </button>
+            <span className="font-mono text-[10px]" style={{ color: palette.muted }}>
+              CTA sm×lg · 紧凑 xxs×sm
+            </span>
+          </div>
+        </div>
+
         {/* Combined instance: shadow + border + opacity on one realistic card */}
         <div>
           <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>阴影 · 描边 · 透明度 · 组合实例</p>

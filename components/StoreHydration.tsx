@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useTokens } from "@/lib/store";
+import { useLang } from "@/lib/i18n";
 import { applyPaletteFromUrl } from "@/lib/urlPalette";
 
 export function StoreHydration({ children }: { children: React.ReactNode }) {
@@ -12,6 +13,12 @@ export function StoreHydration({ children }: { children: React.ReactNode }) {
       applyPaletteFromUrl();
       if (!cancelled) setHydrated(true);
     };
+    // Language preference rehydrates alongside the tokens store.
+    try {
+      useLang.persist.rehydrate();
+    } catch {
+      /* default stays "en" */
+    }
     try {
       const result = useTokens.persist.rehydrate();
       if (result && typeof (result as { then?: unknown }).then === "function") {
@@ -28,7 +35,7 @@ export function StoreHydration({ children }: { children: React.ReactNode }) {
   }, []);
   if (!hydrated) {
     return (
-      <div className="grid place-items-center py-16 text-sm text-neutral-500">加载中…</div>
+      <div className="grid place-items-center py-16 text-sm text-neutral-500">Loading…</div>
     );
   }
   return <>{children}</>;

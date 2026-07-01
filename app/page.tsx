@@ -11,7 +11,9 @@ import { TypographyStep } from "@/components/TypographyStep";
 import { StyleStep } from "@/components/StyleStep";
 import { MotionStep } from "@/components/MotionStep";
 import { Export } from "@/components/Export";
+import { LanguageToggle } from "@/components/LanguageToggle";
 import { useTokens } from "@/lib/store";
+import { useTr } from "@/lib/i18n";
 
 export default function Home() {
   return (
@@ -50,6 +52,7 @@ function Workflow() {
 
   return (
     <main className="min-h-screen bg-neutral-50 font-sans text-neutral-900 dark:bg-black dark:text-neutral-100">
+      <LanguageToggle />
       <WorkflowNav />
       <SchemeBar />
       <DescribeStep onLoaded={goToEditor} />
@@ -60,6 +63,7 @@ function Workflow() {
 
 function WorkArea() {
   const hasColors = useTokens((s) => s.colors.length > 0);
+  const tr = useTr();
   if (!hasColors) return null;
 
   return (
@@ -76,20 +80,23 @@ function WorkArea() {
             <div className="space-y-4">
               <header className="space-y-1">
                 <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-2xl font-semibold tracking-tight">调色</h2>
+                  <h2 className="text-2xl font-semibold tracking-tight">{tr("Colors", "调色")}</h2>
                   <DarkPairingToggle />
                 </div>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                  色轮做整体协调，点击色块编辑单色。
+                  {tr(
+                    "Harmonize the whole palette on the wheel, or click a swatch to edit one color.",
+                    "色轮做整体协调，点击色块编辑单色。",
+                  )}
                 </p>
               </header>
               <Editor />
             </div>
             <div className="space-y-4">
               <header className="space-y-1">
-                <h2 className="text-2xl font-semibold tracking-tight">预览</h2>
+                <h2 className="text-2xl font-semibold tracking-tight">{tr("Preview", "预览")}</h2>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400">
-                  切换 mockup 类型查看不同场景效果。
+                  {tr("Switch mockup types to see different scenarios.", "切换 mockup 类型查看不同场景效果。")}
                 </p>
               </header>
               <Preview />
@@ -107,9 +114,12 @@ function WorkArea() {
             Step 3 / 5
           </p>
           <header className="mb-6 space-y-1">
-            <h2 className="text-2xl font-semibold tracking-tight">字体</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">{tr("Type", "字体")}</h2>
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              模板里的字号阶梯已自动载入。拖动 base 改正文字号，ratio 控制 H1→Caption 的递增比。
+              {tr(
+                "The type scale loads from the template. Drag base to set body size; ratio controls the H1→Caption step.",
+                "模板里的字号阶梯已自动载入。拖动 base 改正文字号，ratio 控制 H1→Caption 的递增比。",
+              )}
             </p>
           </header>
           <TypographyStep />
@@ -125,9 +135,12 @@ function WorkArea() {
             Step 4 / 5
           </p>
           <header className="mb-6 space-y-1">
-            <h2 className="text-2xl font-semibold tracking-tight">细节</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">{tr("Details", "细节")}</h2>
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              调节间距阶梯、圆角和阴影深度。base 滑条统一缩放整套 spacing；圆角统一从 sm 派生到 full；阴影默认按 intensity 缩放，可展开高级独立调三档。
+              {tr(
+                "Tune the spacing scale, radii, and shadow depth. The base slider scales all spacing; radii derive sm→full together; shadows scale by intensity, or expand to tune the three levels independently.",
+                "调节间距阶梯、圆角和阴影深度。base 滑条统一缩放整套 spacing；圆角统一从 sm 派生到 full；阴影默认按 intensity 缩放，可展开高级独立调三档。",
+              )}
             </p>
           </header>
           <StyleStep />
@@ -143,9 +156,12 @@ function WorkArea() {
             Step 5 / 5
           </p>
           <header className="mb-6 space-y-1">
-            <h2 className="text-2xl font-semibold tracking-tight">动效</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">{tr("Motion", "动效")}</h2>
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              base 滑条控制整套时长阶梯（micro → page），缓动曲线统一应用到所有过渡。
+              {tr(
+                "The base slider drives the whole duration scale (micro → page); one easing curve applies to every transition.",
+                "base 滑条控制整套时长阶梯（micro → page），缓动曲线统一应用到所有过渡。",
+              )}
             </p>
           </header>
           <MotionStep />
@@ -158,9 +174,12 @@ function WorkArea() {
       >
         <div className="mx-auto w-full max-w-[1440px] space-y-6">
           <header className="space-y-2">
-            <h2 className="text-2xl font-semibold tracking-tight">导出</h2>
+            <h2 className="text-2xl font-semibold tracking-tight">{tr("Export", "导出")}</h2>
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
-              下载 design.md 交给你的 agent；或导出视觉总览发给团队。
+              {tr(
+                "Download design.md for your agent, or export the visual overview for your team.",
+                "下载 design.md 交给你的 agent；或导出视觉总览发给团队。",
+              )}
             </p>
           </header>
           <Export />

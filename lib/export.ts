@@ -358,6 +358,17 @@ Base ${radius.base}px. Use:
 
 ${buildRadius(radius.base).map((r) => `- ${r.name}: ${r.name === "full" ? "9999px (pill)" : `${r.px}px`}`).join("\n")}
 
+Bind components to these steps exactly as the design tool renders them — do NOT
+pick a step freely (e.g. do not make buttons pill-shaped unless \`--radius-md\`
+resolves to a pill):
+
+- **Buttons / controls / nav items** → \`--radius-md\`
+- **Inputs / text fields / selects** → \`--radius-sm\`
+- **Cards / panels / modals / larger surfaces** → \`--radius-lg\`
+- **Badges / chips / avatars / toggles (intentionally pill)** → \`--radius-full\`
+- Bigger containers may use \`--radius-xl\`; \`--radius-full\` is reserved for
+  circles/pills, never for standard buttons or cards.
+
 ## Shadow / elevation
 ${shadow.advanced ? "Per-level custom values" : `Intensity ${shadow.intensity.toFixed(2)}`}.
 

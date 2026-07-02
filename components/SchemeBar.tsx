@@ -42,7 +42,7 @@ export function SchemeBar() {
         show ? "translate-y-0" : "-translate-y-full"
       }`}
     >
-      <div className="mx-auto flex max-w-[1440px] items-center gap-2 px-6 py-2">
+      <div className="mx-auto flex max-w-[1440px] items-center gap-2 px-1 py-2">
         <span className="shrink-0 text-xs font-semibold">{tr("Schemes", "方案")}</span>
         <input
           value={name}

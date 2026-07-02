@@ -11,6 +11,7 @@ import {
 } from "@/lib/scales";
 import { hexA, resolvePalette } from "@/lib/mockup";
 import { relativeLuminance } from "@/lib/color";
+import { useTr } from "@/lib/i18n";
 
 const SHADOW_LEVELS = ["sm", "md", "lg"] as const;
 type ShadowParam = "blur" | "offsetY" | "opacity";
@@ -38,6 +39,7 @@ export function StyleStep() {
   const setBorder = useTokens((s) => s.setBorder);
   const setOpacity = useTokens((s) => s.setOpacity);
   const hasColors = useTokens((s) => s.colors.length > 0);
+  const tr = useTr();
   const [view, setView] = useState<"instance" | "basic">("instance");
 
   const primaryHex = usePrimaryHex();
@@ -65,7 +67,7 @@ export function StyleStep() {
         <section className="space-y-3">
           <header className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-              间距
+              {tr("Spacing", "间距")}
             </span>
             <span className="font-mono text-xs text-neutral-500">base {spacing.base}px</span>
           </header>
@@ -79,7 +81,7 @@ export function StyleStep() {
             className="w-full accent-neutral-900 dark:accent-white"
           />
           <div className="flex justify-between text-[10px] text-neutral-400">
-            <span>紧凑 2</span><span>常用 4</span><span>宽松 8</span>
+            <span>{tr("Tight 2", "紧凑 2")}</span><span>{tr("Common 4", "常用 4")}</span><span>{tr("Loose 8", "宽松 8")}</span>
           </div>
         </section>
 
@@ -89,7 +91,7 @@ export function StyleStep() {
         <section className="space-y-3">
           <header className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-              圆角
+              {tr("Radius", "圆角")}
             </span>
             <span className="font-mono text-xs text-neutral-500">base {radius.base}px</span>
           </header>
@@ -103,7 +105,7 @@ export function StyleStep() {
             className="w-full accent-neutral-900 dark:accent-white"
           />
           <div className="flex justify-between text-[10px] text-neutral-400">
-            <span>方 0</span><span>圆 8</span><span>大圆 24</span>
+            <span>{tr("Square 0", "方 0")}</span><span>{tr("Round 8", "圆 8")}</span><span>{tr("Pill 24", "大圆 24")}</span>
           </div>
         </section>
 
@@ -114,7 +116,7 @@ export function StyleStep() {
           <header className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-                阴影
+                {tr("Shadow", "阴影")}
               </span>
               <button
                 onClick={() => {
@@ -126,8 +128,8 @@ export function StyleStep() {
                   }
                 }}
                 aria-pressed={shadow.advanced}
-                aria-label={shadow.advanced ? "切换到简单模式" : "切换到高级模式"}
-                title={shadow.advanced ? "切换到简单模式" : "切换到高级模式"}
+                aria-label={shadow.advanced ? tr("Switch to simple mode", "切换到简单模式") : tr("Switch to advanced mode", "切换到高级模式")}
+                title={shadow.advanced ? tr("Switch to simple mode", "切换到简单模式") : tr("Switch to advanced mode", "切换到高级模式")}
                 className={`grid h-5 w-5 place-items-center rounded transition ${
                   shadow.advanced
                     ? "bg-neutral-900 text-white dark:bg-white dark:text-black"
@@ -145,7 +147,7 @@ export function StyleStep() {
               </button>
             </div>
             <span className="font-mono text-xs text-neutral-500">
-              {shadow.advanced ? "高级" : `intensity ${shadow.intensity.toFixed(2)}`}
+              {shadow.advanced ? tr("Advanced", "高级") : `intensity ${shadow.intensity.toFixed(2)}`}
             </span>
           </header>
           {!shadow.advanced && (
@@ -160,7 +162,7 @@ export function StyleStep() {
                 className="w-full accent-neutral-900 dark:accent-white"
               />
               <div className="flex justify-between text-[10px] text-neutral-400">
-                <span>无 0</span><span>柔和 0.5</span><span>强烈 1.0</span>
+                <span>{tr("None 0", "无 0")}</span><span>{tr("Soft 0.5", "柔和 0.5")}</span><span>{tr("Strong 1.0", "强烈 1.0")}</span>
               </div>
             </>
           )}
@@ -169,7 +171,7 @@ export function StyleStep() {
             <div className="space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-800">
               <ShadowParamSlider
                 param="blur"
-                label="模糊 Blur"
+                label={tr("Blur", "模糊 Blur")}
                 shadow={shadow}
                 onApply={(mul) => applyShadowMultiplier("blur", mul, setShadowLevel)}
                 max={3}
@@ -177,7 +179,7 @@ export function StyleStep() {
               />
               <ShadowParamSlider
                 param="offsetY"
-                label="偏移 Offset Y"
+                label={tr("Offset Y", "偏移 Offset Y")}
                 shadow={shadow}
                 onApply={(mul) => applyShadowMultiplier("offsetY", mul, setShadowLevel)}
                 max={3}
@@ -185,7 +187,7 @@ export function StyleStep() {
               />
               <ShadowParamSlider
                 param="opacity"
-                label="不透明度 Opacity"
+                label={tr("Opacity", "不透明度 Opacity")}
                 shadow={shadow}
                 onApply={(mul) => applyShadowMultiplier("opacity", mul, setShadowLevel)}
                 max={3}
@@ -201,7 +203,7 @@ export function StyleStep() {
         <section className="space-y-3">
           <header className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-              描边粗细
+              {tr("Border width", "描边粗细")}
             </span>
             <span className="font-mono text-xs text-neutral-500">base {border.base}px</span>
           </header>
@@ -215,7 +217,7 @@ export function StyleStep() {
             className="w-full accent-neutral-900 dark:accent-white"
           />
           <div className="flex justify-between text-[10px] text-neutral-400">
-            <span>细 0.5</span><span>常用 1</span><span>粗 4</span>
+            <span>{tr("Thin 0.5", "细 0.5")}</span><span>{tr("Common 1", "常用 1")}</span><span>{tr("Thick 4", "粗 4")}</span>
           </div>
         </section>
 
@@ -225,7 +227,7 @@ export function StyleStep() {
         <section className="space-y-3">
           <header className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-              透明度
+              {tr("Opacity", "透明度")}
             </span>
             <span className="font-mono text-xs text-neutral-500">base {opacity.base}</span>
           </header>
@@ -239,7 +241,7 @@ export function StyleStep() {
             className="w-full accent-neutral-900 dark:accent-white"
           />
           <div className="flex justify-between text-[10px] text-neutral-400">
-            <span>淡 0.04</span><span>标准 0.08</span><span>深 0.16</span>
+            <span>{tr("Faint 0.04", "淡 0.04")}</span><span>{tr("Standard 0.08", "标准 0.08")}</span><span>{tr("Deep 0.16", "深 0.16")}</span>
           </div>
         </section>
       </div>
@@ -248,7 +250,7 @@ export function StyleStep() {
       <div className="flex flex-col rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-2.5 dark:border-neutral-800">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-            组件细节
+            {tr("Component details", "组件细节")}
           </h3>
           <ViewToggle view={view} onChange={setView} />
         </div>
@@ -257,7 +259,7 @@ export function StyleStep() {
           <div className="space-y-5 p-6">
             {/* Spacing ladder */}
             <section className="space-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">间距 spacing</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">{tr("Spacing", "间距 spacing")}</p>
               <div className="flex flex-col gap-1.5">
                 {spacingScale.map((s) => (
                   <div key={s.name} className="flex items-center gap-3">
@@ -276,7 +278,7 @@ export function StyleStep() {
 
             {/* Radius ladder */}
             <section className="space-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">圆角 radius</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">{tr("Radius", "圆角 radius")}</p>
               <div className="flex flex-wrap gap-3">
                 {radiusScale.map((r) => (
                   <div key={r.name} className="flex flex-col items-center gap-1.5">
@@ -297,7 +299,7 @@ export function StyleStep() {
 
             {/* Shadow ladder */}
             <section className="space-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">阴影 shadow</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">{tr("Shadow", "阴影 shadow")}</p>
               <div
                 className="grid grid-cols-3 gap-4 rounded-xl p-5"
                 style={{ background: "rgb(226 232 240)" }}
@@ -321,7 +323,7 @@ export function StyleStep() {
 
             {/* Border ladder */}
             <section className="space-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">描边 border</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">{tr("Border", "描边 border")}</p>
               <div className="flex gap-3 pt-1">
                 {borderScale.map((b) => (
                   <div key={b.name} className="flex flex-1 flex-col items-center gap-1.5">
@@ -339,7 +341,7 @@ export function StyleStep() {
 
             {/* Opacity ladder */}
             <section className="space-y-2">
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">透明度 opacity</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">{tr("Opacity", "透明度 opacity")}</p>
               <div className="flex gap-2">
                 {opacityScale.map((o) => (
                   <div key={o.name} className="flex flex-1 flex-col items-center gap-1.5">
@@ -361,7 +363,7 @@ export function StyleStep() {
 
         {/* Spacing — task list card, rendered in the actual palette */}
         <div>
-          <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>间距 · 列表卡片</p>
+          <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>{tr("Spacing · list card", "间距 · 列表卡片")}</p>
           <div
             className="overflow-hidden"
             style={{
@@ -375,7 +377,7 @@ export function StyleStep() {
               className="flex items-center justify-between"
               style={{ padding: `${sp("xs", 8)}px ${sp("md", 16)}px`, borderBottom: `1px solid ${palette.border}` }}
             >
-              <span className="text-xs font-medium" style={{ color: palette.fg }}>今日任务</span>
+              <span className="text-xs font-medium" style={{ color: palette.fg }}>{tr("Tasks today", "今日任务")}</span>
               <span
                 className="grid h-4 w-4 shrink-0 place-items-center text-[10px] font-semibold"
                 style={{ background: palette.primary, color: onPrimary, borderRadius: "50%" }}
@@ -384,9 +386,9 @@ export function StyleStep() {
               </span>
             </div>
             {[
-              { label: "整理设计规范", done: true },
-              { label: "组件库评审", done: false },
-              { label: "输出交互文档", done: false },
+              { label: tr("Organize the design spec", "整理设计规范"), done: true },
+              { label: tr("Component library review", "组件库评审"), done: false },
+              { label: tr("Write the interaction doc", "输出交互文档"), done: false },
             ].map(({ label, done }, i, arr) => (
               <div
                 key={label}
@@ -420,15 +422,15 @@ export function StyleStep() {
               className="flex items-center justify-between"
               style={{ padding: `${sp("xs", 8)}px ${sp("md", 16)}px`, borderTop: `1px solid ${palette.border}` }}
             >
-              <span className="text-[10px]" style={{ color: palette.muted }}>今天 · 2 未完成</span>
-              <span className="text-[10px]" style={{ color: palette.primary }}>＋ 添加</span>
+              <span className="text-[10px]" style={{ color: palette.muted }}>{tr("Today · 2 open", "今天 · 2 未完成")}</span>
+              <span className="text-[10px]" style={{ color: palette.primary }}>{tr("＋ Add", "＋ 添加")}</span>
             </div>
           </div>
         </div>
 
         {/* Buttons — padding tracks spacing: prominent CTA sm×lg vs compact xxs×sm */}
         <div>
-          <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>间距 · 按钮 padding</p>
+          <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>{tr("Spacing · button padding", "间距 · 按钮 padding")}</p>
           <div className="flex flex-wrap items-center" style={{ gap: sp("sm", 12) }}>
             <button
               style={{
@@ -443,7 +445,7 @@ export function StyleStep() {
                 cursor: "pointer",
               }}
             >
-              主要操作
+              {tr("Primary action", "主要操作")}
             </button>
             <button
               style={{
@@ -456,17 +458,17 @@ export function StyleStep() {
                 cursor: "pointer",
               }}
             >
-              紧凑
+              {tr("Compact", "紧凑")}
             </button>
             <span className="font-mono text-[10px]" style={{ color: palette.muted }}>
-              CTA sm×lg · 紧凑 xxs×sm
+              {tr("CTA sm×lg · compact xxs×sm", "CTA sm×lg · 紧凑 xxs×sm")}
             </span>
           </div>
         </div>
 
         {/* Combined instance: shadow + border + opacity on one realistic card */}
         <div>
-          <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>阴影 · 描边 · 透明度 · 组合实例</p>
+          <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>{tr("Shadow · border · opacity · combined", "阴影 · 描边 · 透明度 · 组合实例")}</p>
           <div>
             <div
               style={{
@@ -477,7 +479,7 @@ export function StyleStep() {
                 padding: `${sp("md", 16)}px`,
               }}
             >
-              <div style={{ fontWeight: 600, fontSize: 12, color: palette.fg }}>发布更新</div>
+              <div style={{ fontWeight: 600, fontSize: 12, color: palette.fg }}>{tr("Publish update", "发布更新")}</div>
               <div
                 style={{
                   fontSize: 11,
@@ -486,13 +488,13 @@ export function StyleStep() {
                   marginBottom: sp("sm", 12),
                 }}
               >
-                卡片用阴影抬升；同一输入框按状态切换描边粗细，按钮演示交互透明度。
+                {tr("Cards lift with shadow; one input switches border width by state; the button shows interactive opacity.", "卡片用阴影抬升；同一输入框按状态切换描边粗细，按钮演示交互透明度。")}
               </div>
               <div className="mb-3 grid grid-cols-3" style={{ gap: sp("sm", 12) }}>
                 {[
-                  { label: "默认", strong: false, focus: false },
-                  { label: "选中", strong: true, focus: false },
-                  { label: "聚焦", strong: true, focus: true },
+                  { label: tr("Default", "默认"), strong: false, focus: false },
+                  { label: tr("Selected", "选中"), strong: true, focus: false },
+                  { label: tr("Focus", "聚焦"), strong: true, focus: true },
                 ].map((s) => {
                   const w = s.strong ? bw("strong", border.base * 2) : bw("default", border.base);
                   return (
@@ -513,7 +515,7 @@ export function StyleStep() {
                             : "none",
                         }}
                       >
-                        搜索…
+                        {tr("Search…", "搜索…")}
                       </div>
                     </div>
                   );
@@ -544,7 +546,7 @@ export function StyleStep() {
                           overflow: "hidden",
                         }}
                       >
-                        发布
+                        {tr("Publish", "发布")}
                         {(o.name === "hover" || o.name === "pressed") && (
                           <span
                             style={{
@@ -582,6 +584,7 @@ function ViewToggle({
   view: "instance" | "basic";
   onChange: (v: "instance" | "basic") => void;
 }) {
+  const tr = useTr();
   return (
     <div className="flex gap-0.5 rounded-lg border border-neutral-200 p-0.5 dark:border-neutral-800">
       {(["instance", "basic"] as const).map((v) => (
@@ -595,7 +598,7 @@ function ViewToggle({
               : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
           }`}
         >
-          {v === "instance" ? "实例预览" : "基础效果"}
+          {v === "instance" ? tr("Instance", "实例预览") : tr("Basics", "基础效果")}
         </button>
       ))}
     </div>

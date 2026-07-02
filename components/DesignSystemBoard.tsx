@@ -93,7 +93,7 @@ export function DesignSystemBoard() {
   divider();
 
   // ── Colors ───────────────────────────────────────────────────────────────
-  sectionLabel("Colors 色板");
+  sectionLabel(tr("Colors", "色板"));
   {
     const sw = 150;
     const sh = 88;
@@ -126,7 +126,7 @@ export function DesignSystemBoard() {
   divider();
 
   // ── Typography ─────────────────────────────────────────────────────────────
-  sectionLabel("Typography 字阶");
+  sectionLabel(tr("Typography", "字阶"));
   {
     els.push(
       <text key={key()} x={PAD} y={y} fontFamily={LABEL_FONT} fontSize={11} fill={SUB}>
@@ -143,7 +143,7 @@ export function DesignSystemBoard() {
             fontSize={s.px}
             fontWeight={isHeading ? headingWeight(typography.fontWeight) : typography.fontWeight}
             fill={COL}>
-            Ag 设计 Design 123
+            {tr("Ag Design 123", "Ag 设计 Design 123")}
           </text>
           <text x={W - PAD} y={y + s.px} textAnchor="end" fontFamily={MONO} fontSize={11} fill={SUB}>
             {`${s.name}  ${s.rem}rem · ${s.px}px`}
@@ -156,7 +156,7 @@ export function DesignSystemBoard() {
   divider();
 
   // ── Spacing ────────────────────────────────────────────────────────────────
-  sectionLabel("Spacing 间距");
+  sectionLabel(tr("Spacing", "间距"));
   {
     const maxPx = Math.max(...buildSpacing(spacing.base).map((s) => s.px));
     const maxBar = W - 2 * PAD - 160;
@@ -175,7 +175,7 @@ export function DesignSystemBoard() {
   divider();
 
   // ── Radius ─────────────────────────────────────────────────────────────────
-  sectionLabel("Radius 圆角");
+  sectionLabel(tr("Radius", "圆角"));
   {
     const box = 72;
     const gap = 24;
@@ -198,7 +198,7 @@ export function DesignSystemBoard() {
   divider();
 
   // ── Border ─────────────────────────────────────────────────────────────────
-  sectionLabel("Border 描边");
+  sectionLabel(tr("Border", "描边"));
   {
     const box = 72;
     const gap = 60;
@@ -219,7 +219,7 @@ export function DesignSystemBoard() {
   divider();
 
   // ── Shadow ─────────────────────────────────────────────────────────────────
-  sectionLabel("Elevation 阴影");
+  sectionLabel(tr("Elevation", "阴影"));
   {
     const cw = 150;
     const ch = 76;
@@ -248,7 +248,7 @@ export function DesignSystemBoard() {
   divider();
 
   // ── Opacity ────────────────────────────────────────────────────────────────
-  sectionLabel("Opacity 透明度");
+  sectionLabel(tr("Opacity", "透明度"));
   {
     const sw = 120;
     const sh = 54;
@@ -272,7 +272,7 @@ export function DesignSystemBoard() {
   divider();
 
   // ── Motion ─────────────────────────────────────────────────────────────────
-  sectionLabel("Motion 动效");
+  sectionLabel(tr("Motion", "动效"));
   {
     const startY = y;
     buildDurations(motion.base).forEach((d, i) => {

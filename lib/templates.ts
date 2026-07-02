@@ -1,3 +1,4 @@
+import { trg } from "./i18n";
 import {
   type ColorToken,
   type SemanticRole,
@@ -54,7 +55,7 @@ let snapshotPromise: Promise<TemplateSnapshot> | null = null;
 function loadSnapshot(): Promise<TemplateSnapshot> {
   if (!snapshotPromise) {
     const p = fetch("/templates.json").then(async (res) => {
-      if (!res.ok) throw new Error(`无法加载模板库 (${res.status})`);
+      if (!res.ok) throw new Error(trg(`Failed to load the template library (${res.status})`, `无法加载模板库 (${res.status})`));
       return (await res.json()) as TemplateSnapshot;
     });
     snapshotPromise = p;
@@ -78,7 +79,7 @@ export async function fetchTemplate(brand: string): Promise<{
 }> {
   const snap = await loadSnapshot();
   const entry = snap.templates[brand];
-  if (!entry) throw new Error(`无法加载 ${brand} 模板`);
+  if (!entry) throw new Error(trg(`Failed to load the ${brand} template`, `无法加载 ${brand} 模板`));
   return {
     colors: entry.colors.map((c) => ({
       id: uid(),

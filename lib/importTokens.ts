@@ -17,6 +17,7 @@ import type {
   SemanticRole,
 } from "./tokens-core";
 import { EASING_PRESETS, type EasingPreset } from "./scales";
+import { trg } from "./i18n";
 
 export type ImportedTokens = {
   colors: ColorToken[];
@@ -77,13 +78,13 @@ export function parseW3CTokens(jsonText: string): ImportedTokens {
   try {
     root = asObj(JSON.parse(jsonText));
   } catch {
-    throw new Error("不是有效的 JSON 文件");
+    throw new Error(trg("Not a valid JSON file", "不是有效的 JSON 文件"));
   }
-  if (!root) throw new Error("不是有效的 JSON 文件");
+  if (!root) throw new Error(trg("Not a valid JSON file", "不是有效的 JSON 文件"));
 
   // ── colors ──
   const colorGroup = asObj(root.color);
-  if (!colorGroup) throw new Error("缺少 color 分组——这不是本工具导出的 design.md？");
+  if (!colorGroup) throw new Error(trg("Missing the color group — is this a design.md exported by this tool?", "缺少 color 分组——这不是本工具导出的 design.md？"));
   const colors: ColorToken[] = [];
   const darkHexes: (string | undefined)[] = [];
   for (const [key, node] of Object.entries(colorGroup)) {
@@ -101,7 +102,7 @@ export function parseW3CTokens(jsonText: string): ImportedTokens {
     const dark = asObj(asObj(asObj(node)?.["$extensions"])?.["design-system"])?.dark;
     darkHexes.push(typeof dark === "string" && HEX_RE.test(dark) ? dark.toLowerCase() : undefined);
   }
-  if (colors.length === 0) throw new Error("color 分组里没有可识别的颜色");
+  if (colors.length === 0) throw new Error(trg("No recognizable colors in the color group", "color 分组里没有可识别的颜色"));
 
   const out: ImportedTokens = { colors };
   if (darkHexes.some((d) => d !== undefined)) out.darkHexes = darkHexes;

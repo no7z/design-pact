@@ -1,5 +1,6 @@
 // Turn the on-page <svg> design-system board into downloadable artifacts.
 // Zero dependencies: SVG is serialized directly; PNG is rasterized via canvas.
+import { trg } from "./i18n";
 
 export function serializeSvg(svg: SVGSVGElement): string {
   const clone = svg.cloneNode(true) as SVGSVGElement;
@@ -27,7 +28,7 @@ export function svgToPngBlob(svgString: string, scale = 2): Promise<Blob> {
       canvas.height = Math.round(h * scale);
       const ctx = canvas.getContext("2d");
       if (!ctx) {
-        reject(new Error("无法创建 canvas 上下文"));
+        reject(new Error(trg("Could not create a canvas context", "无法创建 canvas 上下文")));
         return;
       }
       ctx.fillStyle = "#ffffff";
@@ -35,10 +36,10 @@ export function svgToPngBlob(svgString: string, scale = 2): Promise<Blob> {
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.toBlob((blob) => {
         if (blob) resolve(blob);
-        else reject(new Error("PNG 生成失败"));
+        else reject(new Error(trg("PNG generation failed", "PNG 生成失败")));
       }, "image/png");
     };
-    img.onerror = () => reject(new Error("SVG 光栅化失败"));
+    img.onerror = () => reject(new Error(trg("SVG rasterization failed", "SVG 光栅化失败")));
     img.src = url;
   });
 }

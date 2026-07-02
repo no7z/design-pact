@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { buildShadowsFromIntensity } from "./scales";
 import type { ExtractedColor } from "./extract";
+import { trg } from "./i18n";
 import {
   computedHex,
   defaultTypography,
@@ -220,7 +221,7 @@ export const useTokens = create<State>()(
         const id = `s${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
         const scheme: Scheme = {
           id,
-          name: name.trim() || `方案 ${s.schemes.length + 1}`,
+          name: name.trim() || trg(`Scheme ${s.schemes.length + 1}`, `方案 ${s.schemes.length + 1}`),
           createdAt: Date.now(),
           colors: s.colors.map((c) => ({ ...c })),
           typography: { ...s.typography },

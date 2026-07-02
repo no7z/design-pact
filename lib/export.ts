@@ -545,9 +545,9 @@ generated: ${generated}
 ${prompt}
 ---
 
-## 机器可读 tokens (W3C Design Tokens)
+## Machine-readable tokens (W3C Design Tokens)
 
-人类和 AI 读上面的说明即可。下面这段 JSON 供工具（配套 CLI）精确、确定性地还原设计系统并转成 CSS / Tailwind 等格式。
+Humans and AI can read the prose above. The JSON below lets tools (the companion CLI) reconstruct the design system precisely and deterministically, and convert it to CSS / Tailwind / etc.
 
 \`\`\`json
 ${JSON.stringify(tokens, null, 2)}

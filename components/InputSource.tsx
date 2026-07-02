@@ -3,10 +3,12 @@ import { useState } from "react";
 import { Uploader } from "./Uploader";
 import { AllTemplatesBrowser } from "./AllTemplatesBrowser";
 import { TokenImport } from "./TokenImport";
+import { useTr } from "@/lib/i18n";
 
 type Tab = "template" | "image" | "json";
 
 export function InputSource({ onSuccess }: { onSuccess?: () => void } = {}) {
+  const tr = useTr();
   const [tab, setTab] = useState<Tab>("template");
 
   return (
@@ -14,9 +16,9 @@ export function InputSource({ onSuccess }: { onSuccess?: () => void } = {}) {
       <div className="mb-3 flex gap-1 border-b border-neutral-200 dark:border-neutral-800">
         {(
           [
-            ["template", "模板"],
-            ["image", "图片"],
-            ["json", "导入 agent 配色"],
+            ["template", tr("Templates", "模板")],
+            ["image", tr("Image", "图片")],
+            ["json", tr("Import agent palette", "导入 agent 配色")],
           ] as const
         ).map(([key, label]) => (
           <button

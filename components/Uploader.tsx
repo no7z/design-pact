@@ -2,8 +2,10 @@
 import { useCallback, useState } from "react";
 import { extractPalette } from "@/lib/extract";
 import { useTokens } from "@/lib/store";
+import { useTr } from "@/lib/i18n";
 
 export function Uploader({ onSuccess }: { onSuccess?: (previewUrl: string) => void }) {
+  const tr = useTr();
   const setColors = useTokens((s) => s.setColors);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -56,8 +58,8 @@ export function Uploader({ onSuccess }: { onSuccess?: (previewUrl: string) => vo
         <img src={preview} alt="uploaded" className="max-h-36 rounded-lg shadow" />
       ) : (
         <div className="space-y-1">
-          <div className="text-sm font-medium">拖入图片 / 粘贴 / 选择文件</div>
-          <div className="text-xs text-neutral-500">提取主色生成 design tokens</div>
+          <div className="text-sm font-medium">{tr("Drop an image / paste / choose a file", "拖入图片 / 粘贴 / 选择文件")}</div>
+          <div className="text-xs text-neutral-500">{tr("Extract dominant colors into design tokens", "提取主色生成 design tokens")}</div>
         </div>
       )}
       <input
@@ -72,7 +74,7 @@ export function Uploader({ onSuccess }: { onSuccess?: (previewUrl: string) => vo
       />
       {busy && (
         <div className="absolute inset-0 grid place-items-center rounded-xl bg-white/70 text-sm dark:bg-black/70">
-          提取中…
+          {tr("Extracting…", "提取中…")}
         </div>
       )}
       {err && (

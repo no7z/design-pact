@@ -2,9 +2,11 @@
 import { useState } from "react";
 import { useTokens } from "@/lib/store";
 import { parseDesignSystemTokens } from "@/lib/importTokens";
+import { useTr } from "@/lib/i18n";
 
 /** Import a previously exported design.md back into the store. */
 export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
+  const tr = useTr();
   const [text, setText] = useState("");
   const [error, setError] = useState("");
   const [dragging, setDragging] = useState(false);
@@ -32,7 +34,7 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
       }
       onSuccess?.();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "解析失败");
+      setError(e instanceof Error ? e.message : tr("Parse failed", "解析失败"));
     }
   };
 
@@ -50,7 +52,7 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
   return (
     <div className="space-y-3">
       <p className="text-xs text-neutral-500 dark:text-neutral-400">
-        导入之前下载的 design.md，恢复整套设计系统。
+        {tr("Import a design.md you downloaded earlier to restore the whole design system.", "导入之前下载的 design.md，恢复整套设计系统。")}
       </p>
       <label
         onDragOver={(e) => {
@@ -65,7 +67,7 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
             : "border-neutral-300 text-neutral-500 hover:border-neutral-500 dark:border-neutral-700 dark:text-neutral-400"
         }`}
       >
-        {dragging ? "松开导入 design.md" : "点击选择，或拖拽 design.md 到这里"}
+        {dragging ? tr("Release to import design.md", "松开导入 design.md") : tr("Click to choose, or drag design.md here", "点击选择，或拖拽 design.md 到这里")}
         <input
           type="file"
           accept=".md,text/markdown"
@@ -77,7 +79,7 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="或直接粘贴 design.md 内容…"
+          placeholder={tr("Or paste design.md contents directly…", "或直接粘贴 design.md 内容…")}
           rows={4}
           className="w-full resize-none rounded-lg border border-neutral-300 bg-white p-3 font-mono text-xs outline-none transition focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-900"
         />
@@ -86,7 +88,7 @@ export function TokenImport({ onSuccess }: { onSuccess?: () => void }) {
           disabled={!text.trim()}
           className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
         >
-          导入
+          {tr("Import", "导入")}
         </button>
       </div>
       {error && (

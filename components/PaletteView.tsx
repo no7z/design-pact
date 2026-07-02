@@ -3,11 +3,13 @@ import { useMemo } from "react";
 import { useTokens, computedHex, type ColorToken } from "@/lib/store";
 import { treemapBinary } from "@/lib/treemap";
 import { contrastRatio } from "@/lib/color";
+import { useTr } from "@/lib/i18n";
 
 const TREEMAP_W = 560;
 const TREEMAP_H = 320;
 
 export function PaletteView() {
+  const tr = useTr();
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
 
@@ -23,7 +25,7 @@ export function PaletteView() {
   if (resolved.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-500 dark:border-neutral-700">
-        上传图片后,色彩比例会显示在这里
+        {tr("Upload an image and the color proportions show up here", "上传图片后,色彩比例会显示在这里")}
       </div>
     );
   }
@@ -38,7 +40,7 @@ export function PaletteView() {
     <div className="space-y-4">
       <div>
         <div className="mb-2 text-xs font-medium uppercase tracking-wider text-neutral-500">
-          色彩比例 Treemap
+          {tr("Color proportions · Treemap", "色彩比例 Treemap")}
         </div>
         <div
           className="relative overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-800"

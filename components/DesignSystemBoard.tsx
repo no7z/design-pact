@@ -12,6 +12,7 @@ import {
 } from "@/lib/scales";
 import { oklchString } from "@/lib/color";
 import { headingWeight } from "@/lib/scales";
+import { useTr } from "@/lib/i18n";
 
 // Hand-authored SVG so the export is clean, editable vector (Figma/Illustrator
 // import it natively) and can be rasterized to PNG with zero dependencies.
@@ -27,6 +28,7 @@ const MONO = "ui-monospace, SFMono-Regular, Menlo, monospace";
 export const BOARD_SVG_ID = "ds-board-svg";
 
 export function DesignSystemBoard() {
+  const tr = useTr();
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
   const typography = useTokens((s) => s.typography);
@@ -84,7 +86,7 @@ export function DesignSystemBoard() {
       {brandName}
     </text>,
     <text key={key()} x={PAD} y={y + 50} fontFamily={LABEL_FONT} fontSize={13} fill={SUB}>
-      设计系统总览 · {date}
+      {tr("Design system overview", "设计系统总览")} · {date}
     </text>,
   );
   y += 78;
@@ -316,7 +318,7 @@ export function DesignSystemBoard() {
       width="100%"
       style={{ height: "auto", display: "block" }}
       role="img"
-      aria-label="设计系统总览"
+      aria-label={tr("Design system overview", "设计系统总览")}
     >
       <rect x={0} y={0} width={W} height={totalH} fill="#ffffff" />
       {els}

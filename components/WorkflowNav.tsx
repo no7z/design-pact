@@ -2,16 +2,17 @@
 import { useEffect, useState } from "react";
 import { useLenis } from "lenis/react";
 import { useTokens } from "@/lib/store";
+import { useTr } from "@/lib/i18n";
 
-type Step = { id: string; label: string };
+type Step = { id: string; en: string; zh: string };
 
 const ALL_STEPS: Step[] = [
-  { id: "step-describe", label: "开始" },
-  { id: "step-edit", label: "调色" },
-  { id: "step-typography", label: "字体" },
-  { id: "step-tokens", label: "细节" },
-  { id: "step-motion", label: "动效" },
-  { id: "step-export", label: "导出" },
+  { id: "step-describe", en: "Start", zh: "开始" },
+  { id: "step-edit", en: "Colors", zh: "调色" },
+  { id: "step-typography", en: "Type", zh: "字体" },
+  { id: "step-tokens", en: "Details", zh: "细节" },
+  { id: "step-motion", en: "Motion", zh: "动效" },
+  { id: "step-export", en: "Export", zh: "导出" },
 ];
 
 // Offset so a clicked section lands clear of the scheme bar that slides in at
@@ -20,6 +21,7 @@ const NAV_OFFSET = -64;
 
 export function WorkflowNav() {
   const hasColors = useTokens((s) => s.colors.length > 0);
+  const tr = useTr();
   const lenis = useLenis();
   const [active, setActive] = useState<string>("step-describe");
   const [hovered, setHovered] = useState<string | null>(null);
@@ -76,7 +78,8 @@ export function WorkflowNav() {
     0,
     steps.findIndex((s) => s.id === active),
   );
-  const activeLabel = steps[activeIndex]?.label ?? "";
+  const activeStep = steps[activeIndex];
+  const activeLabel = activeStep ? tr(activeStep.en, activeStep.zh) : "";
 
   return (
     <>
@@ -85,7 +88,7 @@ export function WorkflowNav() {
           segments fill as you go, the current step name fades in on change.
           Bottom so it clears the top scheme bar and stays in the thumb zone. */}
       <nav
-        aria-label="工作流导航"
+        aria-label={tr("Workflow navigation", "工作流导航")}
         className="fixed inset-x-0 bottom-0 z-40 border-t border-neutral-200 bg-white/90 backdrop-blur min-[1600px]:hidden dark:border-neutral-800 dark:bg-black/85"
       >
         <div className="flex items-center gap-3 px-4 py-2.5">
@@ -97,7 +100,7 @@ export function WorkflowNav() {
                 <button
                   key={step.id}
                   onClick={() => handleClick(step.id)}
-                  aria-label={step.label}
+                  aria-label={tr(step.en, step.zh)}
                   aria-current={isActive ? "step" : undefined}
                   className="flex-1 cursor-pointer py-1.5"
                 >
@@ -131,7 +134,7 @@ export function WorkflowNav() {
           shows its label (replacing the dash); the rest are short dashes that
           lengthen + reveal their label on hover. */}
       <nav
-        aria-label="工作流导航"
+        aria-label={tr("Workflow navigation", "工作流导航")}
         onMouseLeave={() => setHovered(null)}
         className="fixed right-6 top-24 z-40 hidden flex-col items-end gap-3 min-[1600px]:flex"
       >
@@ -144,7 +147,7 @@ export function WorkflowNav() {
             onClick={() => handleClick(step.id)}
             onMouseEnter={() => setHovered(step.id)}
             aria-current={isActive ? "step" : undefined}
-            aria-label={step.label}
+            aria-label={tr(step.en, step.zh)}
             className="group relative flex h-4 cursor-pointer items-center justify-end"
           >
             {/* Both rendered and cross-faded by opacity so the dash↔label swap
@@ -160,7 +163,7 @@ export function WorkflowNav() {
                   : "text-neutral-700 dark:text-neutral-200"
               }`}
             >
-              {step.label}
+              {tr(step.en, step.zh)}
             </span>
             <span
               aria-hidden

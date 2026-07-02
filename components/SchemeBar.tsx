@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useTokens, computedHex, type Scheme } from "@/lib/store";
+import { useTr } from "@/lib/i18n";
 
 const SWATCH_ORDER = ["background", "primary", "accent", "foreground", "muted", "border"];
 
@@ -9,6 +10,7 @@ const SWATCH_ORDER = ["background", "primary", "accent", "foreground", "muted", 
 // rather than inside 调色 — it slides down from the top once you scroll into the
 // editor so you can save or switch from any section.
 export function SchemeBar() {
+  const tr = useTr();
   const colors = useTokens((s) => s.colors);
   const schemes = useTokens((s) => s.schemes);
   const activeSchemeId = useTokens((s) => s.activeSchemeId);
@@ -41,23 +43,23 @@ export function SchemeBar() {
       }`}
     >
       <div className="mx-auto flex max-w-[1440px] items-center gap-2 px-6 py-2">
-        <span className="shrink-0 text-xs font-semibold">方案</span>
+        <span className="shrink-0 text-xs font-semibold">{tr("Schemes", "方案")}</span>
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSave()}
-          placeholder={`方案 ${schemes.length + 1}`}
+          placeholder={tr(`Scheme ${schemes.length + 1}`, `方案 ${schemes.length + 1}`)}
           className="w-24 shrink-0 rounded border border-neutral-300 bg-white px-2 py-1 text-xs outline-none focus:border-neutral-500 dark:border-neutral-700 dark:bg-neutral-900"
         />
         <button
           onClick={handleSave}
           className="shrink-0 rounded bg-neutral-900 px-2.5 py-1 text-xs text-white hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
         >
-          保存当前
+          {tr("Save current", "保存当前")}
         </button>
         <div className="scrollbar-subtle flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto">
           {schemes.length === 0 ? (
-            <span className="text-[10px] text-neutral-400">存几套，任意板块一键切换</span>
+            <span className="text-[10px] text-neutral-400">{tr("Save a few; switch from any section", "存几套，任意板块一键切换")}</span>
           ) : (
             schemes.map((s) => (
               <SchemeChip
@@ -86,6 +88,7 @@ export function SchemeChip({
   onLoad: () => void;
   onDelete: () => void;
 }) {
+  const tr = useTr();
   const swatches = [...scheme.colors]
     .sort((x, y) => SWATCH_ORDER.indexOf(x.role) - SWATCH_ORDER.indexOf(y.role))
     .slice(0, 4);
@@ -101,7 +104,7 @@ export function SchemeChip({
           onLoad();
         }
       }}
-      title={active ? "当前已载入" : "点击载入此方案"}
+      title={active ? tr("Currently loaded", "当前已载入") : tr("Click to load this scheme", "点击载入此方案")}
       className={`inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border py-0.5 pl-1.5 pr-1 text-xs transition ${
         active
           ? "border-neutral-900 dark:border-white"
@@ -124,8 +127,8 @@ export function SchemeChip({
           e.stopPropagation();
           onDelete();
         }}
-        title="删除此方案"
-        aria-label={`删除方案 ${scheme.name}`}
+        title={tr("Delete this scheme", "删除此方案")}
+        aria-label={tr(`Delete scheme ${scheme.name}`, `删除方案 ${scheme.name}`)}
         className="rounded px-1 text-[10px] text-neutral-400 transition hover:text-red-600"
       >
         ×

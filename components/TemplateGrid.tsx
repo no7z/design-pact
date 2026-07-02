@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { brandDisplayName, fetchTemplate } from "@/lib/templates";
 import { useTokens } from "@/lib/store";
 import { useTemplatePreview } from "@/lib/templatePreviews";
+import { useTr } from "@/lib/i18n";
 
 // A grid of brand-template cards with the shared "apply this template" logic.
 // Reused by the full "全部" browser and the "同类真实产品" matched row.
@@ -10,13 +11,14 @@ export function TemplateGrid({
   brands,
   onPicked,
   className = "grid grid-cols-2 gap-2.5 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8",
-  emptyHint = "无匹配品牌",
+  emptyHint,
 }: {
   brands: readonly string[];
   onPicked?: (brand: string) => void;
   className?: string;
   emptyHint?: string;
 }) {
+  const tr = useTr();
   const loadTokens = useTokens((s) => s.loadTokens);
   const setTypography = useTokens((s) => s.setTypography);
   const setSpacing = useTokens((s) => s.setSpacing);
@@ -31,14 +33,14 @@ export function TemplateGrid({
     setError("");
     try {
       const { colors, typography, spacing, radius } = await fetchTemplate(brand);
-      if (colors.length === 0) throw new Error("未提取到颜色");
+      if (colors.length === 0) throw new Error(tr("No colors extracted", "未提取到颜色"));
       loadTokens(colors, brand);
       if (typography && Object.keys(typography).length > 0) setTypography(typography);
       if (spacing && Object.keys(spacing).length > 0) setSpacing(spacing);
       if (radius && Object.keys(radius).length > 0) setRadius(radius);
       onPicked?.(brand);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "加载失败");
+      setError(e instanceof Error ? e.message : tr("Load failed", "加载失败"));
     } finally {
       setLoading(null);
     }
@@ -48,7 +50,7 @@ export function TemplateGrid({
     <div className="space-y-2">
       <div className={className}>
         {brands.length === 0 ? (
-          <p className="col-span-full p-3 text-xs text-neutral-400">{emptyHint}</p>
+          <p className="col-span-full p-3 text-xs text-neutral-400">{emptyHint ?? tr("No matching brands", "无匹配品牌")}</p>
         ) : (
           brands.map((brand) => (
             <BrandCard

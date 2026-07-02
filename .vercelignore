@@ -1,0 +1,13 @@
+# local daemon sockets / caches that aren't part of the build
+.codegraph/
+.gstack/
+.understand-anything/
+
+# build artifacts (regenerated on Vercel)
+.next/
+out/
+packages/cli/web/
+packages/cli/dist/
+
+node_modules/
+.git/

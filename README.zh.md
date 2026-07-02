@@ -6,6 +6,8 @@
 
 [![skills.sh](https://skills.sh/b/no7z/design-system)](https://skills.sh/no7z/design-system)
 
+### [▶ 在线试用](https://design-system-zeta-snowy.vercel.app)
+
 **给「用 AI 生成页面的人」的设计系统工具**
 
 你的 agent 定方向、出配色 · 工具确定性派生整套设计 tokens · 导出 AI 能逐字执行的 `design.md`,

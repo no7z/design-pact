@@ -6,6 +6,8 @@
 
 [![skills.sh](https://skills.sh/b/no7z/design-system)](https://skills.sh/no7z/design-system)
 
+### [▶ Try it live](https://design-system-zeta-snowy.vercel.app)
+
 **A design-system tool for people who build UIs with AI agents**
 
 Your agent sets direction and proposes palettes · the tool derives a whole

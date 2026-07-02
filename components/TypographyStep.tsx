@@ -5,6 +5,7 @@ import { buildScale, SCALE_STEPS } from "@/lib/typography";
 import { resolvePalette } from "@/lib/mockup";
 import { relativeLuminance } from "@/lib/color";
 import { headingWeight } from "@/lib/scales";
+import { useTr } from "@/lib/i18n";
 
 const FONT_PRESETS = [
   {
@@ -54,6 +55,7 @@ export function TypographyStep() {
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
   const hasColors = colors.length > 0;
+  const tr = useTr();
   const [view, setView] = useState<"instance" | "basic">("instance");
 
   const palette = useMemo(() => resolvePalette(colors, globals), [colors, globals]);
@@ -79,7 +81,7 @@ export function TypographyStep() {
         {/* Base size */}
         <label className="block space-y-2">
           <span className="flex items-center justify-between text-xs font-medium">
-            <span>基础字号 base</span>
+            <span>{tr("Base size", "基础字号 base")}</span>
             <span className="font-mono text-neutral-500">{typography.base}px</span>
           </span>
           <input
@@ -99,7 +101,7 @@ export function TypographyStep() {
         {/* Ratio */}
         <label className="block space-y-2">
           <span className="flex items-center justify-between text-xs font-medium">
-            <span>缩放比例 ratio</span>
+            <span>{tr("Scale ratio", "缩放比例 ratio")}</span>
             <span className="font-mono text-neutral-500">{typography.ratio.toFixed(2)}</span>
           </span>
           <input
@@ -112,13 +114,13 @@ export function TypographyStep() {
             className="w-full accent-neutral-900 dark:accent-white"
           />
           <div className="flex justify-between text-[10px] text-neutral-400">
-            <span>1.10 紧凑</span><span>1.25 适中</span><span>1.50 宽松</span>
+            <span>{tr("1.10 tight", "1.10 紧凑")}</span><span>{tr("1.25 medium", "1.25 适中")}</span><span>{tr("1.50 loose", "1.50 宽松")}</span>
           </div>
         </label>
 
         {/* Heading family */}
         <div className="space-y-2">
-          <label className="text-xs font-medium">标题字体</label>
+          <label className="text-xs font-medium">{tr("Heading font", "标题字体")}</label>
           <select
             value={headingPreset}
             onChange={(e) => onPresetSelect("headingFamily", e.target.value)}
@@ -127,7 +129,7 @@ export function TypographyStep() {
             {FONT_PRESETS.map((p) => (
               <option key={p.id} value={p.id}>{p.label}</option>
             ))}
-            <option value="custom">自定义…</option>
+            <option value="custom">{tr("Custom…", "自定义…")}</option>
           </select>
           <input
             type="text"
@@ -139,7 +141,7 @@ export function TypographyStep() {
 
         {/* Body family */}
         <div className="space-y-2">
-          <label className="text-xs font-medium">正文字体</label>
+          <label className="text-xs font-medium">{tr("Body font", "正文字体")}</label>
           <select
             value={bodyPreset}
             onChange={(e) => onPresetSelect("fontFamily", e.target.value)}
@@ -148,7 +150,7 @@ export function TypographyStep() {
             {FONT_PRESETS.map((p) => (
               <option key={p.id} value={p.id}>{p.label}</option>
             ))}
-            <option value="custom">自定义…</option>
+            <option value="custom">{tr("Custom…", "自定义…")}</option>
           </select>
           <input
             type="text"
@@ -160,7 +162,7 @@ export function TypographyStep() {
 
         {/* Font weight */}
         <div className="space-y-2">
-          <label className="text-xs font-medium">字重 weight</label>
+          <label className="text-xs font-medium">{tr("Weight", "字重 weight")}</label>
           <div className="flex gap-1.5 flex-wrap">
             {([300, 400, 500, 600, 700] as const).map((w) => (
               <button
@@ -181,7 +183,7 @@ export function TypographyStep() {
 
         {/* Line height */}
         <div className="space-y-2">
-          <label className="text-xs font-medium">行高 line-height</label>
+          <label className="text-xs font-medium">{tr("Line height", "行高 line-height")}</label>
           <div className="flex gap-1.5">
             {([1.25, 1.5, 1.75, 2.0] as const).map((lh) => (
               <button
@@ -194,7 +196,7 @@ export function TypographyStep() {
                     : "border-neutral-200 text-neutral-600 hover:border-neutral-400 dark:border-neutral-800 dark:text-neutral-400"
                 }`}
               >
-                {lh === 1.25 ? "1.25 紧凑" : lh === 1.5 ? "1.5 标准" : lh === 1.75 ? "1.75 宽松" : "2.0 疏散"}
+                {lh === 1.25 ? tr("1.25 tight", "1.25 紧凑") : lh === 1.5 ? tr("1.5 standard", "1.5 标准") : lh === 1.75 ? tr("1.75 loose", "1.75 宽松") : tr("2.0 airy", "2.0 疏散")}
               </button>
             ))}
           </div>
@@ -202,7 +204,7 @@ export function TypographyStep() {
 
         {/* Letter spacing */}
         <div className="space-y-2">
-          <label className="text-xs font-medium">字间距 letter-spacing</label>
+          <label className="text-xs font-medium">{tr("Letter spacing", "字间距 letter-spacing")}</label>
           <div className="flex gap-1.5">
             {([-0.05, 0, 0.05] as const).map((ls) => (
               <button
@@ -215,15 +217,15 @@ export function TypographyStep() {
                     : "border-neutral-200 text-neutral-600 hover:border-neutral-400 dark:border-neutral-800 dark:text-neutral-400"
                 }`}
               >
-                {ls === -0.05 ? "−0.05em 紧" : ls === 0 ? "0 标准" : "+0.05em 宽"}
+                {ls === -0.05 ? tr("−0.05em tight", "−0.05em 紧") : ls === 0 ? tr("0 normal", "0 标准") : tr("+0.05em wide", "+0.05em 宽")}
               </button>
             ))}
           </div>
         </div>
 
         <p className="text-[10px] leading-relaxed text-neutral-400">
-          base 控制正文字号；ratio 是模块化比例尺，H1 = base × ratio<sup>5</sup>。
-          调整后右侧实时预览，并自动同步到「导出」的所有格式。
+          {tr("base sets the body size; ratio is the modular scale, H1 = base × ratio", "base 控制正文字号；ratio 是模块化比例尺，H1 = base × ratio")}<sup>5</sup>.
+          {tr(" Changes preview live on the right and sync to every export format.", " 调整后右侧实时预览，并自动同步到「导出」的所有格式。")}
         </p>
       </div>
 
@@ -231,7 +233,7 @@ export function TypographyStep() {
       <div className="flex min-w-0 flex-col rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-2.5 dark:border-neutral-800">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-            字体预览
+            {tr("Type preview", "字体预览")}
           </h3>
           <ViewToggle view={view} onChange={setView} />
         </div>
@@ -263,7 +265,7 @@ export function TypographyStep() {
                         letterSpacing: `${typography.letterSpacing}em`,
                       }}
                     >
-                      {SAMPLE}
+                      {tr("The Quick Brown Fox 敏捷的棕狐 0123", SAMPLE)}
                     </span>
                   </div>
                 );
@@ -289,7 +291,7 @@ export function TypographyStep() {
                   letterSpacing: `${typography.letterSpacing}em`,
                 }}
               >
-                设计 Token 如何改变前端协作
+                {tr("How design tokens change frontend collaboration", "设计 Token 如何改变前端协作")}
               </h2>
               <p
                 className="font-mono"
@@ -299,7 +301,7 @@ export function TypographyStep() {
                   letterSpacing: `${typography.letterSpacing}em`,
                 }}
               >
-                2026 年 5 月 28 日 · 5 分钟阅读
+                {tr("May 28, 2026 · 5 min read", "2026 年 5 月 28 日 · 5 分钟阅读")}
               </p>
               <p
                 style={{
@@ -311,10 +313,10 @@ export function TypographyStep() {
                   letterSpacing: `${typography.letterSpacing}em`,
                 }}
               >
-                过去十年里，前端团队对颜色、间距、字号的口头约定，被一份 JSON 文件取代。
-                Token 让 designer 与 engineer 共用同一套词汇——而当 AI 加入协作流，这份词汇成了
-                让模型理解风格的唯一入口。一份好的 token 集既能产出干净的 CSS，也能让 prompt 在
-                上下文里精确表达视觉语言。
+                {tr(
+                  "Over the last decade, a frontend team's verbal conventions for color, spacing, and type got replaced by a single JSON file. Tokens give designers and engineers one shared vocabulary — and once AI joins the workflow, that vocabulary becomes the model's only entry point to your style. A good token set both produces clean CSS and lets a prompt express the visual language precisely in context.",
+                  "过去十年里，前端团队对颜色、间距、字号的口头约定，被一份 JSON 文件取代。Token 让 designer 与 engineer 共用同一套词汇——而当 AI 加入协作流，这份词汇成了让模型理解风格的唯一入口。一份好的 token 集既能产出干净的 CSS，也能让 prompt 在上下文里精确表达视觉语言。",
+                )}
               </p>
               <h3
                 style={{
@@ -327,13 +329,13 @@ export function TypographyStep() {
                   marginTop: "0.5em",
                 }}
               >
-                共享词汇的三个支点
+                {tr("Three pillars of a shared vocabulary", "共享词汇的三个支点")}
               </h3>
               <ul className="list-disc space-y-1.5 pl-5" style={{ color: palette.fg }}>
                 {[
-                  "颜色、间距、字号有统一命名，不再靠口头约定",
-                  "亮暗主题自动配对，一处定义、两处生效",
-                  "AI 读同一份契约，生成的 UI 不会跑偏",
+                  tr("Colors, spacing, and type get consistent names — no more verbal conventions", "颜色、间距、字号有统一命名，不再靠口头约定"),
+                  tr("Light/dark themes pair automatically — define once, apply in both", "亮暗主题自动配对，一处定义、两处生效"),
+                  tr("AI reads the same contract, so generated UI stays on-brand", "AI 读同一份契约，生成的 UI 不会跑偏"),
                 ].map((t) => (
                   <li
                     key={t}
@@ -361,7 +363,10 @@ export function TypographyStep() {
                   paddingLeft: "0.75em",
                 }}
               >
-                “好的排版是隐形的——读者只感到顺畅，不会注意到字体本身。”
+                {tr(
+                  "“Good typography is invisible — readers just feel the flow, never noticing the type itself.”",
+                  "“好的排版是隐形的——读者只感到顺畅，不会注意到字体本身。”",
+                )}
               </blockquote>
               <p
                 style={{
@@ -373,7 +378,7 @@ export function TypographyStep() {
                   letterSpacing: `${typography.letterSpacing}em`,
                 }}
               >
-                调整左侧的字重、行高和字间距，这段正文会实时反映效果。
+                {tr("Adjust weight, line height, and letter spacing on the left — this paragraph reflects it live.", "调整左侧的字重、行高和字间距，这段正文会实时反映效果。")}
               </p>
             </article>
 
@@ -392,7 +397,7 @@ export function TypographyStep() {
                   letterSpacing: `${typography.letterSpacing}em`,
                 }}
               >
-                组件标签
+                {tr("Component labels", "组件标签")}
               </h4>
               <div className="flex items-center gap-3">
                 <button
@@ -406,7 +411,7 @@ export function TypographyStep() {
                     letterSpacing: `${typography.letterSpacing}em`,
                   }}
                 >
-                  继续阅读
+                  {tr("Keep reading", "继续阅读")}
                 </button>
                 <a
                   className="underline-offset-2 hover:underline"
@@ -418,7 +423,7 @@ export function TypographyStep() {
                     letterSpacing: `${typography.letterSpacing}em`,
                   }}
                 >
-                  分享给同事 →
+                  {tr("Share with a colleague →", "分享给同事 →")}
                 </a>
               </div>
             </div>
@@ -436,6 +441,7 @@ function ViewToggle({
   view: "instance" | "basic";
   onChange: (v: "instance" | "basic") => void;
 }) {
+  const tr = useTr();
   return (
     <div className="flex gap-0.5 rounded-lg border border-neutral-200 p-0.5 dark:border-neutral-800">
       {(["instance", "basic"] as const).map((v) => (
@@ -449,7 +455,7 @@ function ViewToggle({
               : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
           }`}
         >
-          {v === "instance" ? "实例预览" : "基础效果"}
+          {v === "instance" ? tr("Instance", "实例预览") : tr("Basics", "基础效果")}
         </button>
       ))}
     </div>

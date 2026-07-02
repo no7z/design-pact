@@ -41,6 +41,9 @@ export function Warnings() {
     return auditTokens(colors, map).sort(
       (a, b) => severityRank(a.severity) - severityRank(b.severity),
     );
+    // `tr` is a real dep: audit messages come from trg(), which reads the
+    // current language — recompute when it changes. eslint can't see that.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [colors, globals, tr]);
 
   if (colors.length === 0) return null;

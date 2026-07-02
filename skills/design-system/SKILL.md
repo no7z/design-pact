@@ -151,6 +151,12 @@ when nothing matched:
 …&m=stripe,linear.app,vercel,supabase
 ```
 
+Append `&lang=zh` if you're talking to the user in Chinese, or `&lang=en` for
+English — this sets the studio's default UI language on first open (the user
+can still switch in the top-right). Omit it and the app falls back to the
+browser language. Only matters on the user's first visit; after that their
+own choice is remembered.
+
 Full URL: `http://localhost:3000/?<query>` (`DESIGN_SYSTEM_URL` defaults to
 `http://localhost:3000`; use a hosted URL if the user has one and skip the CLI).
 

@@ -1,30 +1,19 @@
 "use client";
-import { useLang, type Lang } from "@/lib/i18n";
+import { useLang } from "@/lib/i18n";
 
-// Fixed EN / 中 switch. English is the default; the choice persists.
+// Minimal single-text language switch, fixed top-right above the scheme bar.
+// Shows the language you'll switch TO; one click toggles.
 export function LanguageToggle() {
   const lang = useLang((s) => s.lang);
-  const setLang = useLang((s) => s.setLang);
-  const opts: { id: Lang; label: string }[] = [
-    { id: "en", label: "EN" },
-    { id: "zh", label: "中" },
-  ];
+  const toggle = useLang((s) => s.toggle);
   return (
-    <div className="fixed left-4 top-4 z-50 flex overflow-hidden rounded-full border border-neutral-200 bg-white/80 text-xs font-medium backdrop-blur dark:border-neutral-700 dark:bg-neutral-900/80">
-      {opts.map((o) => (
-        <button
-          key={o.id}
-          onClick={() => setLang(o.id)}
-          aria-pressed={lang === o.id}
-          className={`px-2.5 py-1 transition ${
-            lang === o.id
-              ? "bg-neutral-900 text-white dark:bg-white dark:text-black"
-              : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
-          }`}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
+    <button
+      onClick={toggle}
+      title="Switch language / 切换语言"
+      aria-label="Switch language"
+      className="fixed right-5 top-3 z-50 text-xs font-medium tracking-wide text-neutral-400 transition-colors hover:text-neutral-900 dark:text-neutral-500 dark:hover:text-white"
+    >
+      {lang === "en" ? "中文" : "EN"}
+    </button>
   );
 }

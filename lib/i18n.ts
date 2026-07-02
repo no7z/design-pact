@@ -29,6 +29,27 @@ export const useLang = create<LangState>()(
   ),
 );
 
+export const LANG_STORAGE_KEY = "design-system-lang";
+
+/**
+ * First-visit default (no stored preference yet). Priority:
+ * 1. `?lang=zh|en` in the URL — the agent sets this to match the language it's
+ *    talking to the user in (see SKILL.md).
+ * 2. The browser's language.
+ * 3. English.
+ */
+export function detectDefaultLang(): Lang {
+  if (typeof window === "undefined") return "en";
+  try {
+    const q = new URLSearchParams(window.location.search).get("lang");
+    if (q === "zh" || q === "en") return q;
+  } catch {
+    /* ignore */
+  }
+  const nav = (navigator.language || "").toLowerCase();
+  return nav.startsWith("zh") ? "zh" : "en";
+}
+
 /** Component hook: subscribes to the language and returns a picker. */
 export function useTr() {
   const lang = useLang((s) => s.lang);

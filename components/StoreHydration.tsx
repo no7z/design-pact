@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useTokens } from "@/lib/store";
-import { useLang } from "@/lib/i18n";
+import { useLang, detectDefaultLang, LANG_STORAGE_KEY } from "@/lib/i18n";
 import { applyPaletteFromUrl } from "@/lib/urlPalette";
 
 export function StoreHydration({ children }: { children: React.ReactNode }) {
@@ -13,9 +13,13 @@ export function StoreHydration({ children }: { children: React.ReactNode }) {
       applyPaletteFromUrl();
       if (!cancelled) setHydrated(true);
     };
-    // Language preference rehydrates alongside the tokens store.
+    // Language preference rehydrates alongside the tokens store. On the very
+    // first visit (nothing stored) pick a default from the URL (?lang=, set by
+    // the agent) or the browser language, then persist it.
     try {
+      const hadStored = localStorage.getItem(LANG_STORAGE_KEY) != null;
       useLang.persist.rehydrate();
+      if (!hadStored) useLang.getState().setLang(detectDefaultLang());
     } catch {
       /* default stays "en" */
     }

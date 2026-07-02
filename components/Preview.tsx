@@ -4,35 +4,29 @@ import { useTokens } from "@/lib/store";
 import { resolvePalette } from "@/lib/mockup";
 import { lightDarkFaces, isDarkPalette } from "@/lib/darkMode";
 import { MockupView, type MockupKind } from "@/components/MockupViews";
+import { useTr } from "@/lib/i18n";
 
 const ZERO_GLOBALS = { dL: 0, dC: 0, dH: 0 };
 
 type PreviewKind = MockupKind | "all";
 
-const KINDS: { id: PreviewKind; label: string }[] = [
-  { id: "all", label: "全部" },
-  { id: "landing", label: "落地页" },
-  { id: "card", label: "卡片组" },
-  { id: "form", label: "表单" },
-  { id: "dashboard", label: "仪表盘" },
-  { id: "article", label: "文章页" },
-  { id: "pricing", label: "定价页" },
-];
-
-const ALL_MOCKUPS: MockupKind[] = ["landing", "card", "form", "dashboard", "article", "pricing"];
-const LABELS: Record<MockupKind, string> = {
-  landing: "落地页",
-  card: "卡片组",
-  form: "表单",
-  dashboard: "仪表盘",
-  article: "文章页",
-  pricing: "定价页",
+const KIND_LABEL: Record<PreviewKind, { en: string; zh: string }> = {
+  all: { en: "All", zh: "全部" },
+  landing: { en: "Landing", zh: "落地页" },
+  card: { en: "Cards", zh: "卡片组" },
+  form: { en: "Form", zh: "表单" },
+  dashboard: { en: "Dashboard", zh: "仪表盘" },
+  article: { en: "Article", zh: "文章页" },
+  pricing: { en: "Pricing", zh: "定价页" },
 };
+const KINDS: PreviewKind[] = ["all", "landing", "card", "form", "dashboard", "article", "pricing"];
+const ALL_MOCKUPS: MockupKind[] = ["landing", "card", "form", "dashboard", "article", "pricing"];
 
 export function Preview() {
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
   const dark = useTokens((s) => s.dark);
+  const tr = useTr();
   const [kind, setKind] = useState<PreviewKind>("all");
   // Default the toggle to the base palette's own nature so enabling pairing
   // doesn't flip a dark-themed brand to light on first view.
@@ -53,15 +47,15 @@ export function Preview() {
       <div className="flex flex-wrap items-center gap-1">
         {KINDS.map((k) => (
           <button
-            key={k.id}
-            onClick={() => setKind(k.id)}
+            key={k}
+            onClick={() => setKind(k)}
             className={`rounded-full border px-3 py-1 text-xs transition ${
-              kind === k.id
+              kind === k
                 ? "border-neutral-900 bg-neutral-900 text-white dark:border-white dark:bg-white dark:text-black"
                 : "border-neutral-300 hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
             }`}
           >
-            {k.label}
+            {tr(KIND_LABEL[k].en, KIND_LABEL[k].zh)}
           </button>
         ))}
         {dark.enabled && (
@@ -77,7 +71,7 @@ export function Preview() {
                     : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
                 }`}
               >
-                {s === "light" ? "亮" : "暗"}
+                {s === "light" ? tr("Light", "亮") : tr("Dark", "暗")}
               </button>
             ))}
           </div>
@@ -89,7 +83,7 @@ export function Preview() {
           {ALL_MOCKUPS.map((k) => (
             <div key={k} className="space-y-1.5">
               <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-                {LABELS[k]}
+                {tr(KIND_LABEL[k].en, KIND_LABEL[k].zh)}
               </p>
               <div className="aspect-[800/520] overflow-hidden rounded-lg border border-neutral-200 dark:border-neutral-800">
                 <MockupView kind={k} palette={palette} />

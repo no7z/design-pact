@@ -2,6 +2,7 @@
 import { useMemo, useState } from "react";
 import { useTokens, computedHex, type ColorToken } from "@/lib/store";
 import { auditTokens, severityRank, type Severity } from "@/lib/audit";
+import { useTr } from "@/lib/i18n";
 
 const SEVERITY_STYLE: Record<
   Severity,
@@ -31,6 +32,7 @@ export function Warnings() {
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
   const [expanded, setExpanded] = useState(true);
+  const tr = useTr();
 
   const audits = useMemo(() => {
     if (colors.length === 0) return [];
@@ -39,7 +41,7 @@ export function Warnings() {
     return auditTokens(colors, map).sort(
       (a, b) => severityRank(a.severity) - severityRank(b.severity),
     );
-  }, [colors, globals]);
+  }, [colors, globals, tr]);
 
   if (colors.length === 0) return null;
 
@@ -63,33 +65,33 @@ export function Warnings() {
         className="flex w-full items-center justify-between gap-2 text-left"
       >
         <div className="flex items-center gap-3">
-          <h3 className="text-sm font-semibold">协调度检查</h3>
+          <h3 className="text-sm font-semibold">{tr("Harmony check", "协调度检查")}</h3>
           {audits.length === 0 ? (
-            <span className="text-xs text-emerald-600 dark:text-emerald-400">✓ 全部通过</span>
+            <span className="text-xs text-emerald-600 dark:text-emerald-400">{tr("✓ all pass", "✓ 全部通过")}</span>
           ) : (
             <span className="flex items-center gap-2 text-xs">
               {counts.error > 0 && (
                 <span className="flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                  {counts.error} 错误
+                  {counts.error} {tr("errors", "错误")}
                 </span>
               )}
               {counts.warn > 0 && (
                 <span className="flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-                  {counts.warn} 警告
+                  {counts.warn} {tr("warnings", "警告")}
                 </span>
               )}
               {counts.info > 0 && (
                 <span className="flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-sky-500" />
-                  {counts.info} 提示
+                  {counts.info} {tr("notes", "提示")}
                 </span>
               )}
             </span>
           )}
         </div>
-        <span className="text-xs text-neutral-500">{expanded ? "收起" : "展开"}</span>
+        <span className="text-xs text-neutral-500">{expanded ? tr("collapse", "收起") : tr("expand", "展开")}</span>
       </button>
 
       {expanded && audits.length > 0 && (

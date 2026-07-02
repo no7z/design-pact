@@ -12,6 +12,7 @@ import {
   EASING_PRESETS,
 } from "@/lib/scales";
 import { relativeLuminance } from "@/lib/color";
+import { useTr } from "@/lib/i18n";
 
 /**
  * Live interactive state demo: real hover / pressed / focus / disabled driven
@@ -28,6 +29,7 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
   const opacity = useTokens((s) => s.opacity);
   const motion = useTokens((s) => s.motion);
   const spacing = useTokens((s) => s.spacing);
+  const tr = useTr();
 
   const palette = useMemo(() => resolvePalette(colors, globals), [colors, globals]);
   const ops = useMemo(() => {
@@ -104,7 +106,7 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
               boxShadow: btn === "hover" ? shadowToCss(shadow.sm) : "none",
             }}
           >
-            主操作
+            {tr("Primary", "主操作")}
             <span
               aria-hidden
               style={{
@@ -141,7 +143,7 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
               cursor: "not-allowed",
             }}
           >
-            主操作
+            {tr("Primary", "主操作")}
           </button>
           <span className="font-mono text-[10px]" style={{ color: palette.muted }}>
             disabled {(ops.disabled * 100).toFixed(0)}%
@@ -151,7 +153,7 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
         {/* Input: real focus ring at token opacity, border default→strong */}
         <div className="flex min-w-[160px] flex-col gap-1.5">
           <input
-            placeholder="点击聚焦…"
+            placeholder={tr("Click to focus…", "点击聚焦…")}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             className="w-full text-xs outline-none"
@@ -187,10 +189,10 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
             }}
           >
             <div className="text-xs font-medium" style={{ color: palette.fg }}>
-              卡片悬停
+              {tr("Card hover", "卡片悬停")}
             </div>
             <div className="mt-1 text-[10px]" style={{ color: palette.muted }}>
-              阴影 sm → md
+              {tr("shadow sm → md", "阴影 sm → md")}
             </div>
           </div>
           <span className="font-mono text-[10px]" style={{ color: palette.muted }}>
@@ -214,10 +216,10 @@ export function StatePreview({ onOpenModal }: { onOpenModal?: () => void } = {})
                 transition,
               }}
             >
-              打开弹窗
+              {tr("Open modal", "打开弹窗")}
             </button>
             <span className="font-mono text-[10px]" style={{ color: palette.muted }}>
-              overlay + 动效
+              {tr("overlay + motion", "overlay + 动效")}
             </span>
           </div>
         )}

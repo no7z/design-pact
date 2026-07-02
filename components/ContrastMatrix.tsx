@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { useTokens } from "@/lib/store";
 import { contrastRatio } from "@/lib/color";
 import { resolvePalette } from "@/lib/mockup";
+import { useTr } from "@/lib/i18n";
 
 type Pair = {
   label: string;
@@ -31,20 +32,21 @@ const TONE_BADGE = {
 export function ContrastMatrix() {
   const colors = useTokens((s) => s.colors);
   const globals = useTokens((s) => s.globals);
+  const tr = useTr();
 
   const pairs = useMemo<Pair[]>(() => {
     if (colors.length === 0) return [];
     const palette = resolvePalette(colors, globals);
     return [
-      { label: "正文 text", fgName: "fg", bgName: "bg", fg: palette.fg, bg: palette.bg, minimum: 4.5 },
-      { label: "卡片正文", fgName: "fg", bgName: "surface", fg: palette.fg, bg: palette.surface, minimum: 4.5 },
-      { label: "主按钮文字", fgName: "bg", bgName: "primary", fg: palette.bg, bg: palette.primary, minimum: 4.5 },
-      { label: "主色块 vs 页面", fgName: "primary", bgName: "bg", fg: palette.primary, bg: palette.bg, minimum: 3 },
-      { label: "强调色 vs 页面", fgName: "accent", bgName: "bg", fg: palette.accent, bg: palette.bg, minimum: 3 },
-      { label: "次要文字", fgName: "muted", bgName: "bg", fg: palette.muted, bg: palette.bg, minimum: 4.5 },
-      { label: "分隔线可见性", fgName: "border", bgName: "bg", fg: palette.border, bg: palette.bg, minimum: 3 },
+      { label: tr("Body text", "正文 text"), fgName: "fg", bgName: "bg", fg: palette.fg, bg: palette.bg, minimum: 4.5 },
+      { label: tr("Card body", "卡片正文"), fgName: "fg", bgName: "surface", fg: palette.fg, bg: palette.surface, minimum: 4.5 },
+      { label: tr("Primary button text", "主按钮文字"), fgName: "bg", bgName: "primary", fg: palette.bg, bg: palette.primary, minimum: 4.5 },
+      { label: tr("Primary vs page", "主色块 vs 页面"), fgName: "primary", bgName: "bg", fg: palette.primary, bg: palette.bg, minimum: 3 },
+      { label: tr("Accent vs page", "强调色 vs 页面"), fgName: "accent", bgName: "bg", fg: palette.accent, bg: palette.bg, minimum: 3 },
+      { label: tr("Secondary text", "次要文字"), fgName: "muted", bgName: "bg", fg: palette.muted, bg: palette.bg, minimum: 4.5 },
+      { label: tr("Divider visibility", "分隔线可见性"), fgName: "border", bgName: "bg", fg: palette.border, bg: palette.bg, minimum: 3 },
     ];
-  }, [colors, globals]);
+  }, [colors, globals, tr]);
 
   if (pairs.length === 0) return null;
 
@@ -62,7 +64,7 @@ export function ContrastMatrix() {
   return (
     <section className="rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
       <header className="mb-2.5 flex items-center justify-between">
-        <h3 className="text-xs font-semibold">对比度（WCAG）</h3>
+        <h3 className="text-xs font-semibold">{tr("Contrast (WCAG)", "对比度（WCAG）")}</h3>
         <div className="flex gap-1.5 text-[10px]">
           <span className={`rounded px-1.5 py-0.5 font-medium ${TONE_BADGE.good}`}>AAA {summary.aaa}</span>
           <span className={`rounded px-1.5 py-0.5 font-medium ${TONE_BADGE.good}`}>AA {summary.aa}</span>
@@ -104,7 +106,7 @@ export function ContrastMatrix() {
         })}
       </ul>
       <p className="mt-2 text-[10px] leading-snug text-neutral-400">
-        正文文字要求 ≥4.5（AA）/ ≥7（AAA）；UI 元素和分隔线 ≥3 即可。Fail 标识需要调整颜色或换 role。
+        {tr("Body text needs ≥4.5 (AA) / ≥7 (AAA); UI elements and dividers only need ≥3. A Fail means adjust the colors or change a role.", "正文文字要求 ≥4.5（AA）/ ≥7（AAA）；UI 元素和分隔线 ≥3 即可。Fail 标识需要调整颜色或换 role。")}
       </p>
     </section>
   );

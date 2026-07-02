@@ -4,6 +4,8 @@
 
 **English** · [简体中文](README.zh.md)
 
+[![npm](https://img.shields.io/npm/v/@no7z/design-system)](https://www.npmjs.com/package/@no7z/design-system)
+[![license](https://img.shields.io/github/license/no7z/design-system)](LICENSE)
 [![skills.sh](https://skills.sh/b/no7z/design-system)](https://skills.sh/no7z/design-system)
 
 **A design-system tool for people who build UIs with AI agents**

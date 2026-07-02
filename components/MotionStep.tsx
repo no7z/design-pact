@@ -11,21 +11,22 @@ import {
 import { resolvePalette, hexA, type MockupPalette } from "@/lib/mockup";
 import { relativeLuminance } from "@/lib/color";
 import { StatePreview } from "./StatePreview";
+import { useTr } from "@/lib/i18n";
 
-const EASING_LABELS: Record<EasingPreset, string> = {
-  "ease-out":    "起快终慢 · 标准退出",
-  "ease-in-out": "慢快慢 · 进出对称",
-  spring:        "超调回弹 · 弹簧感",
-  linear:        "匀速 · 序列 / 进度条",
-  "ease-in":     "起慢终快 · 标准进入",
+const EASING_LABELS: Record<EasingPreset, { en: string; zh: string }> = {
+  "ease-out":    { en: "fast start, slow end · standard exit", zh: "起快终慢 · 标准退出" },
+  "ease-in-out": { en: "slow-fast-slow · symmetric", zh: "慢快慢 · 进出对称" },
+  spring:        { en: "overshoot · springy", zh: "超调回弹 · 弹簧感" },
+  linear:        { en: "constant · sequences / progress", zh: "匀速 · 序列 / 进度条" },
+  "ease-in":     { en: "slow start, fast end · standard enter", zh: "起慢终快 · 标准进入" },
 };
 
-const DEMO_HINTS: Record<string, string> = {
-  micro:  "按钮点击",
-  fast:   "悬停高亮",
-  normal: "下拉菜单",
-  slow:   "侧边面板",
-  page:   "内容入场",
+const DEMO_HINTS: Record<string, { en: string; zh: string }> = {
+  micro:  { en: "button tap", zh: "按钮点击" },
+  fast:   { en: "hover highlight", zh: "悬停高亮" },
+  normal: { en: "dropdown", zh: "下拉菜单" },
+  slow:   { en: "side panel", zh: "侧边面板" },
+  page:   { en: "content enter", zh: "内容入场" },
 };
 
 function usePalette(): MockupPalette {
@@ -74,6 +75,7 @@ function loopAnimate(
 type DemoProps = { ms: number; easingValue: string; palette: MockupPalette; initialDelay: number };
 
 function ButtonPressDemo({ ms, easingValue, palette, initialDelay }: DemoProps) {
+  const tr = useTr();
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!ref.current) return;
@@ -94,13 +96,14 @@ function ButtonPressDemo({ ms, easingValue, palette, initialDelay }: DemoProps) 
         className="select-none rounded-lg px-5 py-2 text-xs font-medium"
         style={{ background: palette.primary, color: onPrimary(palette.primary) }}
       >
-        保存更改
+        {tr("Save changes", "保存更改")}
       </div>
     </div>
   );
 }
 
 function HoverHighlightDemo({ ms, easingValue, palette, initialDelay }: DemoProps) {
+  const tr = useTr();
   const bgRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLSpanElement>(null);
   useEffect(() => {
@@ -135,7 +138,7 @@ function HoverHighlightDemo({ ms, easingValue, palette, initialDelay }: DemoProp
     return () => { stopped = true; };
   }, [ms, easingValue, palette, initialDelay]);
 
-  const items = ["首页", "文档", "设置"];
+  const items = [tr("Home", "首页"), tr("Docs", "文档"), tr("Settings", "设置")];
   return (
     <div className="flex h-full flex-col justify-center gap-0.5 px-4 py-3">
       {items.map((item, i) => (
@@ -161,6 +164,7 @@ function HoverHighlightDemo({ ms, easingValue, palette, initialDelay }: DemoProp
 }
 
 function DropdownDemo({ ms, easingValue, palette, initialDelay }: DemoProps) {
+  const tr = useTr();
   const dropRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!dropRef.current) return;
@@ -180,7 +184,7 @@ function DropdownDemo({ ms, easingValue, palette, initialDelay }: DemoProps) {
         className="flex w-full items-center gap-1.5 rounded px-2.5 py-1.5 text-xs"
         style={{ border: `1px solid ${palette.border}` }}
       >
-        <span className="flex-1" style={{ color: palette.muted }}>选择选项</span>
+        <span className="flex-1" style={{ color: palette.muted }}>{tr("Select an option", "选择选项")}</span>
         <span className="text-[10px]" style={{ color: palette.muted }}>▾</span>
       </div>
       <div
@@ -193,7 +197,7 @@ function DropdownDemo({ ms, easingValue, palette, initialDelay }: DemoProps) {
           border: `1px solid ${palette.border}`,
         }}
       >
-        {["选项一", "选项二", "选项三"].map((o, i) => (
+        {[tr("Option 1", "选项一"), tr("Option 2", "选项二"), tr("Option 3", "选项三")].map((o, i) => (
           <div
             key={o}
             className="px-2.5 py-1.5"
@@ -299,8 +303,10 @@ function DemoCard({
   palette: MockupPalette;
   index: number;
 }) {
+  const tr = useTr();
   const Demo = DEMO_COMPONENTS[duration.name];
   const easingValue = EASING_PRESETS[easing];
+  const hint = DEMO_HINTS[duration.name];
   return (
     <div
       className="flex flex-col overflow-hidden rounded-xl"
@@ -320,7 +326,7 @@ function DemoCard({
           {duration.ms}ms
         </span>
         <span className="ml-auto text-[10px]" style={{ color: palette.muted }}>
-          {DEMO_HINTS[duration.name]}
+          {hint ? tr(hint.en, hint.zh) : ""}
         </span>
       </div>
       <div className="h-32">
@@ -344,6 +350,7 @@ export function MotionStep() {
   const setMotion = useTokens((s) => s.setMotion);
   const opacity = useTokens((s) => s.opacity);
   const hasColors = useTokens((s) => s.colors.length > 0);
+  const tr = useTr();
   const palette = usePalette();
   const primaryHex = palette.primary; // basic-view charts only need the brand color
   const [view, setView] = useState<"instance" | "basic">("instance");
@@ -364,7 +371,7 @@ export function MotionStep() {
         <section className="space-y-3">
           <header className="flex items-center justify-between">
             <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-              时长 Duration
+              {tr("Duration", "时长 Duration")}
             </span>
             <span className="font-mono text-xs text-neutral-500">base {motion.base}ms</span>
           </header>
@@ -378,7 +385,7 @@ export function MotionStep() {
             className="w-full accent-neutral-900 dark:accent-white"
           />
           <div className="flex justify-between text-[10px] text-neutral-400">
-            <span>快 80</span><span>标准 200</span><span>慢 500</span>
+            <span>{tr("Fast 80", "快 80")}</span><span>{tr("Standard 200", "标准 200")}</span><span>{tr("Slow 500", "慢 500")}</span>
           </div>
         </section>
 
@@ -387,7 +394,7 @@ export function MotionStep() {
         <section className="space-y-3">
           <header>
             <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-              缓动曲线 Easing
+              {tr("Easing", "缓动曲线 Easing")}
             </span>
           </header>
           <div className="space-y-1.5">
@@ -403,7 +410,7 @@ export function MotionStep() {
                 }`}
               >
                 <span className="font-mono">{key}</span>
-                <span className="text-[10px] opacity-70">{EASING_LABELS[key]}</span>
+                <span className="text-[10px] opacity-70">{tr(EASING_LABELS[key].en, EASING_LABELS[key].zh)}</span>
               </button>
             ))}
           </div>
@@ -414,7 +421,7 @@ export function MotionStep() {
       <div className="relative flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-center justify-between border-b border-neutral-100 px-4 py-2.5 dark:border-neutral-800">
           <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-500">
-            动效演示
+            {tr("Motion demo", "动效演示")}
           </h3>
           <ViewToggle view={view} onChange={setView} />
         </div>
@@ -434,7 +441,7 @@ export function MotionStep() {
             </div>
             <div>
               <p className="mb-2 text-[10px]" style={{ color: palette.muted }}>
-                可交互 · 移上去 / 按住 / 点输入框 / 开弹窗试试
+                {tr("Interactive · try hover / press / focus the input / open the modal", "可交互 · 移上去 / 按住 / 点输入框 / 开弹窗试试")}
               </p>
               <StatePreview onOpenModal={() => setModalOpen(true)} />
             </div>
@@ -446,7 +453,7 @@ export function MotionStep() {
             {/* Duration ladder — each tile slides on its own duration */}
             <section className="space-y-2">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
-                持续时长 duration
+                {tr("Duration", "持续时长 duration")}
               </p>
               <div className="space-y-2.5">
                 {durations.map((d, i) => (
@@ -467,7 +474,7 @@ export function MotionStep() {
             {/* Easing curve */}
             <section className="space-y-2">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400">
-                缓动曲线 easing
+                {tr("Easing", "缓动曲线 easing")}
               </p>
               <EasingCurve easing={motion.easing} primaryHex={primaryHex} />
             </section>
@@ -509,10 +516,10 @@ export function MotionStep() {
             }}
           >
             <p className="text-sm font-semibold" style={{ color: palette.fg }}>
-              删除这套配色？
+              {tr("Delete this palette?", "删除这套配色？")}
             </p>
             <p className="mt-1.5 text-xs leading-relaxed" style={{ color: palette.muted }}>
-              此操作无法撤销。删除后，关联的导出文件需要重新生成。
+              {tr("This can't be undone. Any exported files will need to be regenerated.", "此操作无法撤销。删除后，关联的导出文件需要重新生成。")}
             </p>
             <div className="mt-4 flex justify-end gap-2">
               <button
@@ -520,14 +527,14 @@ export function MotionStep() {
                 className="rounded-lg px-3 py-1.5 text-xs"
                 style={{ border: `1px solid ${palette.border}`, color: palette.fg }}
               >
-                取消
+                {tr("Cancel", "取消")}
               </button>
               <button
                 onClick={() => setModalOpen(false)}
                 className="rounded-lg px-3 py-1.5 text-xs font-medium"
                 style={{ background: palette.primary, color: onPrimary(palette.primary) }}
               >
-                删除
+                {tr("Delete", "删除")}
               </button>
             </div>
           </div>
@@ -544,6 +551,7 @@ function ViewToggle({
   view: "instance" | "basic";
   onChange: (v: "instance" | "basic") => void;
 }) {
+  const tr = useTr();
   return (
     <div className="flex gap-0.5 rounded-lg border border-neutral-200 p-0.5 dark:border-neutral-800">
       {(["instance", "basic"] as const).map((v) => (
@@ -557,7 +565,7 @@ function ViewToggle({
               : "text-neutral-500 hover:text-neutral-900 dark:hover:text-white"
           }`}
         >
-          {v === "instance" ? "实例预览" : "基础效果"}
+          {v === "instance" ? tr("Instance", "实例预览") : tr("Basics", "基础效果")}
         </button>
       ))}
     </div>

@@ -10,6 +10,8 @@
 
 **给「用 AI 生成页面的人」的设计系统工具**
 
+**[在线试用 →](https://design-pact.vercel.app)**
+
 你的 agent 定方向、出配色 · 工具确定性派生整套设计 tokens · 导出 AI 能逐字执行的 `design.md`,
 丢进代码库让 Claude Code / Cursor 照它生成 UI。
 

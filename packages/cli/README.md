@@ -31,7 +31,7 @@ installer if you prefer a single, offline, version-locked bundle:
 npx design-pact add design.md
 
 # Pick formats and an output directory
-npx design-pact add design.md --format css|tailwind|w3c|all --out ./design
+npx design-pact add design.md --format css|tailwind|w3c|shadcn|all --out ./design
 
 # Print a summary without writing anything
 npx design-pact inspect design.md
@@ -72,6 +72,7 @@ Outputs:
 | `css` | `tokens.css` | the verbatim `:root` block (byte-identical to the web export) |
 | `w3c` | `design-tokens.json` | the W3C Design Tokens block |
 | `tailwind` | `tailwind.config.js` | regenerated via the web app's own `tailwindConfig` (no drift) |
+| `shadcn` | `shadcn-theme.css` | `:root` + `.dark` HSL-triplet blocks for shadcn/ui — paste into globals.css |
 
 `css` and `w3c` are extracted verbatim from the file; `tailwind` is the one
 format not embedded in the markdown, so it's regenerated from the JSON block

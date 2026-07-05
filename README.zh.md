@@ -64,8 +64,8 @@ npx skills add no7z/design-pact -g     # 全局:装一次,所有项目可用
 
 ```bash
 # 把 design.md 转成项目文件(可选)
-npx design-pact add design.md --format css|tailwind|w3c|all --out ./design
-#   → tokens.css / tailwind.config.js / design-tokens.json
+npx design-pact add design.md --format css|tailwind|w3c|shadcn|all --out ./design
+#   → tokens.css / tailwind.config.js / design-tokens.json / shadcn-theme.css
 
 # 打印设计系统摘要
 npx design-pact inspect design.md

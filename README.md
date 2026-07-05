@@ -69,8 +69,8 @@ Click **Download design.md** in the export step for a self-contained markdown:
 
 ```bash
 # Convert design.md into project files (optional)
-npx design-pact add design.md --format css|tailwind|w3c|all --out ./design
-#   → tokens.css / tailwind.config.js / design-tokens.json
+npx design-pact add design.md --format css|tailwind|w3c|shadcn|all --out ./design
+#   → tokens.css / tailwind.config.js / design-tokens.json / shadcn-theme.css
 
 # Print a summary of the design system
 npx design-pact inspect design.md

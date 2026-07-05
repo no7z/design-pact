@@ -1,10 +1,10 @@
 {
-  "name": "@no7z/design-system",
-  "version": "0.1.10",
-  "description": "Set up and use your design system: install the Claude Code / Cursor skill, open the local studio, and turn design-system.md into token files. Zero backend, zero account.",
+  "name": "design-pact",
+  "version": "0.2.2",
+  "description": "Design-system contract for AI agents: derive a full token set from a palette in the local studio, export an agent-executable design.md, convert it to CSS/Tailwind tokens, and audit generated UI against the contract. Works with Claude Code / Cursor. Zero backend, zero account.",
   "type": "module",
   "bin": {
-    "design-system": "dist/cli.js"
+    "design-pact": "dist/cli.js"
   },
   "files": [
     "dist",
@@ -19,12 +19,23 @@
   "keywords": [
     "design-tokens",
     "design-system",
+    "design-md",
+    "ai-agents",
+    "claude-code",
+    "cursor",
     "tailwind",
     "css-variables",
-    "ai",
+    "oklch",
     "cli"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/no7z/design-pact.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/no7z/design-pact#readme",
+  "bugs": "https://github.com/no7z/design-pact/issues",
   "dependencies": {
     "culori": "^4.0.2"
   },

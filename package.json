@@ -1,5 +1,5 @@
 {
-  "name": "design-system",
+  "name": "design-pact",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "test": "vitest run",
     "build:studio": "next build && node packages/cli/scripts/bundle.mjs && npm --prefix packages/cli run build",
     "snapshot:templates": "tsx scripts/snapshot-templates.ts"
   },
@@ -30,7 +31,8 @@
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
     "tsx": "^4.22.4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.9"
   },
   "license": "MIT"
 }

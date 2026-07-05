@@ -25,11 +25,11 @@ export const useLang = create<LangState>()(
     // skipHydration: the static export prerenders with the "en" default, then
     // StoreHydration rehydrates from localStorage on the client (same pattern
     // as the tokens store) so there is no hydration mismatch.
-    { name: "design-system-lang", skipHydration: true },
+    { name: "design-pact-lang", skipHydration: true },
   ),
 );
 
-export const LANG_STORAGE_KEY = "design-system-lang";
+export const LANG_STORAGE_KEY = "design-pact-lang";
 
 /**
  * First-visit default (no stored preference yet). Priority:

@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "design-system — tokens for AI-agent workflows",
+  title: "design-pact — a design contract your AI agent keeps",
   description:
     "Derive a full design system from one palette and export an agent-executable design.md. Zero backend, no AI, no account.",
 };

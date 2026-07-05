@@ -11,7 +11,7 @@ const pkg = join(here, "..");                          // packages/cli
 const repo = join(here, "..", "..", "..");             // repo root
 
 const OUT = join(repo, "out");
-const SKILL = join(repo, "skills", "design-system", "SKILL.md");
+const SKILL = join(repo, "skills", "design-pact", "SKILL.md");
 const WEB = join(pkg, "web");
 
 async function exists(p) {
@@ -35,4 +35,4 @@ if (!(await exists(SKILL))) {
 await rm(WEB, { recursive: true, force: true });
 await cp(OUT, WEB, { recursive: true });
 await copyFile(SKILL, join(pkg, "SKILL.md"));
-console.log("✓ 已打包：packages/cli/web ← out/，SKILL.md ← skills/design-system/SKILL.md");
+console.log("✓ 已打包：packages/cli/web ← out/，SKILL.md ← skills/design-pact/SKILL.md");

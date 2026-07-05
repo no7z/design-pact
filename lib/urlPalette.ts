@@ -1,5 +1,5 @@
 // Hand off palettes from the URL, so an agent can pass its colors by just
-// opening a link — no manual import. The agent (via the design-system skill)
+// opening a link — no manual import. The agent (via the design-pact skill)
 // opens one or more `?p=` sets:
 //
 //   one set  → http://localhost:3000/?p=<bg>-<fg>-<primary>-<accent>-<muted>-<border>

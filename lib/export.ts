@@ -42,7 +42,7 @@ export function w3cTokens(
     colorGroup[key] = {
       $value: c.displayHex,
       $type: "color",
-      $extensions: { "design-system": ext },
+      $extensions: { "design-pact": ext },
     };
   }
   const fontSizes: Record<string, unknown> = {};
@@ -86,7 +86,7 @@ export function w3cTokens(
           {
             $value: semantic[k],
             $type: "color",
-            ...(darkSemantic ? { $extensions: { "design-system": { dark: darkSemantic[k] } } } : {}),
+            ...(darkSemantic ? { $extensions: { "design-pact": { dark: darkSemantic[k] } } } : {}),
           },
         ]),
       )
@@ -107,7 +107,7 @@ export function w3cTokens(
       lineHeight: { $value: typography.lineHeight, $type: "number" },
       letterSpacing: { $value: `${typography.letterSpacing}em`, $type: "dimension" },
       $extensions: {
-        "design-system": { base: typography.base, ratio: typography.ratio },
+        "design-pact": { base: typography.base, ratio: typography.ratio },
       },
     },
     spacing: spacingGroup,
@@ -538,7 +538,7 @@ export function designSystemMarkdown(
   const tokens = w3cTokens(colors, typography, spacing, radius, shadow, motion, border, opacity, darkColors, semantic, darkSemantic);
   const generated = new Date().toISOString().slice(0, 10);
   return `---
-design-system: 1
+design-pact: 1
 generated: ${generated}
 ---
 

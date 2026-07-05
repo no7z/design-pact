@@ -6,6 +6,8 @@
 // Both are byte-for-byte what the web app emitted, so extracting them keeps the
 // CLI's css/json output zero-drift from the source of truth.
 
+import { t } from "./locale";
+
 export type ParsedDesignSystem = {
   /** Verbatim `:root { … }` (+ optional @media dark) CSS, ready as tokens.css. */
   rootCss: string;
@@ -23,26 +25,29 @@ function fence(md: string, lang: string): string | null {
 }
 
 export function parseDesignSystem(md: string): ParsedDesignSystem {
-  if (!/^---\s*\ndesign-system:/m.test(md) && !md.includes("# Design system")) {
+  if (!/^---\s*\ndesign-pact:/m.test(md) && !md.includes("# Design system")) {
     throw new Error(
-      "这看起来不是 design.md（缺少 design-system frontmatter / Design system 标题）。",
+      t(
+        "This does not look like a design.md (missing the design-pact frontmatter / Design system heading).",
+        "这看起来不是 design.md（缺少 design-pact frontmatter / Design system 标题）。",
+      ),
     );
   }
 
   const rootCss = fence(md, "css");
   if (!rootCss || !rootCss.includes(":root")) {
-    throw new Error("未找到 :root CSS 契约块（```css）。");
+    throw new Error(t("No :root CSS contract block (```css) found.", "未找到 :root CSS 契约块（```css）。"));
   }
 
   const w3cText = fence(md, "json");
   if (!w3cText) {
-    throw new Error("未找到机器可读 tokens 块（```json）。");
+    throw new Error(t("No machine-readable tokens block (```json) found.", "未找到机器可读 tokens 块（```json）。"));
   }
   let w3c: Record<string, unknown>;
   try {
     w3c = JSON.parse(w3cText);
   } catch {
-    throw new Error("机器可读 tokens 块不是有效 JSON。");
+    throw new Error(t("The machine-readable tokens block is not valid JSON.", "机器可读 tokens 块不是有效 JSON。"));
   }
 
   return { rootCss: rootCss.trim() + "\n", w3c, w3cText: w3cText.trim() + "\n" };

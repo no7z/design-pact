@@ -12,7 +12,7 @@ const ZERO_GLOBALS = { dL: 0, dC: 0, dH: 0 };
 const SWATCH_ORDER = ["background", "primary", "accent", "foreground", "muted", "border"];
 
 // First screen — the "start" hub. There is no in-page AI: the product
-// direction is discussed with your own agent (via the design-system skill),
+// direction is discussed with your own agent (via the design-pact skill),
 // and the agent produces the palette(s). When the agent opens the app with
 // several palettes (?p=…&p=…), they're shown here as visual candidates — each
 // with the agent's name + description — to pick from. Picking one keeps the

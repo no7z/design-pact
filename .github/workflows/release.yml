@@ -1,0 +1,36 @@
+name: Release
+
+# Publish design-pact to npm when a version tag is pushed.
+#
+#   npm version patch --prefix packages/cli   (or edit version by hand)
+#   git tag v0.2.0 && git push origin v0.2.0
+#
+# Requires the NPM_TOKEN repo secret (npm automation token with publish
+# rights on the design-pact name). `--provenance` links the npm package to this build.
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm provenance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: npm ci --prefix packages/cli
+      - run: npx tsc --noEmit
+      - run: npm test
+      - run: npm run build:studio
+      - run: npm publish --provenance --access public
+        working-directory: packages/cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,6 +1,6 @@
 // The local-studio side of the CLI: install the skill (init) and serve the
 // bundled static app (open / __serve). Zero external deps — Node built-ins only,
-// so a fresh machine needs nothing beyond `npx @no7z/design-system`.
+// so a fresh machine needs nothing beyond `npx design-pact`.
 
 import { createServer, get as httpGet } from "node:http";
 import { mkdir, copyFile } from "node:fs/promises";
@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join, normalize, extname } from "node:path";
 import { spawn } from "node:child_process";
 import { homedir } from "node:os";
+import { t } from "./locale";
 
 // dist/cli.js → package root (web/ and SKILL.md ship at the root via `files`).
 const PKG = dirname(dirname(fileURLToPath(import.meta.url)));
@@ -41,21 +42,21 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export async function cmdInit(args: string[]) {
   const global = args.includes("--global");
   const base = global ? join(homedir(), ".claude") : join(process.cwd(), ".claude");
-  const dir = join(base, "skills", "design-system");
+  const dir = join(base, "skills", "design-pact");
   if (!existsSync(SKILL_SRC)) {
-    console.error("✗ 包内缺少 SKILL.md（发布前需先运行 bundle）。");
+    console.error("✗ " + t("SKILL.md missing from the package (run bundle before publishing).", "包内缺少 SKILL.md（发布前需先运行 bundle）。"));
     process.exit(1);
   }
   await mkdir(dir, { recursive: true });
   await copyFile(SKILL_SRC, join(dir, "SKILL.md"));
-  console.log(`✓ 已安装 design-system skill → ${join(dir, "SKILL.md")}`);
+  console.log(t(`✓ Installed the design-pact skill → ${join(dir, "SKILL.md")}`, `✓ 已安装 design-pact skill → ${join(dir, "SKILL.md")}`));
   console.log(
     global
-      ? "  （全局：对所有项目可用）"
-      : "  （项目级：仅当前项目可用，加 --global 可装到 ~/.claude）",
+      ? t("  (global: available in every project)", "  （全局：对所有项目可用）")
+      : t("  (project-level: this project only; add --global to install into ~/.claude)", "  （项目级：仅当前项目可用，加 --global 可装到 ~/.claude）"),
   );
-  console.log("\n下一步：在 Claude Code / Cursor 里说「用 design-system skill」。");
-  console.log("它会问清方向、产出配色，并用 `npx @no7z/design-system open` 在本地打开配色工具。");
+  console.log("\n" + t('Next: in Claude Code / Cursor, say "use the design-pact skill".', "下一步：在 Claude Code / Cursor 里说「用 design-pact skill」。"));
+  console.log(t("It clarifies direction, proposes palettes, and opens the local studio via `npx design-pact open`.", "它会问清方向、产出配色，并用 `npx design-pact open` 在本地打开配色工具。"));
 }
 
 // ── static server ─────────────────────────────────────────────────────────────
@@ -116,7 +117,7 @@ function openBrowser(url: string) {
 
 export async function cmdOpen(args: string[]) {
   if (!existsSync(join(WEB_DIR, "index.html"))) {
-    console.error("✗ 包内缺少静态网页（发布前需先运行 bundle）。");
+    console.error("✗ " + t("Static web app missing from the package (run bundle before publishing).", "包内缺少静态网页（发布前需先运行 bundle）。"));
     process.exit(1);
   }
   const raw = args.find((a) => !a.startsWith("-")) || "";
@@ -124,7 +125,7 @@ export async function cmdOpen(args: string[]) {
   const url = `http://localhost:${PORT}/${q}`;
 
   if (await probe(PORT)) {
-    console.log(`↻ 复用本地实例\n打开（已带配色）: ${url}`);
+    console.log(t(`↻ Reusing the running instance\nOpen (palettes loaded): ${url}`, `↻ 复用本地实例\n打开（已带配色）: ${url}`));
     openBrowser(url);
     return;
   }
@@ -139,7 +140,7 @@ export async function cmdOpen(args: string[]) {
     if (await probe(PORT)) break;
     await sleep(150);
   }
-  console.log(`本地配色工具已启动（端口 ${PORT}，后台运行）。`);
-  console.log(`打开（已带配色）: ${url}`);
+  console.log(t(`Local studio started (port ${PORT}, running in the background).`, `本地配色工具已启动（端口 ${PORT}，后台运行）。`));
+  console.log(t(`Open (palettes loaded): ${url}`, `打开（已带配色）: ${url}`));
   openBrowser(url);
 }

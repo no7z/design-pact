@@ -1,5 +1,5 @@
 ---
-name: design-system
+name: design-pact
 description: >-
   Establish and apply the project's design system. Invoke at the start of UI
   work, or whenever the user says "use my design system", "apply my tokens",
@@ -7,7 +7,7 @@ description: >-
   build/restyle UI. The skill first looks for a design.md in the repo:
   if present it generates UI against it; if absent it clarifies the product
   direction, YOU (the agent) propose 2–3 palettes, and it opens the
-  design-system web app where the user picks one visually and tunes it into a full
+  design-pact studio where the user picks one visually and tunes it into a full
   design system to export. All AI runs on the agent's own compute — the web app has no AI and
   no backend.
 ---
@@ -15,7 +15,7 @@ description: >-
 # Design system
 
 The project's design system lives in a single file — `design.md` at the
-repo root — exported from the design-system web app. It carries the canonical
+repo root — exported from the design-pact studio. It carries the canonical
 color / type / spacing / radius / shadow / motion tokens plus a copy-verbatim
 `:root` contract. That one file is the source of truth; you do not need the web
 app or network access once it exists.
@@ -30,7 +30,7 @@ Look for `design.md`, in order:
 1. A path the user gave you.
 2. `design.md` at the repo root.
 3. Search the repo for the file's frontmatter marker:
-   `rg -l "^design-system:" --type md`.
+   `rg -l "^design-pact:" --type md`.
 
 Then branch:
 
@@ -157,7 +157,7 @@ can still switch in the top-right). Omit it and the app falls back to the
 browser language. Only matters on the user's first visit; after that their
 own choice is remembered.
 
-Full URL: `http://localhost:3000/?<query>` (`DESIGN_SYSTEM_URL` defaults to
+Full URL: `http://localhost:3000/?<query>` (`DESIGN_PACT_URL` defaults to
 `http://localhost:3000`; use a hosted URL if the user has one and skip the CLI).
 
 **Do these IN ORDER. Step 1 always happens — even if 2 fails, the printed URL is
@@ -172,7 +172,7 @@ all the user needs.**
    clone, no dev server, no account) and opens the browser:
 
    ```bash
-   npx @no7z/design-system open "<query>"
+   npx design-pact open "<query>"
    ```
 
    `<query>` is everything after `?` (the `p=…&p=…&m=…` you assembled). It
@@ -227,7 +227,16 @@ exactly):
 
 Reasoning and generation run on **your** model — no server dependency. After
 generating, verify the output uses the tokens (no stray hex values, no
-off-scale sizes).
+off-scale sizes). The companion CLI automates the color half of that audit:
+
+```bash
+npx design-pact check design.md <dirs-or-files-you-touched>
+```
+
+It flags every hex / `rgb()` literal that isn't in the contract (exit 1 when
+violations exist) with file:line locations — fix them by switching to
+`var(--color-…)` references, then re-run until clean. If the CLI isn't
+available, do the same audit by hand.
 
 ## Config files (optional)
 
@@ -236,7 +245,7 @@ generated UI, the companion CLI converts the file's `json` block into
 `tokens.css` / `tailwind.config.js` / `design-tokens.json`:
 
 ```bash
-npx @no7z/design-system add design.md --format css|tailwind|w3c|all --out ./design
+npx design-pact add design.md --format css|tailwind|w3c|all --out ./design
 ```
 
 If the CLI isn't installed you can produce the same output by reading the

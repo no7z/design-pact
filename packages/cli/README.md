@@ -1,6 +1,6 @@
-# @no7z/design-system
+# design-pact
 
-Turn a `design.md` — exported from the [design-system](../../README.md)
+Turn a `design.md` — exported from the [design-pact](../../README.md)
 web app — into project token files. **No AI, no network, fully deterministic.**
 
 The `design.md` file is self-contained: it holds the verbatim `:root`
@@ -10,32 +10,44 @@ for when you want the tokens as committed project files.
 
 ## Install the skill (recommended)
 
-Get the `design-system` skill into your agent with the open
+Get the `design-pact` skill into your agent with the open
 [`skills`](https://github.com/vercel-labs/skills) CLI — one command, works
 across Claude Code / Cursor / Codex:
 
 ```bash
-npx skills add no7z/design-system -g   # global: install once, available in every project
-npx skills add no7z/design-system      # or: current project only (.claude/skills/)
+npx skills add no7z/design-pact -g   # global: install once, available in every project
+npx skills add no7z/design-pact      # or: current project only (.claude/skills/)
 ```
 
-The skill then opens the studio on demand via `npx @no7z/design-system open`,
+The skill then opens the studio on demand via `npx design-pact open`,
 so you never install the studio separately. (This package also ships its own
 installer if you prefer a single, offline, version-locked bundle:
-`npx @no7z/design-system init [--global]`.)
+`npx design-pact init [--global]`.)
 
 ## Usage
 
 ```bash
 # Generate token files in the current directory
-npx @no7z/design-system add design.md
+npx design-pact add design.md
 
 # Pick formats and an output directory
-npx @no7z/design-system add design.md --format css|tailwind|w3c|all --out ./design
+npx design-pact add design.md --format css|tailwind|w3c|all --out ./design
 
 # Print a summary without writing anything
-npx @no7z/design-system inspect design.md
+npx design-pact inspect design.md
+
+# Audit source files: find color literals outside the contract
+npx design-pact check design.md src/ app/
 ```
+
+### `check` — enforce the contract
+
+`check` scans your source files (css/scss/tsx/vue/svelte/…) for hex and
+`rgb()`/`rgba()` color literals that aren't declared in `design.md` and reports
+each with its file and line. It exits `1` when violations exist, so it slots
+into CI or an agent loop: the agent generates UI against `design.md`, runs
+`check`, and fixes anything flagged. `node_modules` / build output are skipped
+automatically; whitelist intentional exceptions with `--allow "#hex,#hex"`.
 
 Outputs:
 
@@ -52,4 +64,4 @@ using the same code path the web app uses — it can't drift from the source.
 ## How to get a `design.md`
 
 Open the design-system web app, build your design system, and click
-**下载 design.md** in the export step.
+**Download design.md** in the export step.

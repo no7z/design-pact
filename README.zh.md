@@ -1,12 +1,12 @@
 <div align="center">
 
-# design-system
+# design-pact
 
 [English](README.md) · **简体中文**
 
-[![npm](https://img.shields.io/npm/v/@no7z/design-system)](https://www.npmjs.com/package/@no7z/design-system)
-[![license](https://img.shields.io/github/license/no7z/design-system)](LICENSE)
-[![skills.sh](https://skills.sh/b/no7z/design-system)](https://skills.sh/no7z/design-system)
+[![npm](https://img.shields.io/npm/v/design-pact)](https://www.npmjs.com/package/design-pact)
+[![license](https://img.shields.io/github/license/no7z/design-pact)](LICENSE)
+[![skills.sh](https://skills.sh/b/no7z/design-pact)](https://skills.sh/no7z/design-pact)
 
 **给「用 AI 生成页面的人」的设计系统工具**
 
@@ -26,18 +26,18 @@
 **1. 装 skill**(一条命令,支持 Claude Code / Cursor / Codex 等;在 Claude Code 项目里自动装到 `.claude/skills/`)
 
 ```bash
-npx skills add no7z/design-system -g     # 全局:装一次,所有项目可用
-# 或 npx skills add no7z/design-system   # 只装当前项目
+npx skills add no7z/design-pact -g     # 全局:装一次,所有项目可用
+# 或 npx skills add no7z/design-pact   # 只装当前项目
 ```
 
-**2. 触发 skill** —— 在 Claude Code 里直接输入斜杠命令 `/design-system`;或用自然语言说「用 design-system skill 帮我建一套设计系统」(Cursor 等其它 agent 用自然语言即可,skill 会按描述自动触发)。
+**2. 触发 skill** —— 在 Claude Code 里直接输入斜杠命令 `/design-pact`;或用自然语言说「用 design-pact skill 帮我建一套设计系统」(Cursor 等其它 agent 用自然语言即可,skill 会按描述自动触发)。
 
 - 项目里**有** `design.md` → agent 直接照它生成 UI。
-- **没有** → agent 问清方向、给你 2–3 套配色,并用 `npx @no7z/design-system open` 在本地打开配色工具。
+- **没有** → agent 问清方向、给你 2–3 套配色,并用 `npx design-pact open` 在本地打开配色工具。
 
 **3. 在网页里选一套配色 → 微调 → 导出 `design.md`**,放到项目根目录。回到 agent,它就按这份契约生成/对齐 UI。
 
-> studio(配色网页)由 `@no7z/design-system` 包提供,skill 会在需要时自动用 `npx` 拉起,你不用单独安装。
+> studio(配色网页)由 `design-pact` 包提供,skill 会在需要时自动用 `npx` 拉起,你不用单独安装。
 
 ---
 
@@ -62,15 +62,21 @@ npx skills add no7z/design-system -g     # 全局:装一次,所有项目可用
 
 ```bash
 # 把 design.md 转成项目文件(可选)
-npx @no7z/design-system add design.md --format css|tailwind|w3c|all --out ./design
+npx design-pact add design.md --format css|tailwind|w3c|all --out ./design
 #   → tokens.css / tailwind.config.js / design-tokens.json
 
 # 打印设计系统摘要
-npx @no7z/design-system inspect design.md
+npx design-pact inspect design.md
+
+# 契约审计:找出代码里 design.md 之外的颜色字面量
+npx design-pact check design.md src/     # 违规时 exit 1 + 文件:行号报告
 
 # 本地起配色工具并打开浏览器
-npx @no7z/design-system open
+npx design-pact open
 ```
+
+`check` 把 agent 工作流闭环:agent 按 design.md 生成 UI 后,由它(或你的 CI)跑
+`check`,证明没有契约外颜色混进来。
 
 `css` / `w3c` 逐字取自 design.md;`tailwind` 复用网页同一套 `tailwindConfig` 生成,零漂移。纯本地、确定性、不联网、不调 AI。详见 [`packages/cli`](packages/cli/README.md)。
 
@@ -98,8 +104,8 @@ npm run dev
 - `lib/scales.ts` / `lib/typography.ts` — 「base → 整套阶梯」派生逻辑
 - `lib/export.ts` — 文本导出(含 `design.md`);`lib/visualExport.ts` — 视觉导出
 - `lib/templates.ts` + `public/templates.json` — 品牌模板快照(构建时生成,运行时不依赖 GitHub)
-- `packages/cli` — `@no7z/design-system` CLI(`init` / `open` / `add` / `inspect`)
-- `skills/design-system/SKILL.md` — 给 agent 的应用/创建说明
+- `packages/cli` — `design-pact` CLI(`init` / `open` / `add` / `inspect` / `check`)
+- `skills/design-pact/SKILL.md` — 给 agent 的应用/创建说明
 
 模板数据来源:[VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)。
 

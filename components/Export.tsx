@@ -63,11 +63,11 @@ export function Export() {
 
   const exportSvg = () => {
     const svg = boardSvg();
-    if (svg) downloadFile("design-system.svg", serializeSvg(svg), "image/svg+xml");
+    if (svg) downloadFile("design-pact.svg", serializeSvg(svg), "image/svg+xml");
   };
   const exportHtml = () => {
     const svg = boardSvg();
-    if (svg) downloadFile("design-system.html", htmlStyleGuide(serializeSvg(svg), tr("Design system overview", "设计系统总览")), "text/html");
+    if (svg) downloadFile("design-pact.html", htmlStyleGuide(serializeSvg(svg), tr("Design system overview", "设计系统总览")), "text/html");
   };
   const openHtml = () => {
     const svg = boardSvg();
@@ -89,7 +89,7 @@ export function Export() {
     setVBusy(true);
     try {
       const blob = await svgToPngBlob(serializeSvg(svg), 2);
-      downloadBlob("design-system.png", blob);
+      downloadBlob("design-pact.png", blob);
     } finally {
       setVBusy(false);
     }

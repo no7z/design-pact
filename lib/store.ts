@@ -282,6 +282,6 @@ export const useTokens = create<State>()(
           activeSchemeId: null,
         })),
     }),
-    { name: "design-system-tokens", skipHydration: true },
+    { name: "design-pact-tokens", skipHydration: true },
   ),
 );

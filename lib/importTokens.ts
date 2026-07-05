@@ -99,7 +99,7 @@ export function parseW3CTokens(jsonText: string): ImportedTokens {
       role: ROLES.has(key as SemanticRole) ? (key as SemanticRole) : "unassigned",
       name: key,
     });
-    const dark = asObj(asObj(asObj(node)?.["$extensions"])?.["design-system"])?.dark;
+    const dark = asObj(asObj(asObj(node)?.["$extensions"])?.["design-pact"])?.dark;
     darkHexes.push(typeof dark === "string" && HEX_RE.test(dark) ? dark.toLowerCase() : undefined);
   }
   if (colors.length === 0) throw new Error(trg("No recognizable colors in the color group", "color 分组里没有可识别的颜色"));
@@ -111,7 +111,7 @@ export function parseW3CTokens(jsonText: string): ImportedTokens {
   const typo = asObj(root.typography);
   if (typo) {
     const t: Partial<Typography> = {};
-    const ext = asObj(asObj(typo.$extensions)?.["design-system"]);
+    const ext = asObj(asObj(typo.$extensions)?.["design-pact"]);
     const base = num(ext?.base);
     const ratio = num(ext?.ratio);
     if (base) t.base = base;

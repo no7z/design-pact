@@ -31,6 +31,30 @@ describe("scanSignals", () => {
   });
 });
 
+describe("scanSignals real-world naming (regressions from ai-monitor-platform)", () => {
+  it("state-modifier names don't claim a role: --mm-focus-border is not the border", () => {
+    const into = new Map<string, ColorSignal>();
+    scanSignals("--mm-focus-border: #22D3EE;\n--mm-focus-text: #22D3EE;\n", 3, into);
+    const sig = into.get("#22d3ee")!;
+    expect(sig.count).toBe(6); // still counted as usage
+    expect(sig.hints).toEqual({}); // but names nothing
+  });
+
+  it("structural noun beats emphasis modifier: --text-primary is a foreground", () => {
+    const into = new Map<string, ColorSignal>();
+    scanSignals("--text-primary: #1C1B19;\n", 3, into);
+    const sig = into.get("#1c1b19")!;
+    expect(sig.hints.foreground).toBe(6);
+    expect(sig.hints.primary).toBeUndefined();
+  });
+
+  it("a bare --primary still hints primary", () => {
+    const into = new Map<string, ColorSignal>();
+    scanSignals("--primary: #2f6df6;\n", 3, into);
+    expect(into.get("#2f6df6")!.hints.primary).toBe(6);
+  });
+});
+
 describe("assignRoles", () => {
   const sig = (hex: string, count: number, hints: ColorSignal["hints"] = {}): ColorSignal => ({ hex, count, hints });
 
@@ -120,6 +144,21 @@ describe("scanProject + draftToMarkdown end-to-end", () => {
       // draft contract it produced.
       const clean = runCheck(ds.w3c, [dir]);
       expect(clean.violations).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("skips var() font-family references and keeps looking for a real stack", () => {
+    const dir = mkdtempSync(join(tmpdir(), "ds-import-font-"));
+    try {
+      writeFileSync(
+        join(dir, "app.css"),
+        `body { font-family: var(--font-body); }
+         .prose { font-family: "Source Serif 4", Georgia, serif; }\n`,
+      );
+      const draft = scanProject([dir]);
+      expect(draft.fontFamily).toBe("Source Serif 4, Georgia, serif");
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }

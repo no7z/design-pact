@@ -3,7 +3,7 @@
 //
 //   npx design-pact init [--global]                install the skill
 //   npx design-pact open ["p=…&p=…"]               open the local studio
-//   npx design-pact add design.md [--format css|tailwind|w3c|all] [--out .]
+//   npx design-pact add design.md [--format css|tailwind|w3c|shadcn|all] [--out .]
 //   npx design-pact inspect design.md
 //   npx design-pact check design.md [paths…]       audit source colors against the contract
 //   npx design-pact import [paths…] [--out design.md]  derive a draft design.md from existing code
@@ -12,13 +12,14 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parseDesignSystem } from "./parse";
 import { tailwindFromW3C } from "./tailwind";
+import { shadcnFromW3C } from "./shadcn";
 import { cmdInit, cmdOpen, serveStatic } from "./studio";
 import { runCheck, reportCheck } from "./check";
 import { scanProject, draftToMarkdown, studioQuery } from "./import";
 import { t } from "./locale";
 
-type Format = "css" | "tailwind" | "w3c" | "all";
-const FORMATS: Format[] = ["css", "tailwind", "w3c"];
+type Format = "css" | "tailwind" | "w3c" | "shadcn" | "all";
+const FORMATS: Format[] = ["css", "tailwind", "w3c", "shadcn"];
 
 function fail(msg: string): never {
   console.error(`✗ ${msg}`);
@@ -75,7 +76,7 @@ function cmdAdd(file: string | undefined, opts: Record<string, string>) {
   const ds = parseDesignSystem(readMd(file));
   const fmt = (opts.format || "all") as Format;
   if (fmt !== "all" && !FORMATS.includes(fmt))
-    fail(t(`Unknown format: ${fmt} (css|tailwind|w3c|all)`, `未知格式：${fmt}（css|tailwind|w3c|all）`));
+    fail(t(`Unknown format: ${fmt} (css|tailwind|w3c|shadcn|all)`, `未知格式：${fmt}（css|tailwind|w3c|shadcn|all）`));
   const want = fmt === "all" ? FORMATS : [fmt];
 
   const outDir = resolve(opts.out || ".");
@@ -91,6 +92,7 @@ function cmdAdd(file: string | undefined, opts: Record<string, string>) {
     if (f === "css") write("tokens.css", ds.rootCss);
     else if (f === "w3c") write("design-tokens.json", ds.w3cText);
     else if (f === "tailwind") write("tailwind.config.js", tailwindFromW3C(ds.w3cText));
+    else if (f === "shadcn") write("shadcn-theme.css", shadcnFromW3C(ds.w3cText));
   }
   console.log(t(`✓ Wrote ${outDir}: ${written.join(", ")}`, `✓ 写入 ${outDir}：${written.join(", ")}`));
 }
@@ -165,8 +167,8 @@ async function main() {
             '  open ["p=…&p=…"]                                       本地起配色工具并打开浏览器',
           ),
           t(
-            "  add <file> [--format css|tailwind|w3c|all] [--out .]   convert design.md into token files",
-            "  add <file> [--format css|tailwind|w3c|all] [--out .]   把 design.md 转成 token 文件",
+            "  add <file> [--format css|tailwind|w3c|shadcn|all] [--out .]  convert design.md into token files",
+            "  add <file> [--format css|tailwind|w3c|shadcn|all] [--out .]  把 design.md 转成 token 文件",
           ),
           t(
             "  inspect <file>                                         print a design-system summary",

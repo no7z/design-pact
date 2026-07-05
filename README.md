@@ -78,12 +78,21 @@ npx design-pact inspect design.md
 # Audit your code against the contract: find color literals outside design.md
 npx design-pact check design.md src/     # exit 1 + file:line report
 
+# Brownfield: derive a draft design.md from an existing codebase
+npx design-pact import src/              # scans tailwind config / CSS vars / hex usage
+
 # Start the studio locally and open the browser
 npx design-pact open
 ```
 
 `check` closes the agent loop: after your agent generates UI from design.md,
 it (or your CI) runs `check` to prove no off-contract colors crept in.
+
+`import` is the adoption path for existing projects: it maps the colors your
+codebase already uses onto the six roles (named variables > usage heuristics,
+each marked in the summary), detects radius/spacing/type bases where present,
+and emits a full draft — dark pairs and semantic colors included — plus a
+studio link to review before adopting.
 
 `css` / `w3c` are taken verbatim from design.md; `tailwind` is regenerated via the web app's own `tailwindConfig` (no drift). Fully local, deterministic, no network, no AI. See [`packages/cli`](packages/cli/README.md).
 
@@ -111,7 +120,7 @@ npm run dev
 - `lib/scales.ts` / `lib/typography.ts` — "base → full scale" derivation
 - `lib/export.ts` — text exports (incl. `design.md`); `lib/visualExport.ts` — visual exports
 - `lib/templates.ts` + `public/templates.json` — brand-template snapshot (generated at build time, no GitHub dependency at runtime)
-- `packages/cli` — the `design-pact` CLI (`init` / `open` / `add` / `inspect` / `check`)
+- `packages/cli` — the `design-pact` CLI (`init` / `open` / `add` / `inspect` / `check` / `import`)
 - `skills/design-pact/SKILL.md` — the apply/create instructions for agents
 
 Template data source: [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md).

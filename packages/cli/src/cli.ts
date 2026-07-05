@@ -6,13 +6,15 @@
 //   npx design-pact add design.md [--format css|tailwind|w3c|all] [--out .]
 //   npx design-pact inspect design.md
 //   npx design-pact check design.md [paths…]       audit source colors against the contract
+//   npx design-pact import [paths…] [--out design.md]  derive a draft design.md from existing code
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { parseDesignSystem } from "./parse";
 import { tailwindFromW3C } from "./tailwind";
 import { cmdInit, cmdOpen, serveStatic } from "./studio";
 import { runCheck, reportCheck } from "./check";
+import { scanProject, draftToMarkdown, studioQuery } from "./import";
 import { t } from "./locale";
 
 type Format = "css" | "tailwind" | "w3c" | "all";
@@ -23,13 +25,19 @@ function fail(msg: string): never {
   process.exit(1);
 }
 
+// Flags that never take a value — without this list they'd swallow the
+// following positional argument.
+const BOOL_FLAGS = new Set(["force", "global"]);
+
 function parseArgs(argv: string[]) {
   const positional: string[] = [];
   const opts: Record<string, string> = {};
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
-    if (a.startsWith("--")) opts[a.slice(2)] = argv[++i] ?? "";
-    else positional.push(a);
+    if (a.startsWith("--")) {
+      const name = a.slice(2);
+      opts[name] = BOOL_FLAGS.has(name) ? "true" : argv[++i] ?? "";
+    } else positional.push(a);
   }
   return { positional, opts };
 }
@@ -108,6 +116,36 @@ async function main() {
       const result = runCheck(ds.w3c, targets.length > 0 ? targets : ["."], allow);
       process.exit(reportCheck(result));
     }
+    case "import": {
+      const targets = positional.length > 0 ? positional : ["."];
+      const outPath = resolve(opts.out || "design.md");
+      if (existsSync(outPath) && !opts.force)
+        fail(t(`${outPath} already exists — pass --force to overwrite.`, `${outPath} 已存在——用 --force 覆盖。`));
+      const draft = scanProject(targets);
+      writeFileSync(outPath, draftToMarkdown(draft), "utf8");
+      console.log(t(
+        `✓ Draft design.md written to ${outPath} (${draft.filesScanned} file(s) scanned)`,
+        `✓ design.md 草稿已写入 ${outPath}（扫描 ${draft.filesScanned} 个文件）`,
+      ));
+      console.log(t("  Detected palette:", "  识别出的色板："));
+      const provenanceLabel: Record<string, [string, string]> = {
+        named: ["from a named variable", "来自命名变量"],
+        heuristic: ["by usage heuristic", "按使用频率推断"],
+        derived: ["derived (no signal found)", "派生（未找到信号）"],
+      };
+      for (const c of draft.colors) {
+        const [en, zh] = provenanceLabel[c.provenance];
+        console.log(`    ${c.role.padEnd(12)} ${c.hex}  ${t(en, zh)}`);
+      }
+      const q = studioQuery(draft);
+      console.log("\n" + t(
+        "Review it visually before adopting — heuristic/derived roles deserve a look:",
+        "采用前建议先到 studio 里过目——推断/派生的角色值得确认：",
+      ));
+      console.log(`  https://design-pact.vercel.app/?${q}`);
+      console.log(t(`  or locally: npx design-pact open "${q}"`, `  或本地打开：npx design-pact open "${q}"`));
+      return;
+    }
     case undefined:
     case "-h":
     case "--help":
@@ -138,6 +176,10 @@ async function main() {
             '  check <file> [paths…] [--allow "#hex,#hex"]            find color literals outside the contract',
             '  check <file> [paths…] [--allow "#hex,#hex"]            找出契约外的颜色字面量',
           ),
+          t(
+            "  import [paths…] [--out design.md] [--force]            derive a draft design.md from existing code",
+            "  import [paths…] [--out design.md] [--force]            从现有代码反推 design.md 草稿",
+          ),
           "",
           t(
             'design.md is exported from the studio ("Download design.md").',
@@ -147,7 +189,7 @@ async function main() {
       );
       return;
     default:
-      fail(t(`Unknown command: ${cmd} (init|open|add|inspect|check)`, `未知命令：${cmd}（init|open|add|inspect|check）`));
+      fail(t(`Unknown command: ${cmd} (init|open|add|inspect|check|import)`, `未知命令：${cmd}（init|open|add|inspect|check|import）`));
   }
 }
 

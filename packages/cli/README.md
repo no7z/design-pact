@@ -38,6 +38,9 @@ npx design-pact inspect design.md
 
 # Audit source files: find color literals outside the contract
 npx design-pact check design.md src/ app/
+
+# Derive a draft design.md from an existing codebase
+npx design-pact import src/ [--out design.md] [--force]
 ```
 
 ### `check` — enforce the contract
@@ -48,6 +51,19 @@ each with its file and line. It exits `1` when violations exist, so it slots
 into CI or an agent loop: the agent generates UI against `design.md`, runs
 `check`, and fixes anything flagged. `node_modules` / build output are skipped
 automatically; whitelist intentional exceptions with `--allow "#hex,#hex"`.
+
+### `import` — adopt design-pact in an existing project
+
+`import` scans tailwind configs, CSS custom properties, and raw color usage,
+then assigns the six roles: colors from variables literally named
+background/primary/border/… win outright; the rest are filled by OKLCH
+heuristics (lightness, chroma, hue distance, contrast) and every assignment is
+labeled `named` / `heuristic` / `derived` in the summary so you know what to
+review. Radius, spacing, body font, and base size are detected when declared.
+The output is a complete design.md — dark face and status colors derived the
+same way the studio does it — and the command prints a studio URL to eyeball
+the palette before you commit to it. A dark codebase is handled correctly: it
+becomes the `@media (prefers-color-scheme: dark)` face.
 
 Outputs:
 

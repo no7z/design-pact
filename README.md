@@ -14,7 +14,7 @@ Your agent sets direction and proposes palettes · the tool derives a whole
 coherent token set deterministically · export an agent-executable `design.md`,
 drop it in your repo, and let Claude Code / Cursor build UI from it.
 
-<!-- Demo GIF pending: record a short run → docs/demo.gif, then add <img src="docs/demo.gif" width="860"> here. -->
+<img src="docs/demo.gif" width="860" alt="design-pact studio: pick a palette, tune tokens, export design.md">
 
 </div>
 

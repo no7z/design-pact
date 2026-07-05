@@ -13,7 +13,7 @@
 你的 agent 定方向、出配色 · 工具确定性派生整套设计 tokens · 导出 AI 能逐字执行的 `design.md`,
 丢进代码库让 Claude Code / Cursor 照它生成 UI。
 
-<!-- 演示图待补:录一段操作 → docs/demo.gif,再在这里加 <img src="docs/demo.gif" width="860">。 -->
+<img src="docs/demo.gif" width="860" alt="design-pact studio:选配色、调 tokens、导出 design.md">
 
 </div>
 

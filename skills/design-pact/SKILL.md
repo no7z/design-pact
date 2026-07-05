@@ -41,6 +41,18 @@ Then branch:
 
 ## Create — no design.md yet
 
+**If the project already has real styling** (a tailwind config, CSS custom
+properties, an established look), offer to derive the draft from it instead of
+inventing palettes:
+
+```bash
+npx design-pact import <src-dirs> --out design.md
+```
+
+Show the user the printed summary + studio link to confirm the mapping, then
+continue to **Apply**. Only fall through to palette proposal when the project
+is greenfield or the user wants a fresh direction.
+
 There's no design system yet. The division of labor: **you (the agent) do the
 creative part — clarify direction and propose 2–3 palettes; the web app does
 the deterministic part — render each palette so the user picks one visually,

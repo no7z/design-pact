@@ -1,6 +1,6 @@
 {
   "name": "design-pact",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Design-system contract for AI agents: derive a full token set from a palette in the local studio, export an agent-executable design.md, convert it to CSS/Tailwind tokens, and audit generated UI against the contract. Works with Claude Code / Cursor. Zero backend, zero account.",
   "type": "module",
   "bin": {

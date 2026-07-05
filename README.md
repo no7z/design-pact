@@ -10,6 +10,8 @@
 
 **A design-system tool for people who build UIs with AI agents**
 
+**[Try it live →](https://design-pact.vercel.app)**
+
 Your agent sets direction and proposes palettes · the tool derives a whole
 coherent token set deterministically · export an agent-executable `design.md`,
 drop it in your repo, and let Claude Code / Cursor build UI from it.

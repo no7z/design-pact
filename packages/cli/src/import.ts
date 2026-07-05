@@ -92,6 +92,11 @@ const CSS_PROPERTIES = new Set([
   "outline", "outline-color", "fill", "stroke", "caret-color", "accent-color",
 ]);
 
+const STATE_WORDS = /\b(?:focus|hover|active|pressed|disabled|selected|visited|checked)\b/i;
+
+// Roles named after a UI part, as opposed to primary/accent (emphasis levels).
+const STRUCTURAL_ROLES = new Set<Role>(["background", "foreground", "border", "muted"]);
+
 export function scanSignals(text: string, weight: number, into: Map<string, ColorSignal>): void {
   for (const line of text.split("\n")) {
     for (const m of line.matchAll(COLOR_LITERAL)) {
@@ -106,8 +111,17 @@ export function scanSignals(text: string, weight: number, into: Map<string, Colo
         const hintWeight = CSS_PROPERTIES.has(name.toLowerCase()) ? 1 : weight * 2;
         // Hints match against the camelCase-split form so \b anchors work.
         const normalized = name.replace(/([a-z])([A-Z])/g, "$1-$2");
-        for (const [role, re] of NAME_HINTS) {
-          if (re.test(normalized)) sig.hints[role] = (sig.hints[role] ?? 0) + hintWeight;
+        // A state-modifier color (--focus-border, --hover-bg) describes an
+        // interaction state, not the resting role — count it, don't name it.
+        if (!STATE_WORDS.test(normalized)) {
+          let matched = NAME_HINTS.filter(([, re]) => re.test(normalized)).map(([role]) => role);
+          // `--text-primary` is "the primary TEXT color": when a structural
+          // noun (text/bg/border/…) co-occurs with an emphasis modifier
+          // (primary/accent), the noun is the identity.
+          if (matched.some((r) => STRUCTURAL_ROLES.has(r))) {
+            matched = matched.filter((r) => r !== "primary" && r !== "accent");
+          }
+          for (const role of matched) sig.hints[role] = (sig.hints[role] ?? 0) + hintWeight;
         }
       }
       into.set(hex, sig);
@@ -117,7 +131,9 @@ export function scanSignals(text: string, weight: number, into: Map<string, Colo
 
 const RADIUS_RE = /(?:border-radius|borderRadius|--radius[\w-]*)["']?\s*:\s*["']?(\d{1,2})px/g;
 const SPACING_VAR_RE = /--spacing-[\w-]*\s*:\s*(\d{1,2}(?:\.\d+)?)px/g;
-const FONT_FAMILY_RE = /font-family\s*:\s*([^;}"']{3,120})/i;
+// Value may contain quoted names ("Source Serif 4"); quotes are stripped
+// after capture.
+const FONT_FAMILY_RE = /font-family\s*:\s*([^;}]{3,120})/i;
 const FONT_SIZE_RE = /(?:html|body|:root)[^{]*\{[^}]*?font-size\s*:\s*(\d{2})px/;
 
 // ── role assignment ──────────────────────────────────────────────────────────
@@ -272,8 +288,15 @@ export function scanProject(targets: string[]): ImportDraft {
         if (px >= 2 && px <= 8) spacings.push(px);
       }
       if (!fontFamily && (isCss || isTailwindConfig(file))) {
-        const m = FONT_FAMILY_RE.exec(text);
-        if (m) fontFamily = m[1].trim().replace(/["']/g, "").replace(/\s+/g, " ");
+        for (const m of text.matchAll(new RegExp(FONT_FAMILY_RE.source, "gi"))) {
+          const value = m[1].trim().replace(/["']/g, "").replace(/\s+/g, " ");
+          // `font-family: var(--font-body)` is a reference, not a usable
+          // stack — keep looking for a declaration with real family names.
+          if (!/^var\(/i.test(value)) {
+            fontFamily = value;
+            break;
+          }
+        }
       }
       if (!fontSizeBase) {
         const m = FONT_SIZE_RE.exec(text);

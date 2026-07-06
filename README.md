@@ -55,7 +55,7 @@ npx skills add no7z/design-pact -g     # global: install once, available in ever
 3. **Type** — two sliders (base + ratio) drive an 8-step type scale; weight / line-height / letter-spacing adjustable.
 4. **Details** — spacing / radius / shadow / border / opacity, each derived from a single base slider.
 5. **Motion** — a duration scale + easing curve.
-6. **Export** — **design.md** (recommended, see below), a paste-ready **shadcn/ui theme** (`shadcn-theme.css`), plus a **visual overview** export (HTML / PNG / SVG; SVG drops straight into Figma / Illustrator). Need `tokens.css` / `tailwind.config.js` / `design-tokens.json`? Convert from design.md with the CLI (see below).
+6. **Export** — **design.md** (recommended, see below), plus a **visual overview** export (HTML / PNG / SVG; SVG drops straight into Figma / Illustrator). Need `tokens.css` / `tailwind.config.js` / `design-tokens.json`? Convert from design.md with the CLI (see below).
 
 ## design.md — one file, three readers
 

@@ -50,7 +50,7 @@ npx skills add no7z/design-pact -g     # 全局:装一次,所有项目可用
 3. **字体** — base + ratio 两个滑条驱动 8 级字号阶梯,字重 / 行高 / 字距可调。
 4. **细节** — 间距 / 圆角 / 阴影 / 描边 / 透明度,全部「单 base 滑条派生整套阶梯」。
 5. **动效** — 时长阶梯 + 缓动曲线。
-6. **导出** — **design.md**(推荐,见下),外加**设计系统总览**的视觉导出(HTML / PNG / SVG,SVG 可直接拖进 Figma / Illustrator)。需要 `tokens.css` / `tailwind.config.js` / `design-tokens.json` 时,用配套 CLI 从 design.md 转(见 CLI 一节)。
+6. **导出** — **design.md**(推荐,见下)、可直接粘贴的 **shadcn/ui 主题**(`shadcn-theme.css`),外加**设计系统总览**的视觉导出(HTML / PNG / SVG,SVG 可直接拖进 Figma / Illustrator)。需要 `tokens.css` / `tailwind.config.js` / `design-tokens.json` 时,用配套 CLI 从 design.md 转(见 CLI 一节)。
 
 ## design.md —— 一份文件服务三类读者
 

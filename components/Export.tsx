@@ -4,8 +4,10 @@ import { useTokens, computedHex } from "@/lib/store";
 import {
   designSystemMarkdown,
   downloadFile,
+  w3cTokens,
   type ResolvedToken,
 } from "@/lib/export";
+import { shadcnFromW3C } from "@/lib/shadcn";
 import { DesignSystemBoard, BOARD_SVG_ID } from "./DesignSystemBoard";
 import { serializeSvg, svgToPngBlob, htmlStyleGuide, downloadBlob } from "@/lib/visualExport";
 import { lightDarkFaces } from "@/lib/darkMode";
@@ -83,6 +85,19 @@ export function Export() {
       designSystemMarkdown(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved, semantic, darkSemantic),
       "text/markdown",
     );
+  // shadcn needs all six roles assigned; hide the button until they are.
+  const rolesComplete = (["background", "foreground", "primary", "accent", "muted", "border"] as const)
+    .every((r) => resolved.some((c) => c.role === r));
+  const exportShadcn = () =>
+    downloadFile(
+      "shadcn-theme.css",
+      shadcnFromW3C(
+        JSON.stringify(
+          w3cTokens(resolved, typography, spacing, radius, shadow, motion, border, opacity, darkResolved, semantic, darkSemantic),
+        ),
+      ),
+      "text/css",
+    );
   const exportPng = async () => {
     const svg = boardSvg();
     if (!svg) return;
@@ -110,12 +125,23 @@ export function Export() {
             )}
           </p>
         </div>
-        <button
-          onClick={exportMarkdown}
-          className="shrink-0 rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
-        >
-          {tr("Download design.md", "下载 design.md")}
-        </button>
+        <div className="flex shrink-0 items-center gap-2">
+          {rolesComplete && (
+            <button
+              onClick={exportShadcn}
+              title={tr("Paste into globals.css to theme a shadcn/ui app", "粘进 globals.css 即可给 shadcn/ui 应用换肤")}
+              className="rounded-lg border border-neutral-300 px-3 py-2 text-xs font-medium transition hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
+            >
+              {tr("shadcn theme (.css)", "shadcn 主题 (.css)")}
+            </button>
+          )}
+          <button
+            onClick={exportMarkdown}
+            className="rounded-lg bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700 dark:bg-white dark:text-black dark:hover:bg-neutral-200"
+          >
+            {tr("Download design.md", "下载 design.md")}
+          </button>
+        </div>
       </div>
 
       <section className="rounded-xl border border-neutral-200 dark:border-neutral-800">

@@ -39,6 +39,10 @@ npx design-pact inspect design.md
 # Audit source files: find color literals outside the contract
 npx design-pact check design.md src/ app/
 
+# Audit rendered computed styles and fail below a CI threshold
+npx design-pact audit design.md http://localhost:3000 --threshold 90 \
+  --out design-pact-audit.html --json design-pact-audit.json
+
 # Derive a draft design.md from an existing codebase
 npx design-pact import src/ [--out design.md] [--force]
 ```
@@ -51,6 +55,17 @@ each with its file and line. It exits `1` when violations exist, so it slots
 into CI or an agent loop: the agent generates UI against `design.md`, runs
 `check`, and fixes anything flagged. `node_modules` / build output are skipped
 automatically; whitelist intentional exceptions with `--allow "#hex,#hex"`.
+
+### `audit` — verify the rendered UI
+
+`audit` opens a URL or local HTML file in an installed Chrome/Chromium and
+samples the computed styles of visible elements. Colors, font families/sizes/
+weights, line height, letter spacing, spacing, and corner radii are scored
+against the W3C tokens embedded in `design.md`. The HTML report is fully
+self-contained and the command exits `1` when the overall score is below
+`--threshold` (default `90`). Use `--json` for a machine-readable CI artifact,
+`--browser /path/to/chrome` when auto-discovery is unsuitable, and `--timeout`
+for slower pages. The audit runs locally and uploads nothing.
 
 ### `import` — adopt design-pact in an existing project
 

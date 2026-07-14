@@ -78,6 +78,10 @@ npx design-pact inspect design.md
 # Audit your code against the contract: find color literals outside design.md
 npx design-pact check design.md src/     # exit 1 + file:line report
 
+# Audit the rendered UI: compare computed styles with design.md
+npx design-pact audit design.md http://localhost:3000 --threshold 90
+#   → design-pact-audit.html; exit 1 when the score is below the threshold
+
 # Brownfield: derive a draft design.md from an existing codebase
 npx design-pact import src/              # scans tailwind config / CSS vars / hex usage
 
@@ -85,8 +89,14 @@ npx design-pact import src/              # scans tailwind config / CSS vars / he
 npx design-pact open
 ```
 
-`check` closes the agent loop: after your agent generates UI from design.md,
-it (or your CI) runs `check` to prove no off-contract colors crept in.
+`check` closes the source-code loop: after your agent generates UI from
+design.md, it (or your CI) proves no off-contract color literals crept in.
+
+`audit` closes the browser loop. It launches an installed Chrome/Chromium,
+samples visible elements, and compares their computed colors, typography,
+spacing, and radii with the contract. It writes a self-contained HTML report;
+add `--json report.json` for CI artifacts and set `--threshold` to fail the job.
+Local HTML files are accepted as well as HTTP(S) URLs. Nothing is uploaded.
 
 `import` is the adoption path for existing projects: it maps the colors your
 codebase already uses onto the six roles (named variables > usage heuristics,
@@ -120,7 +130,7 @@ npm run dev
 - `lib/scales.ts` / `lib/typography.ts` — "base → full scale" derivation
 - `lib/export.ts` — text exports (incl. `design.md`); `lib/visualExport.ts` — visual exports
 - `lib/templates.ts` + `public/templates.json` — brand-template snapshot (generated at build time, no GitHub dependency at runtime)
-- `packages/cli` — the `design-pact` CLI (`init` / `open` / `add` / `inspect` / `check` / `import`)
+- `packages/cli` — the `design-pact` CLI (`init` / `open` / `add` / `inspect` / `check` / `audit` / `import`)
 - `skills/design-pact/SKILL.md` — the apply/create instructions for agents
 
 Template data source: [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md).

@@ -16,6 +16,7 @@ import { shadcnFromW3C } from "./shadcn";
 import { cmdInit, cmdOpen, serveStatic } from "./studio";
 import { runCheck, reportCheck } from "./check";
 import { scanProject, draftToMarkdown, studioQuery } from "./import";
+import { auditSummary, renderAuditHtml, runAudit } from "./audit";
 import { t } from "./locale";
 
 type Format = "css" | "tailwind" | "w3c" | "shadcn" | "all";
@@ -47,8 +48,8 @@ function readMd(file: string | undefined): string {
   if (!file)
     fail(
       t(
-        "Usage: design-pact <add|inspect|check> <design.md> [options]",
-        "用法：design-pact <add|inspect|check> <design.md> [选项]",
+        "Usage: design-pact <add|inspect|check|audit> <design.md> [options]",
+        "用法：design-pact <add|inspect|check|audit> <design.md> [选项]",
       ),
     );
   try {
@@ -118,6 +119,32 @@ async function main() {
       const result = runCheck(ds.w3c, targets.length > 0 ? targets : ["."], allow);
       process.exit(reportCheck(result));
     }
+    case "audit": {
+      const ds = parseDesignSystem(readMd(positional[0]));
+      const target = positional[1];
+      if (!target) fail(t(
+        "Usage: design-pact audit <design.md> <url-or-html> [--out report.html] [--json report.json] [--threshold 90]",
+        "用法：design-pact audit <design.md> <网址或HTML> [--out report.html] [--json report.json] [--threshold 90]",
+      ));
+      const threshold = Number(opts.threshold || 90);
+      if (!Number.isFinite(threshold) || threshold < 0 || threshold > 100) {
+        fail(t("--threshold must be between 0 and 100.", "--threshold 必须在 0 到 100 之间。"));
+      }
+      const timeout = Number(opts.timeout || 15_000);
+      const result = await runAudit(ds.w3c, target, {
+        threshold,
+        browserPath: opts.browser,
+        timeout: Number.isFinite(timeout) && timeout > 0 ? timeout : 15_000,
+      });
+      const outPath = resolve(opts.out || "design-pact-audit.html");
+      writeFileSync(outPath, renderAuditHtml(result), "utf8");
+      if (opts.json) writeFileSync(resolve(opts.json), JSON.stringify(result, null, 2) + "\n", "utf8");
+      console.log(auditSummary(result));
+      console.log(t(`  HTML report: ${outPath}`, `  HTML 报告：${outPath}`));
+      if (opts.json) console.log(t(`  JSON report: ${resolve(opts.json)}`, `  JSON 报告：${resolve(opts.json)}`));
+      if (!result.passed) process.exitCode = 1;
+      return;
+    }
     case "import": {
       const targets = positional.length > 0 ? positional : ["."];
       const outPath = resolve(opts.out || "design.md");
@@ -179,6 +206,10 @@ async function main() {
             '  check <file> [paths…] [--allow "#hex,#hex"]            找出契约外的颜色字面量',
           ),
           t(
+            "  audit <file> <url|html> [--threshold 90] [--out report.html]  audit runtime styles against the contract",
+            "  audit <file> <网址|HTML> [--threshold 90] [--out report.html]  按契约审核运行态样式",
+          ),
+          t(
             "  import [paths…] [--out design.md] [--force]            derive a draft design.md from existing code",
             "  import [paths…] [--out design.md] [--force]            从现有代码反推 design.md 草稿",
           ),
@@ -191,7 +222,7 @@ async function main() {
       );
       return;
     default:
-      fail(t(`Unknown command: ${cmd} (init|open|add|inspect|check|import)`, `未知命令：${cmd}（init|open|add|inspect|check|import）`));
+      fail(t(`Unknown command: ${cmd} (init|open|add|inspect|check|audit|import)`, `未知命令：${cmd}（init|open|add|inspect|check|audit|import）`));
   }
 }
 

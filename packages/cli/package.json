@@ -1,7 +1,7 @@
 {
   "name": "design-pact",
-  "version": "0.4.2",
-  "description": "Design-system contract for AI agents: derive a full token set from a palette in the local studio, export an agent-executable design.md, convert it to CSS/Tailwind tokens, and audit generated UI against the contract. Works with Claude Code / Cursor. Zero backend, zero account.",
+  "version": "0.5.0",
+  "description": "Design-system contract for AI agents: derive a full token set from a palette in the local studio, export an agent-executable design.md, convert it to CSS/Tailwind tokens, and audit generated UI against the contract. Works with Claude Code, Codex, and Cursor.",
   "type": "module",
   "bin": {
     "design-pact": "dist/cli.js"
@@ -22,6 +22,7 @@
     "design-md",
     "ai-agents",
     "claude-code",
+    "codex",
     "cursor",
     "tailwind",
     "css-variables",
@@ -37,7 +38,8 @@
   "homepage": "https://github.com/no7z/design-pact#readme",
   "bugs": "https://github.com/no7z/design-pact/issues",
   "dependencies": {
-    "culori": "^4.0.2"
+    "culori": "^4.0.2",
+    "playwright-core": "^1.57.0"
   },
   "devDependencies": {
     "tsup": "^8.5.0",

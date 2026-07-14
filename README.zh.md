@@ -73,6 +73,10 @@ npx design-pact inspect design.md
 # 契约审计:找出代码里 design.md 之外的颜色字面量
 npx design-pact check design.md src/     # 违规时 exit 1 + 文件:行号报告
 
+# 运行态审计:把渲染后的 computed styles 与 design.md 对照
+npx design-pact audit design.md http://localhost:3000 --threshold 90
+#   → design-pact-audit.html；低于阈值时 exit 1
+
 # 存量项目:从现有代码反推 design.md 草稿
 npx design-pact import src/              # 扫描 tailwind 配置 / CSS 变量 / hex 使用频率
 
@@ -80,8 +84,13 @@ npx design-pact import src/              # 扫描 tailwind 配置 / CSS 变量 /
 npx design-pact open
 ```
 
-`check` 把 agent 工作流闭环:agent 按 design.md 生成 UI 后,由它(或你的 CI)跑
-`check`,证明没有契约外颜色混进来。
+`check` 把源码环节闭环:agent 按 design.md 生成 UI 后,由它(或你的 CI)证明
+没有契约外颜色字面量混进来。
+
+`audit` 把浏览器环节闭环:它调用机器上已有的 Chrome/Chromium,抽样可见元素,
+把 computed colors、typography、spacing 和 radii 与契约逐项对照,并生成一个
+自包含 HTML 报告。加 `--json report.json` 可留 CI 产物,用 `--threshold` 控制
+不合格退出码。既支持 HTTP(S) URL,也支持本地 HTML,页面数据不会上传。
 
 `import` 是存量项目的采用路径:把代码库已经在用的颜色映射到六个语义角色
 (命名变量优先于频率推断,来源都标在摘要里),识别圆角/间距/字号基准,直接产出
@@ -113,7 +122,7 @@ npm run dev
 - `lib/scales.ts` / `lib/typography.ts` — 「base → 整套阶梯」派生逻辑
 - `lib/export.ts` — 文本导出(含 `design.md`);`lib/visualExport.ts` — 视觉导出
 - `lib/templates.ts` + `public/templates.json` — 品牌模板快照(构建时生成,运行时不依赖 GitHub)
-- `packages/cli` — `design-pact` CLI(`init` / `open` / `add` / `inspect` / `check` / `import`)
+- `packages/cli` — `design-pact` CLI(`init` / `open` / `add` / `inspect` / `check` / `audit` / `import`)
 - `skills/design-pact/SKILL.md` — 给 agent 的应用/创建说明
 
 模板数据来源:[VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)。

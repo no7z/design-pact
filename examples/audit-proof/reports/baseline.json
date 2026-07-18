@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-18T22:14:11.578Z",
+  "target": {
+    "url": "file:///private/tmp/design-pact-audit-proof/baseline.html",
+    "title": "Audit proof · baseline",
+    "elements": 20
+  },
+  "score": 100,
+  "threshold": 90,
+  "passed": true,
+  "categories": {
+    "colors": {
+      "name": "colors",
+      "checked": 27,
+      "matched": 27,
+      "score": 100,
+      "issues": []
+    },
+    "typography": {
+      "name": "typography",
+      "checked": 80,
+      "matched": 80,
+      "score": 100,
+      "issues": []
+    },
+    "spacing": {
+      "name": "spacing",
+      "checked": 163,
+      "matched": 163,
+      "score": 100,
+      "issues": []
+    },
+    "radii": {
+      "name": "radii",
+      "checked": 80,
+      "matched": 80,
+      "score": 100,
+      "issues": []
+    }
+  }
+}

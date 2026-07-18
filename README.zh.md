@@ -92,6 +92,11 @@ npx design-pact open
 自包含 HTML 报告。加 `--json report.json` 可留 CI 产物,用 `--threshold` 控制
 不合格退出码。既支持 HTTP(S) URL,也支持本地 HTML,页面数据不会上传。
 
+**眼见为实:**[`examples/audit-proof/`](examples/audit-proof/) 里有同一份契约
+和两个页面——全程用 token 的 baseline 得 **100/100**,硬编码值的 drifted 版本
+**79/100 不及格**,每条违规都指明元素、属性和应该使用的 token。报告已随仓库
+提交;CI 每次 push 都重新验证这组一过一败,本地复跑约 2 分钟。
+
 `import` 是存量项目的采用路径:把代码库已经在用的颜色映射到六个语义角色
 (命名变量优先于频率推断,来源都标在摘要里),识别圆角/间距/字号基准,直接产出
 带暗色配对和语义色的完整草稿,并附 studio 链接供采用前复核。

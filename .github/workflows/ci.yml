@@ -18,3 +18,36 @@ jobs:
       - run: npx tsc --noEmit
       - run: npm run lint
       - run: npm test
+
+  # The audit-proof example is the public evidence that `audit` works:
+  # the baseline page must pass and the drifted page must fail. Uses the
+  # runner's preinstalled Chrome.
+  audit-proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm ci --prefix packages/cli
+      - run: npm run build --prefix packages/cli
+      - name: baseline must pass
+        run: node packages/cli/dist/cli.js audit examples/audit-proof/design.md examples/audit-proof/baseline.html --out baseline-report.html --json baseline.json
+      - name: drifted must fail
+        run: |
+          if node packages/cli/dist/cli.js audit examples/audit-proof/design.md examples/audit-proof/drifted.html --out drifted-report.html --json drifted.json; then
+            echo "::error::drifted.html passed the audit — drift detection is broken"
+            exit 1
+          fi
+          echo "drifted page failed the audit as expected"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audit-proof-reports
+          path: |
+            baseline-report.html
+            baseline.json
+            drifted-report.html
+            drifted.json

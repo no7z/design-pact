@@ -1,0 +1,4 @@
+✗ Design Pact Compliance 79/100 (threshold 90)
+  colors 74 · typography 85 · spacing 85 · radii 70
+  HTML report: /private/tmp/design-pact-audit-proof/drifted-report.html
+  JSON report: /private/tmp/design-pact-audit-proof/drifted.json

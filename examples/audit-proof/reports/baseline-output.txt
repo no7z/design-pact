@@ -1,0 +1,4 @@
+✓ Design Pact Compliance 100/100 (threshold 90)
+  colors 100 · typography 100 · spacing 100 · radii 100
+  HTML report: /private/tmp/design-pact-audit-proof/baseline-report.html
+  JSON report: /private/tmp/design-pact-audit-proof/baseline.json

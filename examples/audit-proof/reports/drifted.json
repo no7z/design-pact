@@ -1,0 +1,1057 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-18T22:14:12.591Z",
+  "target": {
+    "url": "file:///private/tmp/design-pact-audit-proof/drifted.html",
+    "title": "Audit proof · drifted",
+    "elements": 20
+  },
+  "score": 79,
+  "threshold": 90,
+  "passed": false,
+  "categories": {
+    "colors": {
+      "name": "colors",
+      "checked": 27,
+      "matched": 20,
+      "score": 74,
+      "issues": [
+        {
+          "selector": "body > main > p.lede",
+          "property": "color",
+          "actual": "#777777",
+          "expected": [
+            "#ffffff",
+            "#16181d",
+            "#2f6df6",
+            "#7c3aed",
+            "#6b7280",
+            "#e5e7eb",
+            "#16a34a",
+            "#d97706",
+            "#dc2626",
+            "#2563eb"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "backgroundColor",
+          "actual": "#fafbfc",
+          "expected": [
+            "#ffffff",
+            "#16181d",
+            "#2f6df6",
+            "#7c3aed",
+            "#6b7280",
+            "#e5e7eb",
+            "#16a34a",
+            "#d97706",
+            "#dc2626",
+            "#2563eb"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "backgroundColor",
+          "actual": "#ff6b35",
+          "expected": [
+            "#ffffff",
+            "#16181d",
+            "#2f6df6",
+            "#7c3aed",
+            "#6b7280",
+            "#e5e7eb",
+            "#16a34a",
+            "#d97706",
+            "#dc2626",
+            "#2563eb"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "backgroundColor",
+          "actual": "#fafbfc",
+          "expected": [
+            "#ffffff",
+            "#16181d",
+            "#2f6df6",
+            "#7c3aed",
+            "#6b7280",
+            "#e5e7eb",
+            "#16a34a",
+            "#d97706",
+            "#dc2626",
+            "#2563eb"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "backgroundColor",
+          "actual": "#ff6b35",
+          "expected": [
+            "#ffffff",
+            "#16181d",
+            "#2f6df6",
+            "#7c3aed",
+            "#6b7280",
+            "#e5e7eb",
+            "#16a34a",
+            "#d97706",
+            "#dc2626",
+            "#2563eb"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "backgroundColor",
+          "actual": "#fafbfc",
+          "expected": [
+            "#ffffff",
+            "#16181d",
+            "#2f6df6",
+            "#7c3aed",
+            "#6b7280",
+            "#e5e7eb",
+            "#16a34a",
+            "#d97706",
+            "#dc2626",
+            "#2563eb"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "backgroundColor",
+          "actual": "#ff6b35",
+          "expected": [
+            "#ffffff",
+            "#16181d",
+            "#2f6df6",
+            "#7c3aed",
+            "#6b7280",
+            "#e5e7eb",
+            "#16a34a",
+            "#d97706",
+            "#dc2626",
+            "#2563eb"
+          ]
+        }
+      ]
+    },
+    "typography": {
+      "name": "typography",
+      "checked": 80,
+      "matched": 68,
+      "score": 85,
+      "issues": [
+        {
+          "selector": "body > main",
+          "property": "fontSize",
+          "actual": "19px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > p.lede",
+          "property": "fontSize",
+          "actual": "19px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards",
+          "property": "fontSize",
+          "actual": "19px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "fontSize",
+          "actual": "19px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > h2",
+          "property": "fontSize",
+          "actual": "27px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > p:nth-of-type(1)",
+          "property": "fontSize",
+          "actual": "19px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "fontSize",
+          "actual": "19px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > h2",
+          "property": "fontSize",
+          "actual": "27px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > p:nth-of-type(1)",
+          "property": "fontSize",
+          "actual": "19px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "fontSize",
+          "actual": "19px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > h2",
+          "property": "fontSize",
+          "actual": "27px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > p:nth-of-type(1)",
+          "property": "fontSize",
+          "actual": "19px",
+          "expected": [
+            "48.832px",
+            "39.056px",
+            "31.248px",
+            "25.008px",
+            "20px",
+            "16px",
+            "12.8px",
+            "10.24px"
+          ]
+        }
+      ]
+    },
+    "spacing": {
+      "name": "spacing",
+      "checked": 163,
+      "matched": 138,
+      "score": 85,
+      "issues": [
+        {
+          "selector": "body > main > p.lede",
+          "property": "marginBottom",
+          "actual": "26px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingTop",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingRight",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingBottom",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingLeft",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingTop",
+          "actual": "7px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingRight",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingBottom",
+          "actual": "7px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingLeft",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingTop",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingRight",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingBottom",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingLeft",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingTop",
+          "actual": "7px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingRight",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingBottom",
+          "actual": "7px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingLeft",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingTop",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingRight",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingBottom",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "paddingLeft",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingTop",
+          "actual": "7px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingRight",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingBottom",
+          "actual": "7px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "paddingLeft",
+          "actual": "18px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "24px",
+            "32px",
+            "48px",
+            "96px"
+          ]
+        }
+      ]
+    },
+    "radii": {
+      "name": "radii",
+      "checked": 80,
+      "matched": 56,
+      "score": 70,
+      "issues": [
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderTopLeftRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderTopRightRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderBottomRightRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderBottomLeftRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderTopLeftRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderTopRightRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderBottomRightRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderBottomLeftRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderTopLeftRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderTopRightRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderBottomRightRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderBottomLeftRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderTopLeftRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderTopRightRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderBottomRightRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderBottomLeftRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderTopLeftRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderTopRightRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderBottomRightRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card",
+          "property": "borderBottomLeftRadius",
+          "actual": "13px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderTopLeftRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderTopRightRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderBottomRightRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        },
+        {
+          "selector": "body > main > section.cards > article.card > a.cta",
+          "property": "borderBottomLeftRadius",
+          "actual": "5px",
+          "expected": [
+            "0px",
+            "4px",
+            "8px",
+            "12px",
+            "16px",
+            "9999px"
+          ]
+        }
+      ]
+    }
+  }
+}

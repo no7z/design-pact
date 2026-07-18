@@ -98,6 +98,12 @@ spacing, and radii with the contract. It writes a self-contained HTML report;
 add `--json report.json` for CI artifacts and set `--threshold` to fail the job.
 Local HTML files are accepted as well as HTTP(S) URLs. Nothing is uploaded.
 
+**See it work:** [`examples/audit-proof/`](examples/audit-proof/) holds one
+contract and two pages — the token-faithful baseline scores **100/100** and the
+hard-coded drifted copy **fails at 79/100**, with every violation naming the
+element, property, and expected tokens. Committed reports included; CI re-proves
+the pass/fail pair on every push, and you can re-run it locally in ~2 minutes.
+
 `import` is the adoption path for existing projects: it maps the colors your
 codebase already uses onto the six roles (named variables > usage heuristics,
 each marked in the summary), detects radius/spacing/type bases where present,
